@@ -67,8 +67,7 @@ class Parser{
 		this.check('name')
 
 		this.check('lpar')
-		// TODO params
-		const params = []
+		const params = this.params()
 		this.check('rpar')
 
 		let ret_type = types.IDXS.void
@@ -88,6 +87,22 @@ class Parser{
 			return_type: ret_type,
 			body,
 		}
+	}
+
+	params() {
+		const params = []
+		while (this.tok.kind !== 'rpar') {
+			const name = this.tok.value
+			this.check('name')
+			const type = this.type()
+
+			params.push({ name, type })
+
+			if (this.tok.kind !== 'rpar') {
+				this.check('comma')
+			}
+		}
+		return params
 	}
 }
 
