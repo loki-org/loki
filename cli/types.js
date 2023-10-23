@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
+// SPDX-License-Identifier: MPL-2.0
+
 class Table {
 	constructor() {
 		this.type_idxs = new Map()

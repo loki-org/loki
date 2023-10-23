@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
+// SPDX-License-Identifier: MPL-2.0
 
 function tokenize(text) {
 	let tokens = []
@@ -42,6 +44,10 @@ function tokenize(text) {
 			}
 			case '}': {
 				tokens.push({ kind: 'rcur', value: '' })
+				continue
+			}
+			case ',': {
+				tokens.push({ kind: 'comma', value: '' })
 				continue
 			}
 			default:

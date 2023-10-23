@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
+// SPDX-License-Identifier: MPL-2.0
+
 import * as types from './types.js'
 
 class Parser{
