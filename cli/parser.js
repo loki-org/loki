@@ -40,9 +40,23 @@ class Parser{
 	}
 
 	type() {
+		if (this.tok.kind === 'lsbr') {
+			this.next()
+			this.check('rsbr')
+			const elem_type = this.type()
+			return this.table.register({
+				kind: 'array',
+				name: `[]${this.table.sym(elem_type).name}`,
+				elem_type: elem_type
+			})
+		}
+
 		const name = this.tok.value
 		this.check('name')
-		return this.table.register({ name: name })
+		return this.table.register({
+			kind: 'other',
+			name: name
+		})
 	}
 
 	stmt() {

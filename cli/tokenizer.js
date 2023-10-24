@@ -46,6 +46,14 @@ function tokenize(text) {
 				tokens.push({ kind: 'rcur', value: '' })
 				continue
 			}
+			case '[': {
+				tokens.push({ kind: 'lsbr', value: '' })
+				continue
+			}
+			case ']': {
+				tokens.push({ kind: 'rsbr', value: '' })
+				continue
+			}
 			case ',': {
 				tokens.push({ kind: 'comma', value: '' })
 				continue
