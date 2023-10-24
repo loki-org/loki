@@ -50,6 +50,10 @@ class BaseGen {
 				this.assign(stmt)
 				break
 			}
+			case 'comment': {
+				this.write(this.comment_str(stmt.text))
+				break
+			}
 			case 'fn': {
 				this.fn(stmt)
 				break
@@ -59,7 +63,7 @@ class BaseGen {
 				break
 			}
 			default:
-				throw new Error(stmt.kind)
+				throw new Error(`cannot gen ${stmt.kind}`)
 		}
 	}
 
@@ -74,12 +78,13 @@ class BaseGen {
 				break
 			}
 			default:
-				throw new Error(expr.kind)
+				throw new Error(`cannot gen ${expr.kind}`)
 		}
 	}
 
 	comment_str(text) {
-		return `// ${text}\n`
+		const s = text.startsWith(' ') ? '' : ' '
+		return `//${s}${text}\n`
 	}
 
 	import(imp) {

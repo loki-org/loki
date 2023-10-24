@@ -27,6 +27,7 @@ class Parser{
 	}
 
 	next() {
+		this.prev_tok = this.tok
 		this.tok = this.next_tok
 		this.next_tok = this.tokens[this.pos]
 		this.pos++
@@ -61,6 +62,9 @@ class Parser{
 
 	toplevel_stmt() {
 		switch (this.tok.kind) {
+			case 'comment': {
+				return this.comment()
+			}
 			case 'key_fn': {
 				return this.fn()
 			}
@@ -71,6 +75,9 @@ class Parser{
 
 	stmt() {
 		switch (this.tok.kind) {
+			case 'comment': {
+				return this.comment()
+			}
 			case 'name': {
 				return this.name_stmt()
 			}
@@ -94,6 +101,14 @@ class Parser{
 			kind: 'assign',
 			left,
 			right
+		}
+	}
+
+	comment() {
+		this.next()
+		return {
+			kind: 'comment',
+			text: this.prev_tok.value
 		}
 	}
 

@@ -87,6 +87,19 @@ function tokenize(text) {
 				}
 				break
 			}
+			case '/': {
+				if (text[pos] === '/') {
+					pos++
+					let val = ''
+					while (pos < text.length && text[pos] !== '\n') {
+						val += text[pos]
+						pos++
+					}
+					tokens.push({ kind: 'comment', value: val })
+					continue
+				}
+				break
+			}
 			default:
 				break
 		}

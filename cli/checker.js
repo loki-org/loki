@@ -24,6 +24,9 @@ class Checker {
 				this.assign(stmt)
 				break
 			}
+			case 'comment': {
+				break
+			}
 			case 'fn': {
 				this.fn(stmt)
 				break
