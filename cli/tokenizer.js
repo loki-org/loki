@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
+const KEYWORDS = ['fn']
+
 function tokenize(text) {
 	let tokens = []
 	let pos = 0
@@ -25,7 +27,26 @@ function tokenize(text) {
 				pos++
 			}
 
+			if (KEYWORDS.includes(val)) {
+				tokens.push({ kind: `key_${val}`, value: '' })
+				continue
+			}
+
 			tokens.push({ kind: 'name', value: val })
+			continue
+		}
+
+		// Numbers
+		const NUMBER_REGEX = /[0-9]/
+		if (NUMBER_REGEX.test(c)) {
+			let val = c
+
+			while (pos < text.length && NUMBER_REGEX.test(text[pos])) {
+				val += text[pos]
+				pos++
+			}
+
+			tokens.push({ kind: 'number', value: val })
 			continue
 		}
 
@@ -58,11 +79,19 @@ function tokenize(text) {
 				tokens.push({ kind: 'comma', value: '' })
 				continue
 			}
+			case ':': {
+				if (text[pos] === '=') {
+					tokens.push({ kind: 'decl_assign', value: '' })
+					pos++
+					continue
+				}
+				break
+			}
 			default:
 				break
 		}
 
-		throw new Error(`Invalid character: ${c}`)
+		throw new Error(`Unknown character: ${c}`)
 	}
 
 	return tokens

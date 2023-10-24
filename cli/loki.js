@@ -6,6 +6,7 @@ import * as fs from 'fs'
 import { Table } from './types.js'
 import { tokenize } from './tokenizer.js'
 import { Parser } from './parser.js'
+import { Checker } from './checker.js'
 import { CGen, TsGen } from './gen.js'
 
 const BACKENDS = {
@@ -34,6 +35,9 @@ function main() {
 
 	const parser = new Parser(tokens, table)
 	const ast = parser.parse()
+
+	const checker = new Checker(table)
+	checker.check(ast)
 
 	const gen = new BACKENDS[backend](table)
 	const out = gen.gen(ast)

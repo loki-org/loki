@@ -20,7 +20,7 @@ class Parser{
 		}
 
 		while (this.pos < this.tokens.length) {
-			ast.body.push(this.stmt())
+			ast.body.push(this.toplevel_stmt())
 		}
 
 		return ast
@@ -59,19 +59,41 @@ class Parser{
 		})
 	}
 
-	stmt() {
+	toplevel_stmt() {
 		switch (this.tok.kind) {
-			case 'name': {
-				switch (this.tok.value) {
-					case 'fn': {
-						return this.fn()
-					}
-					default:
-						throw new Error(this.tok.kind)
-				}
+			case 'key_fn': {
+				return this.fn()
 			}
 			default:
 				throw new Error(this.tok.kind)
+		}
+	}
+
+	stmt() {
+		switch (this.tok.kind) {
+			case 'name': {
+				return this.name_stmt()
+			}
+			default:
+				throw new Error(this.tok.kind)
+		}
+	}
+
+	block() {
+		const stmts = []
+		while (this.tok.kind !== 'rcur') {
+			stmts.push(this.stmt())
+		}
+		return stmts
+	}
+
+	partial_assign(left) {
+		this.next()
+		const right = this.expr()
+		return {
+			kind: 'assign',
+			left,
+			right
 		}
 	}
 
@@ -90,8 +112,7 @@ class Parser{
 		}
 
 		this.check('lcur')
-		// TODO body
-		const body = []
+		const body = this.block()
 		this.check('rcur')
 
 		return {
@@ -117,6 +138,48 @@ class Parser{
 			}
 		}
 		return params
+	}
+
+	name_stmt() {
+		const left = this.expr()
+		if (this.tok.kind === 'decl_assign') {
+			return this.partial_assign(left)
+		}
+		return {
+			kind: 'expr',
+			expr: left
+		}
+	}
+
+	expr() {
+		switch (this.tok.kind) {
+			case 'name': {
+				return this.name_expr()
+			}
+			case 'number': {
+				return this.number()
+			}
+			default:
+				throw new Error(this.tok.kind)
+		}
+	}
+
+	name_expr() {
+		const name = this.tok.value
+		this.check('name')
+		return {
+			kind: 'ident',
+			name
+		}
+	}
+
+	number() {
+		const val = this.tok.value
+		this.check('number')
+		return {
+			kind: 'integer',
+			value: val
+		}
 	}
 }
 

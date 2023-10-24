@@ -1,1 +1,3 @@
-fn decompress(compressed []u8) {}
+fn decompress(compressed []u8) []u8 {
+	pos := 0
+}

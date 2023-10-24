@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # FILE="foo"
 FILE="ms_ovba"
 
