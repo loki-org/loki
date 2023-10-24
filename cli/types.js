@@ -1,13 +1,16 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
+const IDXS = {}
+
 class Table {
 	constructor() {
 		this.type_idxs = new Map()
 		this.type_syms = []
 
-		this.register({ name: 'void' })
-		this.register({ name: 'i32' })
+		IDXS.void = this.register({ name: 'void' })
+		IDXS.i32 = this.register({ name: 'i32' })
+		IDXS.u8 = this.register({ name: 'u8' })
 	}
 
 	register(sym) {
@@ -24,11 +27,6 @@ class Table {
 	sym(idx) {
 		return this.type_syms[idx]
 	}
-}
-
-const IDXS = {
-	void: 0,
-	i32: 1,
 }
 
 export { Table, IDXS }
