@@ -48,7 +48,7 @@ class Parser{
 			return this.table.register({
 				kind: 'array',
 				name: `[]${this.table.sym(elem_type).name}`,
-				elem_type: elem_type
+				elem_type,
 			})
 		}
 
@@ -182,11 +182,23 @@ class Parser{
 			case 'number': {
 				return this.number()
 			}
+			case 'lsbr': {
+				return this.array_init()
+			}
 			case 'key_mut': {
 				return this.ident()
 			}
 			default:
 				throw new Error(this.tok.kind)
+		}
+	}
+
+	array_init() {
+		const type = this.type()
+		return {
+			kind: 'array_init',
+			type,
+			elem_type: this.table.sym(type).elem_type
 		}
 	}
 

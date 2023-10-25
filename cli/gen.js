@@ -69,6 +69,10 @@ class BaseGen {
 
 	expr(expr) {
 		switch (expr.kind) {
+			case 'array_init': {
+				this.array_init(expr)
+				break
+			}
 			case 'ident': {
 				this.write(expr.name)
 				break
@@ -100,6 +104,10 @@ class BaseGen {
 	}
 
 	params(params) {
+		throw new Error('Not implemented')
+	}
+
+	array_init(expr) {
 		throw new Error('Not implemented')
 	}
 
@@ -163,6 +171,10 @@ class CGen extends BaseGen {
 		this.write(param_list.join(', '))
 	}
 
+	array_init(expr) {
+		this.write('NULL')
+	}
+
 	type(t) {
 		switch (t) {
 			case IDXS.i32:
@@ -211,6 +223,10 @@ class TsGen extends BaseGen {
 			param_list.push(`${param.name}: ${this.type(param.type)}`)
 		}
 		this.write(param_list.join(', '))
+	}
+
+	array_init(expr) {
+		this.write(`new Array<${this.type(expr.elem_type)}>()`)
 	}
 
 	type(t) {

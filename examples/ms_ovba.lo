@@ -1,4 +1,5 @@
-// fn decompress(compressed []u8) []u8 {
-fn decompress(compressed []u8) {
+// fn decompress(comp []u8) []u8 {
+fn decompress(comp []u8) {
+	decomp := []u8
 	mut pos := 0
 }

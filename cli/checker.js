@@ -52,6 +52,9 @@ class Checker {
 
 	expr(expr) {
 		switch (expr.kind) {
+			case 'array_init': {
+				return this.array_init(expr)
+			}
 			case 'ident': {
 				return this.ident(expr)
 			}
@@ -62,6 +65,10 @@ class Checker {
 				throw new Error(`cannot check ${expr.kind}`)
 			}
 		}
+	}
+
+	array_init(expr) {
+		return expr.type
 	}
 
 	ident(expr) {
