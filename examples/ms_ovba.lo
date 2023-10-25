@@ -1,5 +1,11 @@
-// fn decompress(comp []u8) []u8 {
-fn decompress(comp []u8) {
+fn decompress(comp []u8) []u8 {
 	decomp := []u8
 	mut pos := 0
+
+	// if (data[pos] != 0x01) {
+	// 	throw new Error(`invalid stream signature byte ${data[pos]}`)
+	// }
+	// pos++
+
+	return decomp
 }

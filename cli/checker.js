@@ -31,6 +31,10 @@ class Checker {
 				this.fn(stmt)
 				break
 			}
+			case 'return': {
+				this.return_stmt(stmt)
+				break
+			}
 			case 'expr': {
 				this.expr(stmt.expr)
 				break
@@ -48,6 +52,10 @@ class Checker {
 
 	fn(stmt) {
 		this.stmts(stmt.body)
+	}
+
+	return_stmt(stmt) {
+		this.expr(stmt.expr)
 	}
 
 	expr(expr) {

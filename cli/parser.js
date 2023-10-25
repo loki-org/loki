@@ -84,6 +84,9 @@ class Parser{
 			case 'key_mut': {
 				return this.assign_stmt()
 			}
+			case 'key_return': {
+				return this.return_stmt()
+			}
 			default:
 				throw new Error(this.tok.kind)
 		}
@@ -171,6 +174,15 @@ class Parser{
 		return {
 			kind: 'expr',
 			expr: left
+		}
+	}
+
+	return_stmt() {
+		this.next()
+		const expr = this.expr()
+		return {
+			kind: 'return',
+			expr,
 		}
 	}
 

@@ -58,6 +58,10 @@ class BaseGen {
 				this.fn(stmt)
 				break
 			}
+			case 'return': {
+				this.return_stmt(stmt)
+				break
+			}
 			case 'expr': {
 				this.expr(stmt.expr)
 				break
@@ -104,6 +108,10 @@ class BaseGen {
 	}
 
 	params(params) {
+		throw new Error('Not implemented')
+	}
+
+	return_stmt(stmt) {
 		throw new Error('Not implemented')
 	}
 
@@ -171,6 +179,12 @@ class CGen extends BaseGen {
 		this.write(param_list.join(', '))
 	}
 
+	return_stmt(stmt) {
+		this.write('return ')
+		this.expr(stmt.expr)
+		this.writeln(';')
+	}
+
 	array_init(expr) {
 		this.write('NULL')
 	}
@@ -223,6 +237,12 @@ class TsGen extends BaseGen {
 			param_list.push(`${param.name}: ${this.type(param.type)}`)
 		}
 		this.write(param_list.join(', '))
+	}
+
+	return_stmt(stmt) {
+		this.write('return ')
+		this.expr(stmt.expr)
+		this.writeln('')
 	}
 
 	array_init(expr) {
