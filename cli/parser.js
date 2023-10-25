@@ -81,6 +81,9 @@ class Parser{
 			case 'name': {
 				return this.name_stmt()
 			}
+			case 'key_mut': {
+				return this.assign_stmt()
+			}
 			default:
 				throw new Error(this.tok.kind)
 		}
@@ -92,6 +95,11 @@ class Parser{
 			stmts.push(this.stmt())
 		}
 		return stmts
+	}
+
+	assign_stmt() {
+		const left = this.expr()
+		return this.partial_assign(left)
 	}
 
 	partial_assign(left) {
@@ -174,18 +182,30 @@ class Parser{
 			case 'number': {
 				return this.number()
 			}
+			case 'key_mut': {
+				return this.ident()
+			}
 			default:
 				throw new Error(this.tok.kind)
 		}
 	}
 
-	name_expr() {
+	ident() {
+		const is_mut = this.tok.kind === 'key_mut'
+		if (is_mut) {
+			this.next()
+		}
 		const name = this.tok.value
 		this.check('name')
 		return {
 			kind: 'ident',
-			name
+			name,
+			is_mut,
 		}
+	}
+
+	name_expr() {
+		return this.ident()
 	}
 
 	number() {

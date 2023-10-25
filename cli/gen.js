@@ -185,7 +185,11 @@ class CGen extends BaseGen {
 
 class TsGen extends BaseGen {
 	assign(stmt) {
-		this.write('const ')
+		if (stmt.left.is_mut) {
+			this.write('let ')
+		} else {
+			this.write('const ')
+		}
 		this.expr(stmt.left)
 		this.write(' = ')
 		this.expr(stmt.right)

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-const KEYWORDS = ['fn']
+const KEYWORDS = ['fn', 'mut']
 
 function tokenize(text) {
 	let tokens = []
