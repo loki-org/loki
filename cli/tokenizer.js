@@ -3,6 +3,10 @@
 
 const KEYWORDS = ['fn', 'mut', 'return']
 
+function is_assign(tok) {
+	return ['assign', 'decl_assign'].includes(tok.kind)
+}
+
 function tokenize(text) {
 	let tokens = []
 	let pos = 0
@@ -87,6 +91,10 @@ function tokenize(text) {
 				}
 				break
 			}
+			case '=': {
+				tokens.push({ kind: 'assign', value: '' })
+				continue
+			}
 			case '/': {
 				if (text[pos] === '/') {
 					pos++
@@ -110,4 +118,4 @@ function tokenize(text) {
 	return tokens
 }
 
-export { tokenize }
+export { tokenize, is_assign }

@@ -46,8 +46,21 @@ class Checker {
 	}
 
 	assign(stmt) {
-		this.expr(stmt.left)
-		stmt.type = this.expr(stmt.right)
+		if (stmt.op === 'decl_assign') {
+			stmt.type = this.expr(stmt.right)
+			// TODO left ident should not exist
+			// TODO register ident
+			this.expr(stmt.left)
+			return
+		}
+
+		// TODO left should be mut
+
+		const ltype = this.expr(stmt.left)
+		const rtype = this.expr(stmt.right)
+		if (ltype !== rtype) {
+			throw new Error(`cannot assign ${rtype} to ${ltype}`)
+		}
 	}
 
 	fn(stmt) {
@@ -80,7 +93,8 @@ class Checker {
 	}
 
 	ident(expr) {
-		// TODO
+		// TODO ident should exist
+		// TODO return actual type
 		return IDXS.void
 	}
 

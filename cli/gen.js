@@ -154,8 +154,10 @@ class CGen extends BaseGen {
 	}
 
 	assign(stmt) {
-		this.write(this.type(stmt.type))
-		this.write(' ')
+		if (stmt.op === 'decl_assign') {
+			this.write(this.type(stmt.type))
+			this.write(' ')
+		}
 		this.expr(stmt.left)
 		this.write(' = ')
 		this.expr(stmt.right)
@@ -211,10 +213,12 @@ class CGen extends BaseGen {
 
 class TsGen extends BaseGen {
 	assign(stmt) {
-		if (stmt.left.is_mut) {
-			this.write('let ')
-		} else {
-			this.write('const ')
+		if (stmt.op === 'decl_assign') {
+			if (stmt.left.is_mut) {
+				this.write('let ')
+			} else {
+				this.write('const ')
+			}
 		}
 		this.expr(stmt.left)
 		this.write(' = ')
