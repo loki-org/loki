@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import { IDXS } from './types.js'
+import { Scope } from './scope.js'
 
 class Checker {
 	constructor(table) {
 		this.table = table
+		this.scope = new Scope(null)
 	}
 
 	check(ast) {
@@ -48,8 +50,10 @@ class Checker {
 	assign(stmt) {
 		if (stmt.op === 'decl_assign') {
 			stmt.type = this.expr(stmt.right)
-			// TODO left ident should not exist
-			// TODO register ident
+			if (this.scope.is_known(stmt.left.name)) {
+				throw new Error(`cannot redeclare ${stmt.left.name}`)
+			}
+			this.scope.register(stmt.left.name, stmt.type)
 			this.expr(stmt.left)
 			return
 		}
@@ -64,7 +68,9 @@ class Checker {
 	}
 
 	fn(stmt) {
+		this.scope = new Scope(this.scope)
 		this.stmts(stmt.body)
+		this.scope = this.scope.parent
 	}
 
 	return_stmt(stmt) {
@@ -93,9 +99,11 @@ class Checker {
 	}
 
 	ident(expr) {
-		// TODO ident should exist
-		// TODO return actual type
-		return IDXS.void
+		const obj = this.scope.find(expr.name)
+		if (obj === null) {
+			throw new Error(`unknown identifier ${expr.name}`)
+		}
+		return obj.type
 	}
 
 	integer(expr) {
