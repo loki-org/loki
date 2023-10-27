@@ -3,8 +3,29 @@
 
 const KEYWORDS = ['fn', 'mut', 'return']
 
+const PRECEDENCE = (tok) => {
+	switch (tok.kind) {
+		case 'mul':
+		case 'div':
+			return 2
+		case 'plus':
+		case 'minus':
+			return 1
+		default:
+			return 0
+	}
+}
+
+function is_infix(tok) {
+	return ['plus', 'minus', 'mul', 'div'].includes(tok.kind)
+}
+
 function is_assign(tok) {
-	return ['assign', 'decl_assign'].includes(tok.kind)
+	return ['assign', 'decl_assign'].includes(tok.kind) // || is_math_assign(tok)
+}
+
+function is_math_assign(tok) {
+	return ['plus_assign', 'minus_assign', 'mul_assign', 'div_assign'].includes(tok.kind)
 }
 
 function tokenize(text) {
@@ -95,6 +116,33 @@ function tokenize(text) {
 				tokens.push({ kind: 'assign', value: '' })
 				continue
 			}
+			case '+': {
+				if (text[pos] === '=') {
+					tokens.push({ kind: 'plus_assign', value: '' })
+					pos++
+					continue
+				}
+				tokens.push({ kind: 'plus', value: '' })
+				continue
+			}
+			case '-': {
+				if (text[pos] === '=') {
+					tokens.push({ kind: 'minus_assign', value: '' })
+					pos++
+					continue
+				}
+				tokens.push({ kind: 'minus', value: '' })
+				continue
+			}
+			case '*': {
+				if (text[pos] === '=') {
+					tokens.push({ kind: 'mul_assign', value: '' })
+					pos++
+					continue
+				}
+				tokens.push({ kind: 'mul', value: '' })
+				continue
+			}
 			case '/': {
 				if (text[pos] === '/') {
 					pos++
@@ -106,7 +154,13 @@ function tokenize(text) {
 					tokens.push({ kind: 'comment', value: val })
 					continue
 				}
-				break
+				if (text[pos] === '=') {
+					tokens.push({ kind: 'div_assign', value: '' })
+					pos++
+					continue
+				}
+				tokens.push({ kind: 'div', value: '' })
+				continue
 			}
 			default:
 				break
@@ -118,4 +172,4 @@ function tokenize(text) {
 	return tokens
 }
 
-export { tokenize, is_assign }
+export { PRECEDENCE, tokenize, is_infix, is_assign, is_math_assign }

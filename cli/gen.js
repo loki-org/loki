@@ -81,6 +81,14 @@ class BaseGen {
 				this.write(expr.name)
 				break
 			}
+			case 'infix': {
+				this.expr(expr.left)
+				this.write(' ')
+				this.write(this.tok_repr(expr.op))
+				this.write(' ')
+				this.expr(expr.right)
+				break
+			}
 			case 'integer': {
 				this.write(expr.value)
 				break
@@ -121,6 +129,21 @@ class BaseGen {
 
 	type(t) {
 		throw new Error('Not implemented')
+	}
+
+	tok_repr(kind) {
+		switch(kind) {
+			case 'plus':
+				return '+'
+			case 'minus':
+				return '-'
+			case 'mul':
+				return '*'
+			case 'div':
+				return '/'
+			default:
+				throw new Error(`cannot represent ${kind}`)
+		}
 	}
 
 	write_indent() {

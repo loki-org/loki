@@ -85,6 +85,9 @@ class Checker {
 			case 'ident': {
 				return this.ident(expr)
 			}
+			case 'infix': {
+				return this.infix_expr(expr)
+			}
 			case 'integer': {
 				return this.integer(expr)
 			}
@@ -99,11 +102,20 @@ class Checker {
 	}
 
 	ident(expr) {
-		const obj = this.scope.find(expr.name)
-		if (obj === null) {
+		const typ = this.scope.find(expr.name)
+		if (typ === null) {
 			throw new Error(`unknown identifier ${expr.name}`)
 		}
-		return obj.type
+		return typ
+	}
+
+	infix_expr(expr) {
+		const ltype = this.expr(expr.left)
+		const rtype = this.expr(expr.right)
+		if (ltype !== rtype) {
+			throw new Error(`types ${ltype} and ${rtype} do not match`)
+		}
+		return ltype
 	}
 
 	integer(expr) {
