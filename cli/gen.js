@@ -77,16 +77,16 @@ class BaseGen {
 				this.array_init(expr)
 				break
 			}
+			case 'bool': {
+				this.bool(expr)
+				break
+			}
 			case 'ident': {
 				this.write(expr.name)
 				break
 			}
 			case 'infix': {
-				this.expr(expr.left)
-				this.write(' ')
-				this.write(this.tok_repr(expr.op))
-				this.write(' ')
-				this.expr(expr.right)
+				this.infix(expr)
 				break
 			}
 			case 'integer': {
@@ -96,6 +96,18 @@ class BaseGen {
 			default:
 				throw new Error(`cannot gen ${expr.kind}`)
 		}
+	}
+
+	bool(expr) {
+		this.write(expr.value ? 'true' : 'false')
+	}
+
+	infix(expr) {
+		this.expr(expr.left)
+		this.write(' ')
+		this.write(this.tok_repr(expr.op))
+		this.write(' ')
+		this.expr(expr.right)
 	}
 
 	comment_str(text) {
@@ -178,6 +190,11 @@ class BaseGen {
 }
 
 class CGen extends BaseGen {
+	constructor(table) {
+		super(table)
+		this.imports.add('<stdbool.h>')
+	}
+
 	import(imp) {
 		this.headers += `#include ${imp}\n`
 
@@ -297,6 +314,8 @@ class TsGen extends BaseGen {
 			case IDXS.i32:
 			case IDXS.u8:
 				return 'number'
+			case IDXS.bool:
+				return 'boolean'
 			default:
 				break
 		}

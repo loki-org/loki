@@ -214,6 +214,10 @@ class Parser{
 			case 'lsbr': {
 				return this.array_init()
 			}
+			case 'key_false':
+			case 'key_true': {
+				return this.bool()
+			}
 			case 'key_mut': {
 				return this.ident()
 			}
@@ -228,6 +232,15 @@ class Parser{
 			kind: 'array_init',
 			type,
 			elem_type: this.table.sym(type).elem_type
+		}
+	}
+
+	bool() {
+		const val = this.tok.kind === 'key_true'
+		this.next()
+		return {
+			kind: 'bool',
+			value: val
 		}
 	}
 

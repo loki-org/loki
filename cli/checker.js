@@ -82,6 +82,9 @@ class Checker {
 			case 'array_init': {
 				return this.array_init(expr)
 			}
+			case 'bool': {
+				return IDXS.bool
+			}
 			case 'ident': {
 				return this.ident(expr)
 			}
@@ -89,7 +92,7 @@ class Checker {
 				return this.infix_expr(expr)
 			}
 			case 'integer': {
-				return this.integer(expr)
+				return IDXS.i32
 			}
 			default: {
 				throw new Error(`cannot check ${expr.kind}`)
@@ -116,10 +119,6 @@ class Checker {
 			throw new Error(`types ${ltype} and ${rtype} do not match`)
 		}
 		return ltype
-	}
-
-	integer(expr) {
-		return IDXS.i32
 	}
 }
 

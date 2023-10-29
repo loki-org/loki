@@ -9,6 +9,7 @@ class Table {
 		this.type_syms = []
 
 		IDXS.void = this.register({ name: 'void' })
+		IDXS.bool = this.register({ name: 'bool' })
 		IDXS.i32 = this.register({ name: 'i32' })
 		IDXS.u8 = this.register({ name: 'u8' })
 	}
