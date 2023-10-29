@@ -7,7 +7,8 @@ import { Table } from './types.js'
 import { tokenize } from './tokenizer.js'
 import { Parser } from './parser.js'
 import { Checker } from './checker.js'
-import { CGen, TsGen } from './gen.js'
+import { CGen } from './gen_c.js'
+import { TsGen } from './gen_ts.js'
 
 const BACKENDS = {
 	'c': CGen,
