@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import * as types from './types.js'
-import { PRECEDENCE, is_assign, is_infix } from './tokenizer.js'
+import { PRECEDENCE, is_assign, is_infix, is_math_assign } from './tokenizer.js'
 
 class Parser{
 	constructor(tokens, table) {
@@ -171,9 +171,11 @@ class Parser{
 
 	name_stmt() {
 		const left = this.expr()
-		if (is_assign(this.tok)) {
+
+		if (is_assign(this.tok) || is_math_assign(this.tok)) {
 			return this.partial_assign(left)
 		}
+
 		return {
 			kind: 'expr',
 			expr: left

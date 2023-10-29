@@ -141,6 +141,18 @@ class BaseGen {
 				return '*'
 			case 'div':
 				return '/'
+			case 'assign':
+				return '='
+			case 'decl_assign':
+				return '='
+			case 'plus_assign':
+				return '+='
+			case 'minus_assign':
+				return '-='
+			case 'mul_assign':
+				return '*='
+			case 'div_assign':
+				return '/='
 			default:
 				throw new Error(`cannot represent ${kind}`)
 		}
@@ -182,7 +194,9 @@ class CGen extends BaseGen {
 			this.write(' ')
 		}
 		this.expr(stmt.left)
-		this.write(' = ')
+		this.write(' ')
+		this.write(this.tok_repr(stmt.op))
+		this.write(' ')
 		this.expr(stmt.right)
 		this.writeln(';')
 	}
@@ -244,7 +258,9 @@ class TsGen extends BaseGen {
 			}
 		}
 		this.expr(stmt.left)
-		this.write(' = ')
+		this.write(' ')
+		this.write(this.tok_repr(stmt.op))
+		this.write(' ')
 		this.expr(stmt.right)
 		this.writeln('')
 	}
