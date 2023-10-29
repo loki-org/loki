@@ -54,8 +54,8 @@ class BaseGen {
 				this.writeln(this.comment_str(stmt.text))
 				break
 			}
-			case 'fn': {
-				this.fn(stmt)
+			case 'fun': {
+				this.fun(stmt)
 				break
 			}
 			case 'return': {
@@ -111,7 +111,7 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
-	fn(fn) {
+	fun(fn) {
 		throw new Error('Not implemented')
 	}
 
@@ -201,7 +201,7 @@ class CGen extends BaseGen {
 		this.writeln(';')
 	}
 
-	fn(fn) {
+	fun(fn) {
 		const ret_type = this.type(fn.return_type)
 		this.write(`${ret_type} ${fn.name}(`)
 		this.params(fn.params)
@@ -265,7 +265,7 @@ class TsGen extends BaseGen {
 		this.writeln('')
 	}
 
-	fn(fn) {
+	fun(fn) {
 		const ret_type = this.type(fn.return_type)
 		this.write(`function ${fn.name}(`)
 		this.params(fn.params)

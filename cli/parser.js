@@ -66,8 +66,8 @@ class Parser{
 			case 'comment': {
 				return this.comment()
 			}
-			case 'key_fn': {
-				return this.fn()
+			case 'key_fun': {
+				return this.fun()
 			}
 			default:
 				throw new Error(this.tok.kind)
@@ -126,7 +126,7 @@ class Parser{
 		}
 	}
 
-	fn() {
+	fun() {
 		this.next()
 		const name = this.tok.value
 		this.check('name')
@@ -145,7 +145,7 @@ class Parser{
 		this.check('rcur')
 
 		return {
-			kind: 'fn',
+			kind: 'fun',
 			name,
 			params,
 			return_type: ret_type,

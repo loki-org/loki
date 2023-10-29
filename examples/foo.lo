@@ -1,1 +1,1 @@
-fn sum(a i32, b i32) i32 {}
+fun sum(a i32, b i32) i32 {}

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-const KEYWORDS = ['fn', 'mut', 'return']
+const KEYWORDS = ['false', 'fun', 'mut', 'return', 'true']
 
 const PRECEDENCE = (tok) => {
 	switch (tok.kind) {
@@ -21,7 +21,7 @@ function is_infix(tok) {
 }
 
 function is_assign(tok) {
-	return ['assign', 'decl_assign'].includes(tok.kind) // || is_math_assign(tok)
+	return ['assign', 'decl_assign'].includes(tok.kind)
 }
 
 function is_math_assign(tok) {

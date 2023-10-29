@@ -29,8 +29,8 @@ class Checker {
 			case 'comment': {
 				break
 			}
-			case 'fn': {
-				this.fn(stmt)
+			case 'fun': {
+				this.fun(stmt)
 				break
 			}
 			case 'return': {
@@ -67,7 +67,7 @@ class Checker {
 		}
 	}
 
-	fn(stmt) {
+	fun(stmt) {
 		this.scope = new Scope(this.scope)
 		this.stmts(stmt.body)
 		this.scope = this.scope.parent
