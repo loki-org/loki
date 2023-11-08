@@ -94,6 +94,9 @@ class Checker {
 			case 'integer': {
 				return IDXS.i32
 			}
+			case 'map_init': {
+				return this.map_init(expr)
+			}
 			default: {
 				throw new Error(`cannot check ${expr.kind}`)
 			}
@@ -119,6 +122,10 @@ class Checker {
 			throw new Error(`types ${ltype} and ${rtype} do not match`)
 		}
 		return ltype
+	}
+
+	map_init(expr) {
+		return expr.type
 	}
 }
 

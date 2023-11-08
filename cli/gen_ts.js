@@ -48,6 +48,10 @@ class TsGen extends BaseGen {
 		this.write(`new Array<${this.type(expr.elem_type)}>()`)
 	}
 
+	map_init(expr) {
+		this.write(`new Map<${this.type(expr.key_type)}, ${this.type(expr.val_type)}>()`)
+	}
+
 	type(t) {
 		switch (t) {
 			case IDXS.i32:
@@ -62,6 +66,9 @@ class TsGen extends BaseGen {
 		const sym = this.table.sym(t)
 		if (sym.kind === 'array') {
 			return this.type(sym.elem_type) + '[]'
+		}
+		if (sym.kind === 'map') {
+			return `Map<${this.type(sym.key_type)}, ${this.type(sym.val_type)}>`
 		}
 		return sym.name
 	}

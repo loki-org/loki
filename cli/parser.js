@@ -55,9 +55,30 @@ class Parser{
 
 		const name = this.tok.value
 		this.check('name')
+
+		if (name === 'map') {
+			return this.map_type()
+		}
+
 		return this.table.register({
 			kind: 'other',
 			name: name
+		})
+	}
+
+	map_type() {
+		this.check('lsbr')
+		const key_type = this.type()
+		this.check('rsbr')
+		const val_type = this.type()
+
+		const key_sym = this.table.sym(key_type)
+		const val_sym = this.table.sym(val_type)
+		return this.table.register({
+			kind: 'map',
+			name: `map[${key_sym.name}]${val_sym.name}`,
+			key_type,
+			val_type,
 		})
 	}
 
@@ -270,7 +291,22 @@ class Parser{
 		}
 	}
 
+	map_init() {
+		this.next()
+		const idx = this.map_type()
+		const sym = this.table.sym(idx)
+		return {
+			kind: 'map_init',
+			type: idx,
+			key_type: sym.key_type,
+			val_type: sym.val_type,
+		}
+	}
+
 	name_expr() {
+		if (this.tok.value === 'map') {
+			return this.map_init()
+		}
 		return this.ident()
 	}
 
