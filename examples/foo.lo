@@ -3,5 +3,6 @@
 // }
 
 fun get_msg() string {
-    return "Hello, World!"
+    s := "hi"
+    return s
 }

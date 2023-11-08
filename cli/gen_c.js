@@ -59,6 +59,10 @@ class CGen extends BaseGen {
 		this.write('NULL')
 	}
 
+	string(expr) {
+		this.write(`"${expr.value}"`)
+	}
+
 	type(t) {
 		switch (t) {
 			case IDXS.i32:
@@ -66,6 +70,8 @@ class CGen extends BaseGen {
 			case IDXS.u8:
 				this.imports.add('<stdint.h>')
 				return 'uint8_t'
+			case IDXS.string:
+				return 'char*'
 			default:
 				break
 		}
