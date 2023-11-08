@@ -17,12 +17,6 @@ class CGen extends BaseGen {
 
 	import(imp) {
 		this.headers += `#include ${imp}\n`
-
-		if (imp.startsWith('"')) {
-			const root = path.join(__dirname, '..')
-			const fname = imp.replaceAll('"', '')
-			fs.copyFileSync(`${root}/lib/${fname}`, `${root}/out/${fname}`)
-		}
 	}
 
 	assign(stmt) {
@@ -78,8 +72,8 @@ class CGen extends BaseGen {
 
 		const sym = this.table.sym(t)
 		if (sym.kind === 'array') {
-				this.imports.add('"array.h"')
-				return 'Array(' + this.type(sym.elem_type) + ')'
+			this.imports.add('"array.h"')
+			return 'Array(' + this.type(sym.elem_type) + ')'
 		}
 		return sym.name
 	}

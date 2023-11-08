@@ -14,6 +14,6 @@ node cli/loki.js ts examples/$FILE.lo
 echo "Compiling native..."
 cd out
 echo "  c"
-gcc -shared $FILE.c
+gcc -I ../lib -shared $FILE.c
 echo "  ts"
 npx tsc $FILE.ts
