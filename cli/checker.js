@@ -97,6 +97,9 @@ class Checker {
 			case 'map_init': {
 				return this.map_init(expr)
 			}
+			case 'string': {
+				return IDXS.string
+			}
 			default: {
 				throw new Error(`cannot check ${expr.kind}`)
 			}

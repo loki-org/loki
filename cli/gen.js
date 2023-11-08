@@ -90,6 +90,10 @@ class BaseGen {
 				this.map_init(expr)
 				break
 			}
+			case 'string': {
+				this.string(expr)
+				break
+			}
 			default:
 				throw new Error(`cannot gen ${expr.kind}`)
 		}
@@ -137,6 +141,10 @@ class BaseGen {
 	}
 
 	map_init(expr) {
+		throw new Error('Not implemented')
+	}
+
+	string(expr) {
 		throw new Error('Not implemented')
 	}
 

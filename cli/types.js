@@ -12,6 +12,7 @@ class Table {
 		IDXS.bool = this.register({ name: 'bool' })
 		IDXS.i32 = this.register({ name: 'i32' })
 		IDXS.u8 = this.register({ name: 'u8' })
+		IDXS.string = this.register({ name: 'string' })
 	}
 
 	register(sym) {

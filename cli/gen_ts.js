@@ -52,6 +52,10 @@ class TsGen extends BaseGen {
 		this.write(`new Map<${this.type(expr.key_type)}, ${this.type(expr.val_type)}>()`)
 	}
 
+	string(expr) {
+		this.write(`"${expr.value}"`)
+	}
+
 	type(t) {
 		switch (t) {
 			case IDXS.i32:

@@ -229,6 +229,9 @@ class Parser{
 			case 'name': {
 				return this.name_expr()
 			}
+			case 'string': {
+				return this.string()
+			}
 			case 'number': {
 				return this.number()
 			}
@@ -315,6 +318,15 @@ class Parser{
 		this.check('number')
 		return {
 			kind: 'integer',
+			value: val
+		}
+	}
+
+	string() {
+		const val = this.tok.value
+		this.check('string')
+		return {
+			kind: 'string',
 			value: val
 		}
 	}

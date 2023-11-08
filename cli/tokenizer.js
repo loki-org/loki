@@ -100,6 +100,16 @@ function tokenize(text) {
 				tokens.push({ kind: 'rsbr', value: '' })
 				continue
 			}
+			case '"': {
+				let val = ''
+				while (pos < text.length && text[pos] !== '"') {
+					val += text[pos]
+					pos++
+				}
+				pos++
+				tokens.push({ kind: 'string', value: val })
+				continue
+			}
 			case ',': {
 				tokens.push({ kind: 'comma', value: '' })
 				continue
