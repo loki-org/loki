@@ -1,8 +1,4 @@
-// fun sum() map[i32]i32 {
-//     m := map[i32]i32
-// }
-
-fun get_msg() string {
-    s := "hi"
-    return s
+fun sum() map[string]i32 {
+    m := map[string]i32
+    return m
 }

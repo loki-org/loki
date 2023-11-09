@@ -2,8 +2,8 @@
 
 set -e
 
-# FILE="foo"
-FILE="ms_ovba"
+FILE="foo"
+# FILE="ms_ovba"
 
 echo "Compiling loki to..."
 echo "  c"
@@ -16,4 +16,4 @@ cd out
 echo "  c"
 gcc -I ../lib -shared $FILE.c
 echo "  ts"
-npx tsc $FILE.ts
+npx tsc --lib es2015 $FILE.ts

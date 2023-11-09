@@ -54,6 +54,10 @@ class CGen extends BaseGen {
 		this.write('NULL')
 	}
 
+	map_init(expr) {
+		this.write('new_Map()')
+	}
+
 	string(expr) {
 		this.write(`"${expr.value}"`)
 	}
@@ -75,6 +79,10 @@ class CGen extends BaseGen {
 		if (sym.kind === 'array') {
 			this.imports.add('"array.h"')
 			return 'Array(' + this.type(sym.elem_type) + ')'
+		}
+		if (sym.kind === 'map') {
+			this.imports.add('"map.h"')
+			return 'Map*'
 		}
 		return sym.name
 	}
