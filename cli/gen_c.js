@@ -1,13 +1,8 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import * as url from 'url';
-import * as fs from 'fs'
-import * as path from 'path'
 import { IDXS } from './types.js'
 import { BaseGen } from './gen.js'
-
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 class CGen extends BaseGen {
 	constructor(table) {
