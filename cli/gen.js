@@ -140,6 +140,10 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
+	index_set(expr, value) {
+		throw new Error('Not implemented')
+	}
+
 	map_init(expr) {
 		throw new Error('Not implemented')
 	}

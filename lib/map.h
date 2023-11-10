@@ -1,17 +1,6 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-// Example must look like:
-// int main() {
-// 	Map* m = new_Map();
-// 	Map_insert(m, "foo", (int*)1);
-// 	Map_insert(m, "bar", (int*)3);
-// 	Map_insert(m, "foo", (int*)2);
-// 	int x = (int)(__intptr_t)Map_get(m, "foo");
-// 	printf("%d\n", x);
-// 	Map_free(m);
-// }
-
 #ifndef MAP_H
 #define MAP_H
 

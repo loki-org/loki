@@ -15,6 +15,11 @@ class CGen extends BaseGen {
 	}
 
 	assign(stmt) {
+		if (stmt.left.kind === 'index') {
+			this.index_set(stmt.left, stmt.right)
+			return
+		}
+
 		if (stmt.op === 'decl_assign') {
 			this.write(this.type(stmt.type))
 			this.write(' ')
@@ -52,6 +57,22 @@ class CGen extends BaseGen {
 
 	array_init(expr) {
 		this.write('NULL')
+	}
+
+	index_set(expr, value) {
+		const lsym = this.table.sym(expr.left_type)
+		if (lsym.kind === 'map') {
+			this.write('Map_insert(')
+			this.expr(expr.left)
+			this.write(', ')
+			this.expr(expr.index)
+			this.write(`, (${this.type(lsym.val_type)}*)`)
+			this.expr(value)
+			this.writeln(');')
+			return
+		}
+
+		throw new Error('This should never happen')
 	}
 
 	map_init(expr) {

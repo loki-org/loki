@@ -6,6 +6,11 @@ import { BaseGen } from './gen.js'
 
 class TsGen extends BaseGen {
 	assign(stmt) {
+		if (stmt.left.kind === 'index') {
+			this.index_set(stmt.left, stmt.right)
+			return
+		}
+
 		if (stmt.op === 'decl_assign') {
 			if (stmt.left.is_mut) {
 				this.write('let ')
@@ -46,6 +51,21 @@ class TsGen extends BaseGen {
 
 	array_init(expr) {
 		this.write(`new Array<${this.type(expr.elem_type)}>()`)
+	}
+
+	index_set(expr, value) {
+		const lsym = this.table.sym(expr.left_type)
+		if (lsym.kind === 'map') {
+			this.expr(expr.left)
+			this.write('.set(')
+			this.expr(expr.index)
+			this.write(', ')
+			this.expr(value)
+			this.writeln(')')
+			return
+		}
+
+		throw new Error('This should never happen')
 	}
 
 	map_init(expr) {

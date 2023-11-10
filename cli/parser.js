@@ -282,6 +282,18 @@ class Parser{
 		}
 	}
 
+	index_expr() {
+		const left = this.ident()
+		this.check('lsbr')
+		const index = this.expr()
+		this.check('rsbr')
+		return {
+			kind: 'index',
+			left,
+			index,
+		}
+	}
+
 	infix_expr(left) {
 		const op_tok = this.tok
 		this.next()
@@ -310,6 +322,11 @@ class Parser{
 		if (this.tok.value === 'map') {
 			return this.map_init()
 		}
+
+		if (this.next_tok.kind === 'lsbr') {
+			return this.index_expr()
+		}
+
 		return this.ident()
 	}
 

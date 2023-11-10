@@ -1,4 +1,8 @@
 fun sum() map[string]i32 {
-    m := map[string]i32
-    return m
+	m := map[string]i32
+	m["a"] = 1
+	m["b"] = 2
+	m["a"] = 3
+// 	int x = (int)(__intptr_t)Map_get(m, "foo");
+	return m
 }

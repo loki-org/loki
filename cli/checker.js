@@ -88,6 +88,9 @@ class Checker {
 			case 'ident': {
 				return this.ident(expr)
 			}
+			case 'index': {
+				return this.index_expr(expr)
+			}
 			case 'infix': {
 				return this.infix_expr(expr)
 			}
@@ -116,6 +119,21 @@ class Checker {
 			throw new Error(`unknown identifier ${expr.name}`)
 		}
 		return typ
+	}
+
+	index_expr(expr) {
+		expr.left_type = this.expr(expr.left)
+		const lsym = this.table.sym(expr.left_type)
+		if (lsym.kind === 'map') {
+			const idx_type = this.expr(expr.index)
+			if (idx_type !== lsym.key_type) {
+				throw new Error(`cannot use ${idx_type} as ${lsym.key_type}`)
+			}
+
+			return lsym.val_type
+		}
+
+		throw new Error(`cannot index ${expr.left_type}`)
 	}
 
 	infix_expr(expr) {
