@@ -32,7 +32,7 @@ class TsGen extends BaseGen {
 		this.params(fn.params)
 		this.writeln(`): ${ret_type} {`)
 		this.stmts(fn.body)
-		this.writeln('}')
+		this.writeln('}\n')
 	}
 
 	params(params) {

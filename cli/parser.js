@@ -9,6 +9,7 @@ class Parser{
 		this.table = table
 		this.tokens = tokens
 		this.pos = 0
+		this.attributes = []
 
 		this.next()
 		this.next()
@@ -83,6 +84,7 @@ class Parser{
 	}
 
 	toplevel_stmt() {
+		this.parse_attributes()
 		switch (this.tok.kind) {
 			case 'comment': {
 				return this.comment()
@@ -139,6 +141,19 @@ class Parser{
 		}
 	}
 
+	parse_attributes() {
+		this.attributes = []
+		while (this.tok.kind === 'at') {
+			this.next()
+			const name = this.tok.value
+			this.check('name')
+
+			this.attributes.push({
+				name
+			})
+		}
+	}
+
 	comment() {
 		this.next()
 		return {
@@ -171,6 +186,7 @@ class Parser{
 			params,
 			return_type: ret_type,
 			body,
+			attrs: this.attributes
 		}
 	}
 

@@ -68,6 +68,7 @@ class Checker {
 	}
 
 	fun(stmt) {
+		this.attributes(stmt.attrs)
 		this.scope = new Scope(this.scope)
 		this.stmts(stmt.body)
 		this.scope = this.scope.parent
@@ -147,6 +148,11 @@ class Checker {
 
 	map_init(expr) {
 		return expr.type
+	}
+
+	attributes(attrs) {
+		console.log(attrs)
+		// TODO
 	}
 }
 

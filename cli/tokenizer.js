@@ -172,6 +172,10 @@ function tokenize(text) {
 				tokens.push({ kind: 'div', value: '' })
 				continue
 			}
+			case '@': {
+				tokens.push({ kind: 'at', value: '' })
+				continue
+			}
 			default:
 				break
 		}

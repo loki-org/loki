@@ -38,7 +38,7 @@ class CGen extends BaseGen {
 		this.params(fn.params)
 		this.writeln(') {')
 		this.stmts(fn.body)
-		this.writeln('}')
+		this.writeln('}\n')
 	}
 
 	params(params) {

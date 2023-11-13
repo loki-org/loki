@@ -6,3 +6,6 @@ fun sum() map[string]i32 {
 // 	int x = (int)(__intptr_t)Map_get(m, "foo");
 	return m
 }
+
+@main
+fun my_main() {}
