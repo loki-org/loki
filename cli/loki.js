@@ -15,21 +15,47 @@ const BACKENDS = {
 	'ts': TsGen,
 }
 
-function main() {
-	let backend = 'c'
-	let file = ''
-	if (process.argv.length === 3) {
-		file = process.argv[2]
+function parse_args(args) {
+	const prefs = {
+		backend: 'c',
+		file: '',
+	}
 
-	} else if (process.argv.length === 4){
-		backend = process.argv[2]
-		file = process.argv[3]
-	} else {
-		console.log('Usage: loki [backend] file')
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i]
+		switch (arg) {
+			case '-b':
+			case '--backend': {
+				prefs.backend = args[++i]
+				continue
+			}
+			default:
+				break
+		}
+
+		if (prefs.file === '') {
+			prefs.file = arg
+		} else {
+			console.log(`Unknown argument: ${arg}`)
+			process.exit(1)
+		}
+	}
+
+	return prefs
+}
+
+function main() {
+	if (process.argv.length < 3) {
+		console.log(`Usage: loki [options] <file>
+
+Options:
+  -b, --backend <backend>   One of [c, ts]. Default: c`)
 		process.exit(0)
 	}
 
-	const text = fs.readFileSync(file, 'utf-8')
+	const prefs = parse_args(process.argv.slice(2))
+
+	const text = fs.readFileSync(prefs.file, 'utf-8')
 	const tokens = tokenize(text)
 
 	const table = new Table()
@@ -40,10 +66,10 @@ function main() {
 	const checker = new Checker(table)
 	checker.check(ast)
 
-	const gen = new BACKENDS[backend](table)
+	const gen = new BACKENDS[prefs.backend](table)
 	const out = gen.gen(ast)
 
-	const outname = file.split('/').pop().replace('.lo', `.${backend}`)
+	const outname = prefs.file.split('/').pop().replace('.lo', `.${prefs.backend}`)
 	if (!fs.existsSync('out')){
 		fs.mkdirSync('out')
 	}
