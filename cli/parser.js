@@ -267,11 +267,26 @@ class Parser{
 	}
 
 	array_init() {
-		const type = this.type()
+		if (this.next_tok.kind === 'rsbr') {
+			const type = this.type()
+			return {
+				kind: 'array_init',
+				type,
+				elem_type: this.table.sym(type).elem_type,
+				exprs: [],
+			}
+		}
+
+		this.next()
+		const exprs = [this.expr()]
+		while (this.tok.kind === 'comma') {
+			this.next()
+			exprs.push(this.expr())
+		}
+		this.check('rsbr')
 		return {
 			kind: 'array_init',
-			type,
-			elem_type: this.table.sym(type).elem_type
+			exprs,
 		}
 	}
 

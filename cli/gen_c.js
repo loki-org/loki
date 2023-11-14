@@ -55,8 +55,10 @@ class CGen extends BaseGen {
 		this.writeln(';')
 	}
 
-	array_init(expr) {
+	array_init(node) {
 		this.write('NULL')
+		// TODO Array_from_c_array(a, ((int[]){1, 2, 3, 4, 5}), 5);
+		// TODO does not work in asignment. Maybe adapt similar system as Map insert
 	}
 
 	index_set(expr, value) {

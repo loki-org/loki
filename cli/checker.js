@@ -135,8 +135,28 @@ class Checker {
 		}
 	}
 
-	array_init(expr) {
-		return expr.type
+	array_init(node) {
+		if (node.type) {
+			return node.type
+		}
+
+		node.exprs.forEach((expr) => {
+			const typ = this.expr(expr)
+			if (node.elem_type) {
+				if (typ !== node.elem_type) {
+					throw new Error(`type ${typ} not matches ${node.elem_type}`)
+				}
+			} else {
+				node.elem_type = typ
+			}
+		})
+
+		node.typ = this.table.register({
+			kind: 'array',
+			name: `[]${this.table.sym(node.elem_type).name}`,
+			elem_type: node.elem_type,
+		})
+		return node.typ
 	}
 
 	ident(expr) {
