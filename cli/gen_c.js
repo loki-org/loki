@@ -5,8 +5,8 @@ import { IDXS } from './types.js'
 import { BaseGen } from './gen.js'
 
 class CGen extends BaseGen {
-	constructor(table, prefs) {
-		super(table, prefs)
+	constructor(table) {
+		super(table)
 		this.imports.add('<stdbool.h>')
 	}
 
@@ -83,9 +83,10 @@ class CGen extends BaseGen {
 		this.write(`"${expr.value}"`)
 	}
 
-	gen_main() {
+	gen_main(name) {
 		this.writeln('int main() {')
-		this.writeln('return 0;')
+		this.writeln(`\t${name}();`)
+		this.writeln('\treturn 0;')
 		this.writeln('}')
 	}
 

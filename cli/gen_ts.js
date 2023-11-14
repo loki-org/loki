@@ -76,8 +76,8 @@ class TsGen extends BaseGen {
 		this.write(`"${expr.value}"`)
 	}
 
-	gen_main() {
-		this.writeln('main()')
+	gen_main(name) {
+		this.writeln(`${name}()`)
 	}
 
 	type(t) {

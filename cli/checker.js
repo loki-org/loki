@@ -35,9 +35,7 @@ class Checker {
 	check(ast) {
 		this.stmts(ast.body)
 
-		if (this.prefs.gen_main !== (this.main_name !== '')) {
-			throw new Error(`--main option and @main attribute must be used together`)
-		}
+		ast.main_name = this.main_name
 	}
 
 	stmts(stmts) {
