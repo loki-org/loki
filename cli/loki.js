@@ -19,6 +19,7 @@ function parse_args(args) {
 	const prefs = {
 		backend: 'c',
 		file: '',
+		gen_main: false,
 	}
 
 	for (let i = 0; i < args.length; i++) {
@@ -27,6 +28,10 @@ function parse_args(args) {
 			case '-b':
 			case '--backend': {
 				prefs.backend = args[++i]
+				continue
+			}
+			case '--main': {
+				prefs.gen_main = true
 				continue
 			}
 			default:
@@ -63,10 +68,10 @@ Options:
 	const parser = new Parser(tokens, table)
 	const ast = parser.parse()
 
-	const checker = new Checker(table)
+	const checker = new Checker(table, prefs)
 	checker.check(ast)
 
-	const gen = new BACKENDS[prefs.backend](table)
+	const gen = new BACKENDS[prefs.backend](table, prefs)
 	const out = gen.gen(ast)
 
 	const outname = prefs.file.split('/').pop().replace('.lo', `.${prefs.backend}`)

@@ -4,14 +4,40 @@
 import { IDXS } from './types.js'
 import { Scope } from './scope.js'
 
+const ATTRS = {
+	'main': {
+		applies: 'fun',
+		max: 1,
+		check: (checker, fun) => {
+			if (fun.return_type !== IDXS.void) {
+				throw new Error(`main function cannot return a value`)
+			}
+
+			// TODO support "args []string" param
+			if (fun.params.length !== 0) {
+				throw new Error(`main function cannot have parameters`)
+			}
+
+			checker.main_name = fun.name
+		}
+	},
+}
+
 class Checker {
-	constructor(table) {
+	constructor(table, prefs) {
 		this.table = table
+		this.prefs = prefs
 		this.scope = new Scope(null)
+
+		this.main_name = ''
 	}
 
 	check(ast) {
 		this.stmts(ast.body)
+
+		if (this.prefs.gen_main !== (this.main_name !== '')) {
+			throw new Error(`--main option and @main attribute must be used together`)
+		}
 	}
 
 	stmts(stmts) {
@@ -68,7 +94,8 @@ class Checker {
 	}
 
 	fun(stmt) {
-		this.attributes(stmt.attrs)
+		this.attributes(stmt)
+
 		this.scope = new Scope(this.scope)
 		this.stmts(stmt.body)
 		this.scope = this.scope.parent
@@ -150,9 +177,26 @@ class Checker {
 		return expr.type
 	}
 
-	attributes(attrs) {
-		console.log(attrs)
-		// TODO
+	attributes(node) {
+		node.attrs.forEach(attr => {
+			const def = ATTRS[attr.name]
+			if (!def) {
+				throw new Error(`unknown attribute @${attr.name}`)
+			}
+
+			if (def.applies !== node.kind) {
+				throw new Error(`attribute @${attr.name} does not apply to ${node.kind}`)
+			}
+
+			if (def.max != -1) {
+				if (def.max == 0) {
+					throw new Error(`attribute @${attr.name} used too often`)
+				}
+				def.max--
+			}
+
+			def.check(this, node)
+		})
 	}
 }
 

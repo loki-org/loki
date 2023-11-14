@@ -76,6 +76,10 @@ class TsGen extends BaseGen {
 		this.write(`"${expr.value}"`)
 	}
 
+	gen_main() {
+		this.writeln('main()')
+	}
+
 	type(t) {
 		switch (t) {
 			case IDXS.i32:

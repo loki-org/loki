@@ -7,9 +7,9 @@ FILE="foo"
 
 echo "Compiling loki to..."
 echo "  c"
-node cli/loki.js c examples/$FILE.lo
+node cli/loki.js -b c examples/$FILE.lo
 echo "  ts"
-node cli/loki.js ts examples/$FILE.lo
+node cli/loki.js -b ts examples/$FILE.lo
 
 echo "Compiling native..."
 cd out
