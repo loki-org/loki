@@ -56,9 +56,20 @@ class CGen extends BaseGen {
 	}
 
 	array_init(node) {
-		this.write('NULL')
-		// TODO Array_from_c_array(a, ((int[]){1, 2, 3, 4, 5}), 5);
-		// TODO does not work in asignment. Maybe adapt similar system as Map insert
+		if (node.exprs.length === 0) {
+			this.write('NULL')
+			return
+		}
+
+		const el_name = this.type(node.elem_type)
+		this.write(`Array_from_c_array(${el_name}, ((${el_name}[]){`)
+		for (let i = 0; i < node.exprs.length; i++) {
+			this.expr(node.exprs[i])
+			if (i < node.exprs.length - 1) {
+				this.write(', ')
+			}
+		}
+		this.write(`}), ${node.exprs.length})`)
 	}
 
 	index_set(expr, value) {

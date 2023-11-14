@@ -47,14 +47,16 @@ typedef struct {
 		Array_get_meta(arr)->capacity = new_len; \
 	} while (0)
 
-#define Array_from_c_array(arr, c_arr, count) \
-	do { \
-		size_t init_size = (count) * sizeof(*(arr)) + sizeof(ArrayMeta); \
+#define Array_from_c_array(type, c_arr, count) \
+	({ \
+		size_t element_size = sizeof(type); \
+		size_t init_size = (count) * element_size + sizeof(ArrayMeta); \
 		void* init_meta = malloc(init_size); \
-		(arr) = Array_from_meta(init_meta); \
-		Array_get_meta(arr)->length = (count); \
-		Array_get_meta(arr)->capacity = (count); \
-		memcpy((arr), (c_arr), (count) * sizeof(*(arr))); \
-	} while (0)
+		Array(type) arr = Array_from_meta(init_meta); \
+		Array_get_meta(arr)->length = count; \
+		Array_get_meta(arr)->capacity = count; \
+		memcpy(arr, c_arr, (count) * element_size); \
+		arr; \
+	})
 
 #endif // ARRAY_H

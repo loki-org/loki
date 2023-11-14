@@ -50,19 +50,19 @@ class TsGen extends BaseGen {
 	}
 
 	array_init(node) {
-		if (node.exprs.length > 0) {
-			this.write('[')
-			for (let i = 0; i < node.exprs.length; i++) {
-				this.expr(node.exprs[i])
-				if (i < node.exprs.length - 1) {
-					this.write(', ')
-				}
-			}
-			this.write(']')
+		if (node.exprs.length === 0) {
+			this.write(`new Array<${this.type(node.elem_type)}>()`)
 			return
 		}
 
-		this.write(`new Array<${this.type(node.elem_type)}>()`)
+		this.write('[')
+		for (let i = 0; i < node.exprs.length; i++) {
+			this.expr(node.exprs[i])
+			if (i < node.exprs.length - 1) {
+				this.write(', ')
+			}
+		}
+		this.write(']')
 	}
 
 	index_set(expr, value) {
