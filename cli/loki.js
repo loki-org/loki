@@ -4,7 +4,7 @@
 import * as process from 'process'
 import * as fs from 'fs'
 import { Table } from './types.js'
-import { tokenize } from './tokenizer.js'
+import { Tokenizer } from './tokenizer.js'
 import { Parser } from './parser.js'
 import { Checker } from './checker.js'
 import { CGen } from './gen_c.js'
@@ -56,7 +56,8 @@ Options:
 	const prefs = parse_args(process.argv.slice(2))
 
 	const text = fs.readFileSync(prefs.file, 'utf-8')
-	const tokens = tokenize(text)
+	const tok = new Tokenizer()
+	const tokens = tok.tokenize(text)
 
 	const table = new Table()
 
