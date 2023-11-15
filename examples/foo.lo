@@ -7,8 +7,6 @@ fun sum() map[string]i32 {
 	return m
 }
 
-// @main
-fun my_main() {
-	mut a := []i32
-	a = [1, 2]
+@main
+fun my_main(args []string) {
 }

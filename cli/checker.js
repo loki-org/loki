@@ -14,11 +14,16 @@ const ATTRS = {
 			}
 
 			// TODO support "args []string" param
-			if (fun.params.length !== 0) {
-				throw new Error(`main function cannot have parameters`)
+			if (fun.params.length === 1) {
+				const sym = checker.table.sym(fun.params[0].type)
+				if (sym.kind !== 'array' || sym.elem_type !== IDXS.string) {
+					throw new Error(`main function must have no params or "args []string"`)
+				}
+			} else {
+				throw new Error(`main function must have no params or "args []string"`)
 			}
 
-			checker.main_name = fun.name
+			checker.main_fun = fun
 		}
 	},
 }
@@ -29,13 +34,13 @@ class Checker {
 		this.prefs = prefs
 		this.scope = new Scope(null)
 
-		this.main_name = ''
+		this.main_fun = null
 	}
 
 	check(ast) {
 		this.stmts(ast.body)
 
-		ast.main_name = this.main_name
+		ast.main_fun = this.main_fun
 	}
 
 	stmts(stmts) {

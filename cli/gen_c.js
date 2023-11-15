@@ -96,9 +96,13 @@ class CGen extends BaseGen {
 		this.write(`"${expr.value}"`)
 	}
 
-	gen_main(name) {
-		this.writeln('int main() {')
-		this.writeln(`\t${name}();`)
+	gen_main(name, with_args) {
+		this.writeln('int main(int argc, char** argv) {')
+		if (with_args) {
+			this.writeln(`\t${name}(Array_from_c_array(char*, argv, argc));`)
+		} else {
+			this.writeln(`\t${name}();`)
+		}
 		this.writeln('\treturn 0;')
 		this.writeln('}')
 	}

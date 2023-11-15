@@ -26,9 +26,9 @@ class BaseGen {
 			this.import(imp)
 		}
 
-		if (ast.main_name.length > 0) {
+		if (ast.main_fun.name.length > 0) {
 			this.indent = 0
-			this.gen_main(ast.main_name)
+			this.gen_main(ast.main_fun.name, ast.main_fun.params.length > 0)
 		}
 
 		return this.headers + '\n' + this.out
@@ -161,7 +161,7 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
-	gen_main() {
+	gen_main(name, with_args) {
 		throw new Error('Not implemented')
 	}
 

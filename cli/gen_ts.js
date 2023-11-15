@@ -88,7 +88,12 @@ class TsGen extends BaseGen {
 		this.write(`"${expr.value}"`)
 	}
 
-	gen_main(name) {
+	gen_main(name, with_args) {
+		if (with_args) {
+			this.writeln(`${name}(process.argv)`)
+			return
+		}
+
 		this.writeln(`${name}()`)
 	}
 
