@@ -105,6 +105,9 @@ class Parser{
 			case 'name': {
 				return this.name_stmt()
 			}
+			case 'hash': {
+				return this.hash_stmt()
+			}
 			case 'key_mut': {
 				return this.assign_stmt()
 			}
@@ -204,6 +207,20 @@ class Parser{
 			}
 		}
 		return params
+	}
+
+	hash_stmt() {
+		const lang = this.tok.value
+		this.next()
+		this.check('dot')
+		const val = this.tok.value
+		this.check('string')
+
+		return {
+			kind: 'hash',
+			lang,
+			value: val,
+		}
 	}
 
 	name_stmt() {

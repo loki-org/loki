@@ -7,13 +7,7 @@ import { Table } from './types.js'
 import { Tokenizer } from './tokenizer.js'
 import { Parser } from './parser.js'
 import { Checker } from './checker.js'
-import { CGen } from './gen_c.js'
-import { TsGen } from './gen_ts.js'
-
-const BACKENDS = {
-	'c': CGen,
-	'ts': TsGen,
-}
+import { BACKENDS } from './backends.js'
 
 function parse_args(args) {
 	const prefs = {
@@ -56,8 +50,8 @@ Options:
 	const prefs = parse_args(process.argv.slice(2))
 
 	const text = fs.readFileSync(prefs.file, 'utf-8')
-	const tok = new Tokenizer()
-	const tokens = tok.tokenize(text)
+	const tok = new Tokenizer(text)
+	const tokens = tok.tokenize()
 
 	const table = new Table()
 
@@ -67,7 +61,7 @@ Options:
 	const checker = new Checker(table)
 	checker.check(ast)
 
-	const gen = new BACKENDS[prefs.backend](table)
+	const gen = new BACKENDS[prefs.backend](table, prefs)
 	const out = gen.gen(ast)
 
 	const outname = prefs.file.split('/').pop().replace('.lo', `.${prefs.backend}`)

@@ -1,5 +1,7 @@
-// SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
+// SPDX-FileCopyrightthis.text: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
+
+import { text } from "stream/consumers"
 
 const KEYWORDS = ['false', 'fun', 'mut', 'return', 'true']
 
@@ -32,7 +34,8 @@ function is_math_assign(tok) {
 }
 
 class Tokenizer {
-	constructor() {
+	constructor(text) {
+		this.text = text
 		this.pos = 0
 		this.tokens = []
 	}
@@ -41,9 +44,9 @@ class Tokenizer {
 		this.tokens.push({ kind, value })
 	}
 
-	tokenize(text) {
-		while (this.pos < text.length) {
-			const c = text[this.pos]
+	tokenize() {
+		while (this.pos < this.text.length) {
+			const c = this.text[this.pos]
 			this.pos++
 
 			// Skip whitespace
@@ -53,12 +56,7 @@ class Tokenizer {
 
 			// Names
 			if (NAME_START_REGEX.test(c)) {
-				let val = c
-
-				while (this.pos < text.length && NAME_REGEX.test(text[this.pos])) {
-					val += text[this.pos]
-					this.pos++
-				}
+				const val = this.name_val()
 
 				if (KEYWORDS.includes(val)) {
 					this.add_token(`key_${val}`)
@@ -74,8 +72,8 @@ class Tokenizer {
 			if (NUMBER_REGEX.test(c)) {
 				let val = c
 
-				while (this.pos < text.length && NUMBER_REGEX.test(text[this.pos])) {
-					val += text[this.pos]
+				while (this.pos < this.text.length && NUMBER_REGEX.test(this.text[this.pos])) {
+					val += this.text[this.pos]
 					this.pos++
 				}
 
@@ -110,8 +108,8 @@ class Tokenizer {
 				}
 				case '"': {
 					let val = ''
-					while (this.pos < text.length && text[this.pos] !== '"') {
-						val += text[this.pos]
+					while (this.pos < this.text.length && this.text[this.pos] !== '"') {
+						val += this.text[this.pos]
 						this.pos++
 					}
 					this.pos++
@@ -127,7 +125,7 @@ class Tokenizer {
 					continue
 				}
 				case ':': {
-					if (text[this.pos] === '=') {
+					if (this.text[this.pos] === '=') {
 						this.add_token('decl_assign')
 						this.pos++
 						continue
@@ -139,7 +137,7 @@ class Tokenizer {
 					continue
 				}
 				case '+': {
-					if (text[this.pos] === '=') {
+					if (this.text[this.pos] === '=') {
 						this.add_token('plus_assign')
 						this.pos++
 						continue
@@ -148,7 +146,7 @@ class Tokenizer {
 					continue
 				}
 				case '-': {
-					if (text[this.pos] === '=') {
+					if (this.text[this.pos] === '=') {
 						this.add_token('minus_assign')
 						this.pos++
 						continue
@@ -157,7 +155,7 @@ class Tokenizer {
 					continue
 				}
 				case '*': {
-					if (text[this.pos] === '=') {
+					if (this.text[this.pos] === '=') {
 						this.add_token('mul_assign')
 						this.pos++
 						continue
@@ -166,17 +164,17 @@ class Tokenizer {
 					continue
 				}
 				case '/': {
-					if (text[this.pos] === '/') {
+					if (this.text[this.pos] === '/') {
 						this.pos++
 						let val = ''
-						while (this.pos < text.length && text[this.pos] !== '\n') {
-							val += text[this.pos]
+						while (this.pos < this.text.length && this.text[this.pos] !== '\n') {
+							val += this.text[this.pos]
 							this.pos++
 						}
 						this.add_token('comment', val)
 						continue
 					}
-					if (text[this.pos] === '=') {
+					if (this.text[this.pos] === '=') {
 						this.add_token('div_assign')
 						this.pos++
 						continue
@@ -188,6 +186,12 @@ class Tokenizer {
 					this.add_token('at')
 					continue
 				}
+				case '#': {
+					this.pos++
+					const name = this.name_val()
+					this.add_token('hash', name)
+					continue
+				}
 				default:
 					break
 			}
@@ -196,6 +200,17 @@ class Tokenizer {
 		}
 
 		return this.tokens
+	}
+
+	name_val() {
+		let val = this.text[this.pos - 1]
+
+		while (this.pos < this.text.length && NAME_REGEX.test(this.text[this.pos])) {
+			val += this.text[this.pos]
+			this.pos++
+		}
+
+		return val
 	}
 }
 

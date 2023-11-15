@@ -3,6 +3,7 @@
 
 import { IDXS } from './types.js'
 import { Scope } from './scope.js'
+import { BACKENDS } from './backends.js'
 
 const ATTRS = {
 	'main': {
@@ -62,6 +63,10 @@ class Checker {
 				this.fun(stmt)
 				break
 			}
+			case 'hash': {
+				this.hash_stmt(stmt)
+				break
+			}
 			case 'return': {
 				this.return_stmt(stmt)
 				break
@@ -102,6 +107,12 @@ class Checker {
 		this.scope = new Scope(this.scope)
 		this.stmts(stmt.body)
 		this.scope = this.scope.parent
+	}
+
+	hash_stmt(stmt) {
+		if (!Object.keys(BACKENDS).includes(stmt.lang)) {
+			throw new Error(`backend ${stmt.lang} does not exist`)
+		}
 	}
 
 	return_stmt(stmt) {
