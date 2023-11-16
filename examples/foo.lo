@@ -9,6 +9,7 @@ fun sum() map[string]i32 {
 
 @main
 fun my_main(args []string) {
-	#c."printf(Array_get(args, 0));"
-	#ts."console.log(args)"
+	a := args[0]
+	#c."printf(a);"
+	#ts."console.log(a)"
 }

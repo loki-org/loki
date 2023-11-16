@@ -88,6 +88,10 @@ class BaseGen {
 				this.write(expr.name)
 				break
 			}
+			case 'index': {
+				this.index_get(expr)
+				break
+			}
 			case 'infix': {
 				this.infix(expr)
 				break
@@ -154,6 +158,10 @@ class BaseGen {
 	}
 
 	array_init(expr) {
+		throw new Error('Not implemented')
+	}
+
+	index_get(expr) {
 		throw new Error('Not implemented')
 	}
 

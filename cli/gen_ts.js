@@ -65,6 +65,19 @@ class TsGen extends BaseGen {
 		this.write(']')
 	}
 
+	index_get(expr) {
+		const lsym = this.table.sym(expr.left_type)
+		if (lsym.kind === 'array') {
+			this.expr(expr.left)
+			this.write('[')
+			this.expr(expr.index)
+			this.write(']')
+			return
+		}
+
+		throw new Error('This should never happen')
+	}
+
 	index_set(expr, value) {
 		const lsym = this.table.sym(expr.left_type)
 		if (lsym.kind === 'map') {

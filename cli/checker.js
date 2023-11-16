@@ -193,6 +193,15 @@ class Checker {
 	index_expr(expr) {
 		expr.left_type = this.expr(expr.left)
 		const lsym = this.table.sym(expr.left_type)
+		if (lsym.kind === 'array') {
+			const idx_type = this.expr(expr.index)
+			if (idx_type !== IDXS.i32) {
+				throw new Error(`cannot use ${idx_type} as i32`)
+			}
+
+			return lsym.elem_type
+		}
+
 		if (lsym.kind === 'map') {
 			const idx_type = this.expr(expr.index)
 			if (idx_type !== lsym.key_type) {
