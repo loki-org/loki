@@ -105,8 +105,15 @@ class Checker {
 		this.attributes(stmt)
 
 		this.scope = new Scope(this.scope)
+		this.params(stmt.params)
 		this.stmts(stmt.body)
 		this.scope = this.scope.parent
+	}
+
+	params(params) {
+		for (const param of params) {
+			this.scope.register(param.name, param.type)
+		}
 	}
 
 	hash_stmt(stmt) {
