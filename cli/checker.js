@@ -20,7 +20,7 @@ const ATTRS = {
 				if (sym.kind !== 'array' || sym.elem_type !== IDXS.string) {
 					throw new Error(`main function must have no params or "args []string"`)
 				}
-			} else {
+			} else if (fun.params.length > 1) {
 				throw new Error(`main function must have no params or "args []string"`)
 			}
 
