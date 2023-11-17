@@ -7,8 +7,8 @@ class Scope{
 		this.objects = {}
 	}
 
-	register(name, typ) {
-		this.objects[name] = typ
+	register(name, obj) {
+		this.objects[name] = obj
 	}
 
 	find(name) {

@@ -14,7 +14,6 @@ const ATTRS = {
 				throw new Error(`main function cannot return a value`)
 			}
 
-			// TODO support "args []string" param
 			if (fun.params.length === 1) {
 				const sym = checker.table.sym(fun.params[0].type)
 				if (sym.kind !== 'array' || sym.elem_type !== IDXS.string) {
@@ -87,15 +86,22 @@ class Checker {
 			if (this.scope.is_known(stmt.left.name)) {
 				throw new Error(`cannot redeclare ${stmt.left.name}`)
 			}
-			this.scope.register(stmt.left.name, stmt.type)
+			this.scope.register(stmt.left.name, {
+				type: stmt.type,
+				is_mut: stmt.left.is_mut,
+			})
 			this.expr(stmt.left)
 			return
 		}
 
-		// TODO left should be mut
-
 		const ltype = this.expr(stmt.left)
 		const rtype = this.expr(stmt.right)
+
+		if (stmt.left.kind === 'ident' && !stmt.left.is_mut) {
+			throw new Error(`cannot assign to immutable ${stmt.left.name}`)
+		}
+		// TODO mut check for index expr
+
 		if (ltype !== rtype) {
 			throw new Error(`cannot assign ${rtype} to ${ltype}`)
 		}
@@ -112,7 +118,9 @@ class Checker {
 
 	params(params) {
 		for (const param of params) {
-			this.scope.register(param.name, param.type)
+			this.scope.register(param.name, {
+				type: param.type,
+			})
 		}
 	}
 
@@ -183,11 +191,12 @@ class Checker {
 	}
 
 	ident(expr) {
-		const typ = this.scope.find(expr.name)
-		if (typ === null) {
+		const def = this.scope.find(expr.name)
+		if (def.type === null) {
 			throw new Error(`unknown identifier ${expr.name}`)
 		}
-		return typ
+		expr.is_mut = def.is_mut
+		return def.type
 	}
 
 	index_expr(expr) {
