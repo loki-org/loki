@@ -117,6 +117,7 @@ class BaseGen {
 		if (stmt.lang !== this.prefs.backend) {
 			return
 		}
+
 		this.writeln(stmt.value)
 	}
 

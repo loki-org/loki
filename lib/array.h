@@ -35,6 +35,9 @@ typedef struct {
 		Array_get_meta(arr)->length++; \
 	} while (0)
 
+#define Array_set(arr, index, value) \
+	(arr)[index] = value
+
 #define Array_get(arr, index) \
 	(arr)[index]
 

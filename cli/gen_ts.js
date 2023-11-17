@@ -80,6 +80,16 @@ class TsGen extends BaseGen {
 
 	index_set(expr, value) {
 		const lsym = this.table.sym(expr.left_type)
+		if (lsym.kind === 'array') {
+			this.expr(expr.left)
+			this.write('[')
+			this.expr(expr.index)
+			this.write('] = ')
+			this.expr(value)
+			this.writeln('')
+			return
+		}
+
 		if (lsym.kind === 'map') {
 			this.expr(expr.left)
 			this.write('.set(')
