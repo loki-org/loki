@@ -106,14 +106,9 @@ class Tokenizer {
 					this.add_token('rsbr')
 					continue
 				}
+				case "'":
 				case '"': {
-					let val = ''
-					while (this.pos < this.text.length && this.text[this.pos] !== '"') {
-						val += this.text[this.pos]
-						this.pos++
-					}
-					this.pos++
-					this.add_token('string', val)
+					this.add_token('string', this.string_val(c))
 					continue
 				}
 				case ',': {
@@ -211,6 +206,24 @@ class Tokenizer {
 		}
 
 		return val
+	}
+
+	string_val(quote) {
+		let c = ""
+		let start = this.pos
+
+		while (this.pos < this.text.length) {
+			c = this.text[this.pos]
+			this.pos++
+
+			if (c === '\\') {
+				this.pos++
+			} else if (c === quote) {
+				break
+			}
+		}
+
+		return this.text.slice(start, this.pos - 1)
 	}
 }
 
