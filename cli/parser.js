@@ -89,6 +89,9 @@ class Parser{
 			case 'comment': {
 				return this.comment()
 			}
+			case 'hash': {
+				return this.hash_stmt()
+			}
 			case 'key_fun': {
 				return this.fun()
 			}
