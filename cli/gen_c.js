@@ -5,8 +5,7 @@ import { IDXS } from './types.js'
 import { BaseGen } from './gen.js'
 
 class CGen extends BaseGen {
-	constructor(table, prefs) {
-		super(table, prefs)
+	pre_stage() {
 		this.imports.add('<stdbool.h>')
 	}
 

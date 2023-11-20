@@ -10,8 +10,10 @@ class BaseGen {
 		this.line_start = true
 		this.indent = -1
 		this.imports = new Set()
+		this.pub_syms = []
 		this.headers = ''
 		this.out = ''
+		this.footer = ''
 
 		this.headers += this.comment_str(LOKI_NOTE)
 
@@ -21,6 +23,8 @@ class BaseGen {
 	}
 
 	gen(ast) {
+		this.pre_stage()
+
 		this.stmts(ast.body)
 
 		for (const imp of this.imports) {
@@ -32,7 +36,9 @@ class BaseGen {
 			this.gen_main(ast.main_fun.name, ast.main_fun.params.length > 0)
 		}
 
-		return this.headers + '\n' + this.out
+		this.post_stage()
+
+		return this.headers + '\n' + this.out + "\n" + this.footer
 	}
 
 	stmts(stmts) {
@@ -136,6 +142,14 @@ class BaseGen {
 	comment_str(text) {
 		const s = text.startsWith(' ') ? '' : ' '
 		return `//${s}${text}`
+	}
+
+	pre_stage() {
+		// Do nothing by default
+	}
+
+	post_stage() {
+		// Do nothing by default
 	}
 
 	import(imp) {

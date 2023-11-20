@@ -3,7 +3,7 @@
 
 import { text } from "stream/consumers"
 
-const KEYWORDS = ['false', 'fun', 'mut', 'return', 'true']
+const KEYWORDS = ['false', 'fun', 'mut', 'pub', 'return', 'true']
 
 const PRECEDENCE = (tok) => {
 	switch (tok.kind) {

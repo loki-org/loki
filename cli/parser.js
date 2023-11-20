@@ -42,6 +42,10 @@ class Parser{
 		this.next()
 	}
 
+	was_pub() {
+		return this.prev_tok.kind === 'key_pub'
+	}
+
 	type() {
 		if (this.tok.kind === 'lsbr') {
 			this.next()
@@ -92,6 +96,17 @@ class Parser{
 			case 'hash': {
 				return this.hash_stmt()
 			}
+			case 'key_pub': {
+				this.next()
+				return this.pub_stmt()
+			}
+			default:
+				return this.pub_stmt()
+		}
+	}
+
+	pub_stmt() {
+		switch (this.tok.kind) {
 			case 'key_fun': {
 				return this.fun()
 			}
@@ -169,6 +184,8 @@ class Parser{
 	}
 
 	fun() {
+		const is_pub = this.was_pub()
+
 		this.next()
 		const name = this.tok.value
 		this.check('name')
@@ -187,6 +204,7 @@ class Parser{
 		this.check('rcur')
 
 		return {
+			is_pub,
 			kind: 'fun',
 			name,
 			params,

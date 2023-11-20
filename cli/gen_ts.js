@@ -5,6 +5,10 @@ import { IDXS } from './types.js'
 import { BaseGen } from './gen.js'
 
 class TsGen extends BaseGen {
+	post_stage() {
+		this.footer = `export { ${this.pub_syms.join(', ')} }`
+	}
+
 	assign(stmt) {
 		if (stmt.left.kind === 'index') {
 			this.index_set(stmt.left, stmt.right)
@@ -27,6 +31,10 @@ class TsGen extends BaseGen {
 	}
 
 	fun(fn) {
+		if (fn.is_pub) {
+			this.pub_syms.push(fn.name)
+		}
+
 		const ret_type = this.type(fn.return_type)
 		this.write(`function ${fn.name}(`)
 		this.params(fn.params)

@@ -1,15 +1,9 @@
+#c.'#include <stdio.h>'
+
+// TODO return type
+pub fun ini_decode(s string) {
+}
+
 @main
 fun my_main() {
-	m := map[string]string
-	m["a"] = 'foo'
-	a := m["a"]
-
-
-	m2 := map[string]i32
-	m2["a"] = 1
-	b := m2["a"]
-
-	#c.'printf("%s\n", a);'
-	#c.'printf("%d\n", b);'
-	#ts."console.log(a)"
 }
