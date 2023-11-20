@@ -132,6 +132,20 @@ class CGen extends BaseGen {
 	}
 
 	string(expr) {
+		if (expr.value.includes('\n')) {
+			const lines = expr.value.split('\n')
+			lines.forEach((line, i) => {
+				this.write('"')
+				this.write(line)
+				if (i < lines.length - 1) {
+					this.writeln('\\n"')
+				} else {
+					this.write('"')
+				}
+			})
+			return
+		}
+
 		this.write(`"${expr.value}"`)
 	}
 

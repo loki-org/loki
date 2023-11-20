@@ -116,7 +116,8 @@ class TsGen extends BaseGen {
 	}
 
 	string(expr) {
-		this.write(`"${expr.value}"`)
+		const quote = expr.value.includes('\n') ? '`' : '"'
+		this.write(`${quote}${expr.value}${quote}`)
 	}
 
 	gen_main(name, with_args) {
