@@ -16,4 +16,4 @@ cd out
 echo "  c"
 gcc -I ../lib -shared $FILE.c
 echo "  ts"
-npx tsc --lib es2015 $FILE.ts
+npx tsc --lib dom,es2015 $FILE.ts

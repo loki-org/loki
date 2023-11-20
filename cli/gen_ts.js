@@ -75,7 +75,15 @@ class TsGen extends BaseGen {
 			return
 		}
 
-		throw new Error('This should never happen')
+		if (lsym.kind === 'map') {
+			this.expr(expr.left)
+			this.write('.get(')
+			this.expr(expr.index)
+			this.write(')')
+			return
+		}
+
+		throw new Error(`Cannot get index of ${lsym.kind}`)
 	}
 
 	index_set(expr, value) {

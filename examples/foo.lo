@@ -1,15 +1,15 @@
-fun sum() map[string]i32 {
-	m := map[string]i32
-	m["a"] = 1
-	m["b"] = 2
-	m["a"] = 3
-// 	int x = (int)(__intptr_t)Map_get(m, "foo");
-	return m
-}
-
 @main
-fun my_main(args []string) {
-	a := args[0]
-	#c."printf(a);"
+fun my_main() {
+	m := map[string]string
+	m["a"] = 'foo'
+	a := m["a"]
+
+
+	m2 := map[string]i32
+	m2["a"] = 1
+	b := m2["a"]
+
+	#c.'printf("%s\n", a);'
+	#c.'printf("%d\n", b);'
 	#ts."console.log(a)"
 }

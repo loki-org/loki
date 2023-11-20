@@ -83,7 +83,21 @@ class CGen extends BaseGen {
 			return
 		}
 
-		throw new Error('This should never happen')
+		if (lsym.kind === 'map') {
+			const val_type = this.type(lsym.val_type)
+			this.write(`(${val_type}`)
+			if (lsym.val_type === IDXS.i32) {
+				this.write(')(__intptr_t')
+			}
+			this.write(`)Map_get(`)
+			this.expr(expr.left)
+			this.write(', ')
+			this.expr(expr.index)
+			this.write(')')
+			return
+		}
+
+		throw new Error(`Cannot get index of ${lsym.kind}`)
 	}
 
 	index_set(expr, value) {
