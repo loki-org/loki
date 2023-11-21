@@ -126,6 +126,11 @@ class Checker {
 		this.attributes(stmt)
 
 		this.open_scope()
+		if (stmt.is_method) {
+			this.scope.register(stmt.receiver.name, {
+				type: stmt.receiver.type,
+			})
+		}
 		this.params(stmt.params)
 		this.stmts(stmt.body)
 		this.close_scope()

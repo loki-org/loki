@@ -192,8 +192,22 @@ class Parser{
 
 	fun() {
 		const is_pub = this.was_pub()
-
 		this.next()
+
+		let is_method = false
+		let receiver = null
+		if (this.tok.kind === 'lpar') {
+			is_method = true
+			this.next()
+			const rec_name = this.tok.value
+			this.check('name')
+			receiver = {
+				name: rec_name,
+				type: this.type(),
+			}
+			this.check('rpar')
+		}
+
 		const name = this.tok.value
 		this.check('name')
 
@@ -218,11 +232,13 @@ class Parser{
 		return {
 			is_pub,
 			kind: 'fun',
+			is_method,
+			receiver,
 			name,
 			params,
 			return_type: ret_type,
 			body,
-			attrs: this.attributes
+			attrs: this.attributes,
 		}
 	}
 

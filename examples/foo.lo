@@ -1,6 +1,11 @@
 #c.'#include <stdio.h>'
 
-pub struct Foo{}
+struct Foo{}
+
+// TODO how to store this so it can generate inside the class for TS and as a function for C?
+fun (f Foo) say_hi() {
+	#ts.'console.log("hi")'
+}
 
 // fun (s string) lo_split(delim string) []string {
 // 	return []string
