@@ -1,9 +1,14 @@
 #c.'#include <stdio.h>'
 
+fun split() {}
+
 // TODO return type
 pub fun ini_decode(s string) {
+	// lines := split(s, "\n")
+	#ts.'console.log(s)'
 }
 
 @main
 fun my_main() {
+	ini_decode("a\nb\nc")
 }

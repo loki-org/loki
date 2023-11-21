@@ -11,6 +11,7 @@ class BaseGen {
 		this.indent = -1
 		this.imports = new Set()
 		this.pub_syms = []
+		this.semi = ''
 		this.headers = ''
 		this.out = ''
 		this.footer = ''
@@ -73,6 +74,7 @@ class BaseGen {
 			}
 			case 'expr': {
 				this.expr(stmt.expr)
+				this.writeln(this.semi)
 				break
 			}
 			default:
@@ -88,6 +90,10 @@ class BaseGen {
 			}
 			case 'bool': {
 				this.bool(expr)
+				break
+			}
+			case 'call': {
+				this.call(expr)
 				break
 			}
 			case 'ident': {
@@ -129,6 +135,18 @@ class BaseGen {
 
 	bool(expr) {
 		this.write(expr.value ? 'true' : 'false')
+	}
+
+	call(expr) {
+		this.write(expr.name)
+		this.write('(')
+		expr.args.forEach((arg, i) => {
+			this.expr(arg)
+			if (i < expr.args.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.write(')')
 	}
 
 	infix(expr) {

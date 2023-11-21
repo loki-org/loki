@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import * as types from './types.js'
+import { Scope } from "./scope.js"
 import { PRECEDENCE, is_assign, is_infix, is_math_assign } from './tokenizer.js'
 
 class Parser{
@@ -10,6 +11,7 @@ class Parser{
 		this.tokens = tokens
 		this.pos = 0
 		this.attributes = []
+		this.root_scope = new Scope(null)
 
 		this.next()
 		this.next()
@@ -18,13 +20,15 @@ class Parser{
 	parse() {
 		let ast = {
 			kind: 'file',
-			body: []
+			body: [],
+			root_scope: null,
 		}
 
 		while (this.pos < this.tokens.length) {
 			ast.body.push(this.toplevel_stmt())
 		}
 
+		ast.root_scope = this.root_scope
 		return ast
 	}
 
@@ -203,6 +207,11 @@ class Parser{
 		const body = this.block()
 		this.check('rcur')
 
+		this.root_scope.register(name, {
+			type: ret_type,
+			params,
+		})
+
 		return {
 			is_pub,
 			kind: 'fun',
@@ -337,6 +346,30 @@ class Parser{
 		}
 	}
 
+	call_expr() {
+		const name = this.tok.value
+		this.check('name')
+		this.check('lpar')
+		const args = this.call_args()
+		this.check('rpar')
+		return {
+			kind: 'call',
+			name,
+			args,
+		}
+	}
+
+	call_args() {
+		const args = []
+		while (this.tok.kind !== 'rpar') {
+			args.push(this.expr())
+			if (this.tok.kind !== 'rpar') {
+				this.check('comma')
+			}
+		}
+		return args
+	}
+
 	ident() {
 		const is_mut = this.tok.kind === 'key_mut'
 		if (is_mut) {
@@ -394,6 +427,10 @@ class Parser{
 
 		if (this.next_tok.kind === 'lsbr') {
 			return this.index_expr()
+		}
+
+		if (this.next_tok.kind === 'lpar') {
+			return this.call_expr()
 		}
 
 		return this.ident()

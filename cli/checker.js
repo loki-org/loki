@@ -32,12 +32,23 @@ class Checker {
 	constructor(table, prefs) {
 		this.table = table
 		this.prefs = prefs
+		this.root_scope = null
 		this.scope = new Scope(null)
 
 		this.main_fun = null
 	}
 
+	open_scope() {
+		this.scope = new Scope(this.scope)
+	}
+
+	close_scope() {
+		this.scope = this.scope.parent
+	}
+
 	check(ast) {
+		this.root_scope = ast.root_scope
+
 		this.stmts(ast.body)
 
 		ast.main_fun = this.main_fun
@@ -110,10 +121,10 @@ class Checker {
 	fun(stmt) {
 		this.attributes(stmt)
 
-		this.scope = new Scope(this.scope)
+		this.open_scope()
 		this.params(stmt.params)
 		this.stmts(stmt.body)
-		this.scope = this.scope.parent
+		this.close_scope()
 	}
 
 	params(params) {
@@ -141,6 +152,9 @@ class Checker {
 			}
 			case 'bool': {
 				return IDXS.bool
+			}
+			case 'call': {
+				return this.call_expr(expr)
 			}
 			case 'ident': {
 				return this.ident(expr)
@@ -190,9 +204,29 @@ class Checker {
 		return node.typ
 	}
 
+	call_expr(expr) {
+		const def = this.root_scope.find(expr.name)
+		if (def === null) {
+			throw new Error(`unknown function ${expr.name}`)
+		}
+
+		if (def.params.length !== expr.args.length) {
+			throw new Error(`got ${expr.args.length} args, expected ${def.params.length}`)
+		}
+
+		def.params.forEach((arg, i) => {
+			const typ = this.expr(expr.args[i])
+			if (arg.type !== typ) {
+				throw new Error(`arg ${i} has type ${typ}, expected ${arg.type}`)
+			}
+		})
+
+		return def.type
+	}
+
 	ident(expr) {
 		const def = this.scope.find(expr.name)
-		if (def.type === null) {
+		if (def === null) {
 			throw new Error(`unknown identifier ${expr.name}`)
 		}
 		expr.is_mut = def.is_mut

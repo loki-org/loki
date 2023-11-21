@@ -6,6 +6,7 @@ import { BaseGen } from './gen.js'
 
 class CGen extends BaseGen {
 	pre_stage() {
+		this.semi = ';'
 		this.imports.add('<stdbool.h>')
 	}
 
