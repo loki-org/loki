@@ -35,6 +35,11 @@ class CGen extends BaseGen {
 	fun(fn) {
 		const ret_type = this.type(fn.return_type)
 		this.write(`${ret_type} ${fn.name}(`)
+
+		if (fn.is_method) {
+			fn.params = [fn.receiver, ...fn.params]
+		}
+
 		this.params(fn.params)
 		this.writeln(') {')
 		this.stmts(fn.body)

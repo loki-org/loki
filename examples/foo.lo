@@ -2,8 +2,7 @@
 
 struct Foo{}
 
-// TODO how to store this so it can generate inside the class for TS and as a function for C?
-fun (f Foo) say_hi() {
+fun (f Foo) say_hi(msg string) {
 	#ts.'console.log("hi")'
 }
 

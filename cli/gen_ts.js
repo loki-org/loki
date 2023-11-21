@@ -31,14 +31,42 @@ class TsGen extends BaseGen {
 	}
 
 	fun(fn) {
+		if (fn.is_method) {
+			return
+		}
+
 		if (fn.is_pub) {
 			this.pub_syms.push(fn.name)
 		}
 
+		this.write('function ')
+		this.fun_or_method(fn)
+	}
+
+	fun_or_method(fn) {
 		const ret_type = this.type(fn.return_type)
-		this.write(`function ${fn.name}(`)
+		this.write(`${fn.name}(`)
 		this.params(fn.params)
 		this.writeln(`): ${ret_type} {`)
+
+		if (fn.is_method) {
+			const rec_assign_this = {
+				kind: 'assign',
+				op: 'decl_assign',
+				left: {
+					kind: 'ident',
+					name: fn.receiver.name,
+					type: fn.receiver_type,
+				},
+				right: {
+					kind: 'ident',
+					name: 'this',
+					type: fn.receiver_type,
+				},
+			}
+			fn.body = [rec_assign_this, ...fn.body]
+		}
+
 		this.stmts(fn.body)
 		this.writeln('}\n')
 	}
@@ -62,8 +90,18 @@ class TsGen extends BaseGen {
 			this.pub_syms.push(stmt.name)
 		}
 
+		const sym = this.table.sym(stmt.type)
+
 		this.writeln(`class ${stmt.name} {`)
+		this.indent++
+
 		// TODO fields
+
+		sym.methods.forEach((method) => {
+			this.fun_or_method(method)
+		})
+
+		this.indent--
 		this.writeln(`}\n`)
 	}
 

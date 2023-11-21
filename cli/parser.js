@@ -224,12 +224,7 @@ class Parser{
 		const body = this.block()
 		this.check('rcur')
 
-		this.root_scope.register(name, {
-			type: ret_type,
-			params,
-		})
-
-		return {
+		const fn = {
 			is_pub,
 			kind: 'fun',
 			is_method,
@@ -240,6 +235,18 @@ class Parser{
 			body,
 			attrs: this.attributes,
 		}
+
+		if (receiver) {
+			let sym = this.table.sym(receiver.type)
+			sym.methods.push(fn)
+			return fn
+		}
+
+		this.root_scope.register(name, {
+			type: ret_type,
+			params,
+		})
+		return fn
 	}
 
 	params() {
@@ -305,10 +312,17 @@ class Parser{
 		// TODO fields
 		this.check('rcur')
 
+		const idx = this.table.register({
+			kind: 'struct',
+			name,
+			methods: [],
+		})
+
 		return {
 			is_pub,
 			kind: 'struct',
 			name,
+			type: idx,
 		}
 	}
 
