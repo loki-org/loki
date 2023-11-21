@@ -1,11 +1,15 @@
 #c.'#include <stdio.h>'
 
-fun split() {}
+pub struct Foo{}
+
+// fun (s string) lo_split(delim string) []string {
+// 	return []string
+// }
 
 // TODO return type
 pub fun ini_decode(s string) {
-	// lines := split(s, "\n")
-	#ts.'console.log(s)'
+	// lines := s.lo_split("\n")
+	// #ts.'console.log(lines)'
 }
 
 @main

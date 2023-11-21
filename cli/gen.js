@@ -72,6 +72,10 @@ class BaseGen {
 				this.return_stmt(stmt)
 				break
 			}
+			case 'struct': {
+				this.struct(stmt)
+				break
+			}
 			case 'expr': {
 				this.expr(stmt.expr)
 				this.writeln(this.semi)
@@ -187,6 +191,10 @@ class BaseGen {
 	}
 
 	return_stmt(stmt) {
+		throw new Error('Not implemented')
+	}
+
+	struct(stmt) {
 		throw new Error('Not implemented')
 	}
 

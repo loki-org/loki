@@ -81,6 +81,10 @@ class Checker {
 				this.return_stmt(stmt)
 				break
 			}
+			case 'struct': {
+				this.struct(stmt)
+				break
+			}
 			case 'expr': {
 				this.expr(stmt.expr)
 				break
@@ -143,6 +147,10 @@ class Checker {
 
 	return_stmt(stmt) {
 		this.expr(stmt.expr)
+	}
+
+	struct(stmt) {
+		// Nothing to do currently
 	}
 
 	expr(expr) {

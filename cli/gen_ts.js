@@ -57,6 +57,16 @@ class TsGen extends BaseGen {
 		this.writeln('')
 	}
 
+	struct(stmt) {
+		if (stmt.is_pub) {
+			this.pub_syms.push(stmt.name)
+		}
+
+		this.writeln(`class ${stmt.name} {`)
+		// TODO fields
+		this.writeln(`}\n`)
+	}
+
 	array_init(node) {
 		if (node.exprs.length === 0) {
 			this.write(`new Array<${this.type(node.elem_type)}>()`)

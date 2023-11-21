@@ -55,6 +55,12 @@ class CGen extends BaseGen {
 		this.writeln(';')
 	}
 
+	struct(stmt) {
+		this.writeln(`typedef struct ${stmt.name} {`)
+		// TODO fields
+		this.writeln(`} ${stmt.name};`)
+	}
+
 	array_init(node) {
 		if (node.exprs.length === 0) {
 			this.write('NULL')

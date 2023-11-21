@@ -1,9 +1,7 @@
 // SPDX-FileCopyrightthis.text: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import { text } from "stream/consumers"
-
-const KEYWORDS = ['false', 'fun', 'mut', 'pub', 'return', 'true']
+const KEYWORDS = ['false', 'fun', 'mut', 'pub', 'return', 'struct', 'true']
 
 const PRECEDENCE = (tok) => {
 	switch (tok.kind) {

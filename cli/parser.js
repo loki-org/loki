@@ -114,6 +114,9 @@ class Parser{
 			case 'key_fun': {
 				return this.fun()
 			}
+			case 'key_struct': {
+				return this.struct()
+			}
 			default:
 				throw new Error(this.tok.kind)
 		}
@@ -272,6 +275,24 @@ class Parser{
 		return {
 			kind: 'return',
 			expr,
+		}
+	}
+
+	struct() {
+		const is_pub = this.was_pub()
+
+		this.next()
+		const name = this.tok.value
+		this.check('name')
+
+		this.check('lcur')
+		// TODO fields
+		this.check('rcur')
+
+		return {
+			is_pub,
+			kind: 'struct',
+			name,
 		}
 	}
 
