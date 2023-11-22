@@ -18,5 +18,6 @@ pub fun ini_decode(s string) {
 
 @main
 fun my_main() {
+	f := Foo{}
 	ini_decode("a\nb\nc")
 }

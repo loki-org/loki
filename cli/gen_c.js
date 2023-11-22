@@ -60,7 +60,7 @@ class CGen extends BaseGen {
 		this.writeln(';')
 	}
 
-	struct(stmt) {
+	struct_decl(stmt) {
 		this.writeln(`typedef struct ${stmt.name} {`)
 		// TODO fields
 		this.writeln(`} ${stmt.name};`)
@@ -158,6 +158,11 @@ class CGen extends BaseGen {
 		}
 
 		this.write(`"${expr.value}"`)
+	}
+
+	struct_init(expr) {
+		// TODO fields
+		this.write(`(${this.type(expr.type)}){}`)
 	}
 
 	gen_main(name, with_args) {

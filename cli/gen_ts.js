@@ -85,7 +85,7 @@ class TsGen extends BaseGen {
 		this.writeln('')
 	}
 
-	struct(stmt) {
+	struct_decl(stmt) {
 		if (stmt.is_pub) {
 			this.pub_syms.push(stmt.name)
 		}
@@ -174,6 +174,11 @@ class TsGen extends BaseGen {
 	string(expr) {
 		const quote = expr.value.includes('\n') ? '`' : '"'
 		this.write(`${quote}${expr.value}${quote}`)
+	}
+
+	struct_init(expr) {
+		// TODO fields
+		this.write(`new ${expr.name}()`)
 	}
 
 	gen_main(name, with_args) {

@@ -72,8 +72,8 @@ class BaseGen {
 				this.return_stmt(stmt)
 				break
 			}
-			case 'struct': {
-				this.struct(stmt)
+			case 'struct_decl': {
+				this.struct_decl(stmt)
 				break
 			}
 			case 'expr': {
@@ -122,6 +122,10 @@ class BaseGen {
 			}
 			case 'string': {
 				this.string(expr)
+				break
+			}
+			case 'struct_init': {
+				this.struct_init(expr)
 				break
 			}
 			default:
@@ -194,7 +198,7 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
-	struct(stmt) {
+	struct_decl(stmt) {
 		throw new Error('Not implemented')
 	}
 
@@ -215,6 +219,10 @@ class BaseGen {
 	}
 
 	string(expr) {
+		throw new Error('Not implemented')
+	}
+
+	struct_init(expr) {
 		throw new Error('Not implemented')
 	}
 

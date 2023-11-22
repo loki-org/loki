@@ -115,7 +115,7 @@ class Parser{
 				return this.fun()
 			}
 			case 'key_struct': {
-				return this.struct()
+				return this.struct_decl()
 			}
 			default:
 				throw new Error(this.tok.kind)
@@ -301,7 +301,7 @@ class Parser{
 		}
 	}
 
-	struct() {
+	struct_decl() {
 		const is_pub = this.was_pub()
 
 		this.next()
@@ -320,7 +320,7 @@ class Parser{
 
 		return {
 			is_pub,
-			kind: 'struct',
+			kind: 'struct_decl',
 			name,
 			type: idx,
 		}
@@ -484,6 +484,10 @@ class Parser{
 			return this.call_expr()
 		}
 
+		if (this.next_tok.kind === 'lcur') {
+			return this.struct_init()
+		}
+
 		return this.ident()
 	}
 
@@ -502,6 +506,19 @@ class Parser{
 		return {
 			kind: 'string',
 			value: val
+		}
+	}
+
+	struct_init() {
+		const type = this.type()
+		const name = this.prev_tok.value
+		this.check('lcur')
+		// TODO fields
+		this.check('rcur')
+		return {
+			kind: 'struct_init',
+			type,
+			name,
 		}
 	}
 }

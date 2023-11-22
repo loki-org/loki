@@ -81,8 +81,8 @@ class Checker {
 				this.return_stmt(stmt)
 				break
 			}
-			case 'struct': {
-				this.struct(stmt)
+			case 'struct_decl': {
+				this.struct_decl(stmt)
 				break
 			}
 			case 'expr': {
@@ -154,7 +154,7 @@ class Checker {
 		this.expr(stmt.expr)
 	}
 
-	struct(stmt) {
+	struct_decl(stmt) {
 		// Nothing to do currently
 	}
 
@@ -186,6 +186,9 @@ class Checker {
 			}
 			case 'string': {
 				return IDXS.string
+			}
+			case 'struct_init': {
+				return this.struct_init(expr)
 			}
 			default: {
 				throw new Error(`cannot check ${expr.kind}`)
@@ -280,6 +283,11 @@ class Checker {
 	}
 
 	map_init(expr) {
+		return expr.type
+	}
+
+	struct_init(expr) {
+		// TODO fields
 		return expr.type
 	}
 
