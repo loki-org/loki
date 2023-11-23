@@ -31,4 +31,13 @@ class Table {
 	}
 }
 
-export { Table, IDXS }
+function get_method(sym, name) {
+	for (const method of sym.methods) {
+		if (method.name === name) {
+			return method
+		}
+	}
+	return null
+}
+
+export { Table, IDXS, get_method }

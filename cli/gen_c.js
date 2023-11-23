@@ -33,13 +33,13 @@ class CGen extends BaseGen {
 	}
 
 	fun(fn) {
-		const ret_type = this.type(fn.return_type)
-		this.write(`${ret_type} ${fn.name}(`)
-
 		if (fn.is_method) {
+			fn.name = this.type(fn.receiver.type) + '_' + fn.name
 			fn.params = [fn.receiver, ...fn.params]
 		}
 
+		const ret_type = this.type(fn.return_type)
+		this.write(`${ret_type} ${fn.name}(`)
 		this.params(fn.params)
 		this.writeln(') {')
 		this.stmts(fn.body)
@@ -140,6 +140,15 @@ class CGen extends BaseGen {
 
 	map_init(expr) {
 		this.write('new_Map()')
+	}
+
+	method_call(expr) {
+		if (expr.is_method) {
+			expr.name = this.type(expr.left_type) + '_' + expr.name
+			expr.args = [expr.left, ...expr.args]
+		}
+
+		this.fun_call(expr)
 	}
 
 	string(expr) {

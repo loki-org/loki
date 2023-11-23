@@ -171,6 +171,12 @@ class TsGen extends BaseGen {
 		this.write(`new Map<${this.type(expr.key_type)}, ${this.type(expr.val_type)}>()`)
 	}
 
+	method_call(expr) {
+		this.expr(expr.left)
+		this.write('.')
+		this.fun_call(expr)
+	}
+
 	string(expr) {
 		const quote = expr.value.includes('\n') ? '`' : '"'
 		this.write(`${quote}${expr.value}${quote}`)

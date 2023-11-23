@@ -2,8 +2,9 @@
 
 struct Foo{}
 
-fun (f Foo) say_hi(msg string) {
+fun (f Foo) say_hi() {
 	#ts.'console.log("hi")'
+	#c.'printf("hi\n");'
 }
 
 // fun (s string) lo_split(delim string) []string {
@@ -19,5 +20,6 @@ pub fun ini_decode(s string) {
 @main
 fun my_main() {
 	f := Foo{}
+	f.say_hi()
 	ini_decode("a\nb\nc")
 }

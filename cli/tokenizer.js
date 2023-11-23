@@ -5,6 +5,8 @@ const KEYWORDS = ['false', 'fun', 'mut', 'pub', 'return', 'struct', 'true']
 
 const PRECEDENCE = (tok) => {
 	switch (tok.kind) {
+		case 'dot':
+			return 3
 		case 'mul':
 		case 'div':
 			return 2

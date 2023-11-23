@@ -331,6 +331,8 @@ class Parser{
 		while (precedence < PRECEDENCE(this.tok)) {
 			if (is_infix(this.tok)) {
 				left = this.infix_expr(left)
+			} else if (this.tok.kind === 'dot') {
+				left = this.dot_expr(left)
 			} else {
 				return left
 			}
@@ -410,6 +412,13 @@ class Parser{
 		}
 	}
 
+	method(left) {
+		const expr = this.call_expr()
+		expr.is_method = true
+		expr.left = left
+		return expr
+	}
+
 	call_args() {
 		const args = []
 		while (this.tok.kind !== 'rpar') {
@@ -419,6 +428,11 @@ class Parser{
 			}
 		}
 		return args
+	}
+
+	dot_expr(left) {
+		this.next()
+		return this.method(left)
 	}
 
 	ident() {

@@ -97,7 +97,7 @@ class BaseGen {
 				break
 			}
 			case 'call': {
-				this.call(expr)
+				this.call_expr(expr)
 				break
 			}
 			case 'ident': {
@@ -145,7 +145,16 @@ class BaseGen {
 		this.write(expr.value ? 'true' : 'false')
 	}
 
-	call(expr) {
+	call_expr(expr) {
+		if (expr.is_method) {
+			this.method_call(expr)
+			return
+		}
+
+		this.fun_call(expr)
+	}
+
+	fun_call(expr) {
 		this.write(expr.name)
 		this.write('(')
 		expr.args.forEach((arg, i) => {
@@ -215,6 +224,10 @@ class BaseGen {
 	}
 
 	map_init(expr) {
+		throw new Error('Not implemented')
+	}
+
+	method_call(expr) {
 		throw new Error('Not implemented')
 	}
 

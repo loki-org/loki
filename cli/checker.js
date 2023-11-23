@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import { IDXS } from './types.js'
+import { IDXS, get_method } from './types.js'
 import { Scope } from './scope.js'
 import { BACKENDS } from './backends.js'
 
@@ -220,10 +220,21 @@ class Checker {
 		return node.typ
 	}
 
+	get_fun_def(expr) {
+		if (expr.is_method) {
+			expr.left_type = this.expr(expr.left)
+			const lsym = this.table.sym(expr.left_type)
+			return get_method(lsym, expr.name)
+		}
+
+		return this.root_scope.find(expr.name)
+	}
+
 	call_expr(expr) {
-		const def = this.root_scope.find(expr.name)
+		const def = this.get_fun_def(expr)
 		if (def === null) {
-			throw new Error(`unknown function ${expr.name}`)
+			const msg = expr.is_method ? 'method' : 'function'
+			throw new Error(`unknown ${msg} ${expr.name}`)
 		}
 
 		if (def.params.length !== expr.args.length) {
