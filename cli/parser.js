@@ -97,6 +97,9 @@ class Parser{
 			case 'comment': {
 				return this.comment()
 			}
+			case 'dollar': {
+				return this.comptime_stmt()
+			}
 			case 'hash': {
 				return this.hash_stmt()
 			}
@@ -133,6 +136,9 @@ class Parser{
 			case 'hash': {
 				return this.hash_stmt()
 			}
+			case 'key_if': {
+				return this.if_stmt()
+			}
 			case 'key_mut': {
 				return this.assign_stmt()
 			}
@@ -167,6 +173,11 @@ class Parser{
 			left,
 			right
 		}
+	}
+
+	comptime_stmt() {
+		// TODO
+		throw new Error('TODO')
 	}
 
 	parse_attributes() {
@@ -279,6 +290,37 @@ class Parser{
 			kind: 'hash',
 			lang,
 			value: val,
+		}
+	}
+
+	if_stmt() {
+		let has_else = false
+		const branches = []
+		do {
+			if (this.tok.kind === 'key_else') {
+				this.next()
+
+				if (this.tok.kind === 'lcur') {
+					has_else = true
+					this.check('lcur')
+					const body = this.block()
+					this.check('rcur')
+					branches.push({ cond: null, body })
+					break
+				}
+			}
+
+			this.check('key_if')
+			const cond = this.expr()
+			this.check('lcur')
+			const body = this.block()
+			this.check('rcur')
+			branches.push({ cond, body })
+		} while(this.tok.kind === 'key_else')
+
+		return {
+			kind: 'if',
+			branches,
 		}
 	}
 

@@ -68,6 +68,10 @@ class BaseGen {
 				this.hash_stmt(stmt)
 				break
 			}
+			case 'if': {
+				this.if_stmt(stmt)
+				break
+			}
 			case 'return': {
 				this.return_stmt(stmt)
 				break
@@ -139,6 +143,25 @@ class BaseGen {
 		}
 
 		this.writeln(stmt.value)
+	}
+
+	if_stmt(stmt) {
+		stmt.branches.forEach((branch, i) => {
+			if (branch.cond) {
+				this.write('if (')
+				this.expr(branch.cond)
+				this.write(') ')
+			}
+
+			this.writeln('{')
+			this.stmts(branch.body)
+			this.write('}')
+
+			if (i < stmt.branches.length - 1) {
+				this.write(' else ')
+			}
+		})
+		this.writeln('')
 	}
 
 	bool(expr) {

@@ -77,6 +77,10 @@ class Checker {
 				this.hash_stmt(stmt)
 				break
 			}
+			case 'if': {
+				this.if_stmt(stmt)
+				break
+			}
 			case 'return': {
 				this.return_stmt(stmt)
 				break
@@ -147,6 +151,15 @@ class Checker {
 	hash_stmt(stmt) {
 		if (!Object.keys(BACKENDS).includes(stmt.lang)) {
 			throw new Error(`backend ${stmt.lang} does not exist`)
+		}
+	}
+
+	if_stmt(stmt) {
+		for (const branch of stmt.branches) {
+			if (branch.cond) {
+				this.expr(branch.cond)
+			}
+			this.stmts(branch.body)
 		}
 	}
 
