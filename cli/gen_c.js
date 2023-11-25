@@ -34,7 +34,7 @@ class CGen extends BaseGen {
 
 	fun(fn) {
 		if (fn.is_method) {
-			fn.name = this.type(fn.receiver.type) + '_' + fn.name
+			fn.name = c_name(this.type(fn.receiver.type)) + '_' + fn.name
 			fn.params = [fn.receiver, ...fn.params]
 		}
 
@@ -144,7 +144,7 @@ class CGen extends BaseGen {
 
 	method_call(expr) {
 		if (expr.is_method) {
-			expr.name = this.type(expr.left_type) + '_' + expr.name
+			expr.name = c_name(this.type(expr.left_type)) + '_' + expr.name
 			expr.args = [expr.left, ...expr.args]
 		}
 
@@ -209,6 +209,10 @@ class CGen extends BaseGen {
 		}
 		return sym.name
 	}
+}
+
+function c_name(name) {
+	return name.replaceAll('*', 'ptr')
 }
 
 export { CGen }

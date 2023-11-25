@@ -238,6 +238,9 @@ class Parser{
 
 		if (receiver) {
 			let sym = this.table.sym(receiver.type)
+			if (!sym.methods) {
+				sym.methods = []
+			}
 			sym.methods.push(fn)
 			return fn
 		}
@@ -315,7 +318,6 @@ class Parser{
 		const idx = this.table.register({
 			kind: 'struct',
 			name,
-			methods: [],
 		})
 
 		return {

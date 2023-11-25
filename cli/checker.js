@@ -248,7 +248,7 @@ class Checker {
 			}
 		})
 
-		return def.type
+		return def.return_type
 	}
 
 	ident(expr) {
