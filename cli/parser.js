@@ -12,6 +12,8 @@ class Parser{
 		this.pos = 0
 		this.attributes = []
 		this.root_scope = new Scope(null)
+		this.toplevel = true
+		this.struct_possible = true
 
 		this.next()
 		this.next()
@@ -98,6 +100,7 @@ class Parser{
 				return this.comment()
 			}
 			case 'dollar': {
+				this.toplevel = true
 				return this.comptime_stmt()
 			}
 			case 'hash': {
@@ -115,6 +118,7 @@ class Parser{
 	pub_stmt() {
 		switch (this.tok.kind) {
 			case 'key_fun': {
+				this.toplevel = false
 				return this.fun()
 			}
 			case 'key_struct': {
@@ -129,6 +133,9 @@ class Parser{
 		switch (this.tok.kind) {
 			case 'comment': {
 				return this.comment()
+			}
+			case 'dollar': {
+				return this.comptime_stmt()
 			}
 			case 'name': {
 				return this.name_stmt()
@@ -151,10 +158,16 @@ class Parser{
 	}
 
 	block() {
+		this.check('lcur')
 		const stmts = []
 		while (this.tok.kind !== 'rcur') {
-			stmts.push(this.stmt())
+			if (this.toplevel) {
+				stmts.push(this.toplevel_stmt())
+			} else {
+				stmts.push(this.stmt())
+			}
 		}
+		this.check('rcur')
 		return stmts
 	}
 
@@ -176,8 +189,12 @@ class Parser{
 	}
 
 	comptime_stmt() {
-		// TODO
-		throw new Error('TODO')
+		this.next()
+		if (this.tok.kind === 'key_if') {
+			return this.if_stmt(true)
+		}
+
+		throw new Error(`Unknown comptime statement ${this.tok.kind}`)
 	}
 
 	parse_attributes() {
@@ -231,9 +248,7 @@ class Parser{
 			ret_type = this.type()
 		}
 
-		this.check('lcur')
 		const body = this.block()
-		this.check('rcur')
 
 		const fn = {
 			is_pub,
@@ -293,34 +308,40 @@ class Parser{
 		}
 	}
 
-	if_stmt() {
-		let has_else = false
+	if_stmt(is_comptime = false) {
 		const branches = []
 		do {
 			if (this.tok.kind === 'key_else') {
 				this.next()
 
 				if (this.tok.kind === 'lcur') {
-					has_else = true
-					this.check('lcur')
-					const body = this.block()
-					this.check('rcur')
+					const body = this.block(is_comptime)
 					branches.push({ cond: null, body })
 					break
+				}
+
+				if (is_comptime) {
+					this.check('dollar')
 				}
 			}
 
 			this.check('key_if')
+			this.struct_possible = false
 			const cond = this.expr()
-			this.check('lcur')
-			const body = this.block()
-			this.check('rcur')
+			this.struct_possible = true
+			const body = this.block(is_comptime)
 			branches.push({ cond, body })
+
+			if (is_comptime && this.tok.kind === 'dollar') {
+				this.next()
+			}
+
 		} while(this.tok.kind === 'key_else')
 
 		return {
 			kind: 'if',
 			branches,
+			is_comptime,
 		}
 	}
 
@@ -542,7 +563,7 @@ class Parser{
 			return this.call_expr()
 		}
 
-		if (this.next_tok.kind === 'lcur') {
+		if (this.struct_possible && this.next_tok.kind === 'lcur') {
 			return this.struct_init()
 		}
 

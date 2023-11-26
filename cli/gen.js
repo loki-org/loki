@@ -146,6 +146,11 @@ class BaseGen {
 	}
 
 	if_stmt(stmt) {
+		if (stmt.is_comptime) {
+			this.comptime_if(stmt)
+			return
+		}
+
 		stmt.branches.forEach((branch, i) => {
 			if (branch.cond) {
 				this.write('if (')
@@ -161,6 +166,25 @@ class BaseGen {
 				this.write(' else ')
 			}
 		})
+		this.writeln('')
+	}
+
+	comptime_if(stmt) {
+		let gen_else = true
+
+		this.indent--
+		stmt.branches.forEach((branch, i) => {
+			if (branch.cond) {
+				if (branch.cond.name !== this.prefs.backend) {
+					return
+				}
+				gen_else = false
+			} else if (!gen_else) {
+				return
+			}
+			this.stmts(branch.body)
+		})
+		this.indent++
 		this.writeln('')
 	}
 

@@ -28,6 +28,8 @@ const ATTRS = {
 	},
 }
 
+const COMPTIME_CONDS = Object.keys(BACKENDS)
+
 class Checker {
 	constructor(table, prefs) {
 		this.table = table
@@ -157,7 +159,13 @@ class Checker {
 	if_stmt(stmt) {
 		for (const branch of stmt.branches) {
 			if (branch.cond) {
-				this.expr(branch.cond)
+				if (stmt.is_comptime) {
+					if (branch.cond.kind !== 'ident' || !COMPTIME_CONDS.includes(branch.cond.name)) {
+						throw new Error(`comptime condition must be on of ${COMPTIME_CONDS}`)
+					}
+				} else {
+					this.expr(branch.cond)
+				}
 			}
 			this.stmts(branch.body)
 		}
