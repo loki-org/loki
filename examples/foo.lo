@@ -1,12 +1,8 @@
 #c.'#include <stdio.h>'
 
-$if c {
-	fun (s string) lo_split(delim string) []string {
-		return []string
-	}
-} $else $if ts {
-	@alias('split')
-	fun (s string) lo_split(delim string) []string {}
+// #ts.@alias('split')
+fun (s string) lo_split(delim string) []string {
+	return []string
 }
 
 // TODO return type

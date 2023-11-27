@@ -12,7 +12,6 @@ class Parser{
 		this.pos = 0
 		this.attributes = []
 		this.root_scope = new Scope(null)
-		this.toplevel = true
 		this.struct_possible = true
 
 		this.next()
@@ -99,9 +98,6 @@ class Parser{
 			case 'comment': {
 				return this.comment()
 			}
-			case 'dollar': {
-				return this.comptime_stmt()
-			}
 			case 'hash': {
 				return this.hash_stmt()
 			}
@@ -117,10 +113,7 @@ class Parser{
 	pub_stmt() {
 		switch (this.tok.kind) {
 			case 'key_fun': {
-				this.toplevel = false
-				const fn = this.fun()
-				this.toplevel = true
-				return fn
+				return this.fun()
 			}
 			case 'key_struct': {
 				return this.struct_decl()
@@ -162,11 +155,7 @@ class Parser{
 		this.check('lcur')
 		const stmts = []
 		while (this.tok.kind !== 'rcur') {
-			if (this.toplevel) {
-				stmts.push(this.toplevel_stmt())
-			} else {
-				stmts.push(this.stmt())
-			}
+			stmts.push(this.stmt())
 		}
 		this.check('rcur')
 		return stmts
