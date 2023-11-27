@@ -205,8 +205,20 @@ class Parser{
 			const name = this.tok.value
 			this.check('name')
 
+			let args = []
+			if (this.tok.kind === 'lpar') {
+				this.next()
+				args.push(this.string().value)
+				while (this.tok.kind === 'comma') {
+					this.next()
+					args.push(this.string().value)
+				}
+				this.check('rpar')
+			}
+
 			this.attributes.push({
-				name
+				name,
+				args,
 			})
 		}
 	}

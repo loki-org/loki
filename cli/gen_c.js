@@ -33,6 +33,10 @@ class CGen extends BaseGen {
 	}
 
 	fun(fn) {
+		if (fn.is_alias) {
+			return
+		}
+
 		if (fn.is_method) {
 			fn.name = c_name(this.type(fn.receiver.type)) + '_' + fn.name
 			fn.params = [fn.receiver, ...fn.params]

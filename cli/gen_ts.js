@@ -31,7 +31,7 @@ class TsGen extends BaseGen {
 	}
 
 	fun(fn) {
-		if (fn.is_method) {
+		if (fn.is_alias || fn.is_method) {
 			return
 		}
 

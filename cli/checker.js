@@ -9,6 +9,7 @@ const ATTRS = {
 	'main': {
 		applies: 'fun',
 		max: 1,
+		arg_count: 0,
 		check: (checker, fun) => {
 			if (fun.return_type !== IDXS.void) {
 				throw new Error(`main function cannot return a value`)
@@ -24,8 +25,21 @@ const ATTRS = {
 			}
 
 			checker.main_fun = fun
-		}
+		},
 	},
+	'alias': {
+		applies: 'method',
+		max: -1,
+		arg_count: 1,
+		check: (checker, fun, args) => {
+			fun.is_alias = true
+
+			const rec_sym = checker.table.sym(fun.receiver.type)
+			const def = get_method(rec_sym, fun.name)
+			def.is_alias = true
+			def.alias_name = args[0]
+		},
+	}
 }
 
 const COMPTIME_CONDS = Object.keys(BACKENDS)
@@ -269,6 +283,10 @@ class Checker {
 			}
 		})
 
+		if (def.is_alias) {
+			expr.name = def.alias_name
+		}
+
 		return def.return_type
 	}
 
@@ -331,7 +349,13 @@ class Checker {
 			}
 
 			if (def.applies !== node.kind) {
-				throw new Error(`attribute @${attr.name} does not apply to ${node.kind}`)
+				if (def.applies !== 'method' || node.kind !== 'fun' || !node.is_method) {
+					throw new Error(`attribute @${attr.name} does not apply to ${node.kind}`)
+				}
+			}
+
+			if (attr.args.length !== def.arg_count) {
+				throw new Error(`attribute @${attr.name} expects ${def.arg_count} args, got ${attr.args.length}`)
 			}
 
 			if (def.max != -1) {
@@ -341,7 +365,7 @@ class Checker {
 				def.max--
 			}
 
-			def.check(this, node)
+			def.check(this, node, attr.args)
 		})
 	}
 }
