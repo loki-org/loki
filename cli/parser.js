@@ -100,7 +100,6 @@ class Parser{
 				return this.comment()
 			}
 			case 'dollar': {
-				this.toplevel = true
 				return this.comptime_stmt()
 			}
 			case 'hash': {
@@ -119,7 +118,9 @@ class Parser{
 		switch (this.tok.kind) {
 			case 'key_fun': {
 				this.toplevel = false
-				return this.fun()
+				const fn = this.fun()
+				this.toplevel = true
+				return fn
 			}
 			case 'key_struct': {
 				return this.struct_decl()
