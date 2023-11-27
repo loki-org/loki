@@ -58,7 +58,7 @@ Options:
 	const parser = new Parser(tokens, table)
 	const ast = parser.parse()
 
-	const checker = new Checker(table)
+	const checker = new Checker(table, prefs)
 	checker.check(ast)
 
 	const gen = new BACKENDS[prefs.backend](table, prefs)

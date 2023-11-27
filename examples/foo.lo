@@ -1,6 +1,6 @@
 #c.'#include <stdio.h>'
 
-// #ts.@alias('split')
+#ts.@alias('split')
 fun (s string) lo_split(delim string) []string {
 	return []string
 }

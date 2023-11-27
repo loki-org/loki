@@ -109,6 +109,9 @@ class Checker {
 				this.expr(stmt.expr)
 				break
 			}
+			case 'skip': {
+				break
+			}
 			default: {
 				throw new Error(`cannot check ${stmt.kind}`)
 			}
@@ -365,7 +368,9 @@ class Checker {
 				def.max--
 			}
 
-			def.check(this, node, attr.args)
+			if (attr.lang.length === 0 || attr.lang === this.prefs.backend) {
+				def.check(this, node, attr.args)
+			}
 		})
 	}
 }

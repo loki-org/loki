@@ -85,6 +85,9 @@ class BaseGen {
 				this.writeln(this.semi)
 				break
 			}
+			case 'skip': {
+				break
+			}
 			default:
 				throw new Error(`cannot gen ${stmt.kind}`)
 		}

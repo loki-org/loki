@@ -12,6 +12,7 @@ class Parser{
 		this.pos = 0
 		this.attributes = []
 		this.root_scope = new Scope(null)
+		this.toplevel = true
 		this.struct_possible = true
 
 		this.next()
@@ -113,7 +114,11 @@ class Parser{
 	pub_stmt() {
 		switch (this.tok.kind) {
 			case 'key_fun': {
-				return this.fun()
+				this.toplevel = false
+				const fn = this.fun()
+				this.toplevel = true
+				this.attributes = []
+				return fn
 			}
 			case 'key_struct': {
 				return this.struct_decl()
@@ -188,28 +193,32 @@ class Parser{
 	}
 
 	parse_attributes() {
-		this.attributes = []
 		while (this.tok.kind === 'at') {
-			this.next()
-			const name = this.tok.value
-			this.check('name')
+			this.parse_attribute()
+		}
+	}
 
-			let args = []
-			if (this.tok.kind === 'lpar') {
+	parse_attribute(lang = '') {
+		this.next()
+		const name = this.tok.value
+		this.check('name')
+
+		let args = []
+		if (this.tok.kind === 'lpar') {
+			this.next()
+			args.push(this.string().value)
+			while (this.tok.kind === 'comma') {
 				this.next()
 				args.push(this.string().value)
-				while (this.tok.kind === 'comma') {
-					this.next()
-					args.push(this.string().value)
-				}
-				this.check('rpar')
 			}
-
-			this.attributes.push({
-				name,
-				args,
-			})
+			this.check('rpar')
 		}
+
+		this.attributes.push({
+			name,
+			args,
+			lang,
+		})
 	}
 
 	comment() {
@@ -300,6 +309,16 @@ class Parser{
 		const lang = this.tok.value
 		this.next()
 		this.check('dot')
+
+		if (this.toplevel) {
+			if (this.tok.kind === 'at') {
+				this.parse_attribute(lang)
+				return {
+					kind: 'skip'
+				}
+			}
+		}
+
 		const val = this.tok.value
 		this.check('string')
 
