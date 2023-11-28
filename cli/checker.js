@@ -85,6 +85,10 @@ class Checker {
 			case 'comment': {
 				break
 			}
+			case 'for_cond': {
+				this.for_cond(stmt)
+				break
+			}
 			case 'fun': {
 				this.fun(stmt)
 				break
@@ -143,6 +147,14 @@ class Checker {
 		if (ltype !== rtype) {
 			throw new Error(`cannot assign ${rtype} to ${ltype}`)
 		}
+	}
+
+	for_cond(stmt) {
+		const type = this.expr(stmt.cond)
+		if (type !== IDXS.bool) {
+			throw new Error('condition must be a bool')
+		}
+		this.stmts(stmt.body)
 	}
 
 	fun(stmt) {

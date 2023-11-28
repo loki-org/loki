@@ -142,6 +142,9 @@ class Parser{
 			case 'hash': {
 				return this.hash_stmt()
 			}
+			case 'key_for': {
+				return this.for_loop()
+			}
 			case 'key_if': {
 				return this.if_stmt()
 			}
@@ -226,6 +229,17 @@ class Parser{
 		return {
 			kind: 'comment',
 			text: this.prev_tok.value
+		}
+	}
+
+	for_loop() {
+		this.next()
+		const cond = this.expr()
+		const body = this.block()
+		return {
+			kind: 'for_cond',
+			cond,
+			body,
 		}
 	}
 

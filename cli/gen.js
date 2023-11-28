@@ -66,6 +66,10 @@ class BaseGen {
 				this.writeln(this.comment_str(stmt.text))
 				break
 			}
+			case 'for_cond': {
+				this.for_cond(stmt)
+				break
+			}
 			case 'fun': {
 				this.fun(stmt)
 				break
@@ -144,6 +148,14 @@ class BaseGen {
 			default:
 				throw new Error(`cannot gen ${expr.kind}`)
 		}
+	}
+
+	for_cond(stmt) {
+		this.write('while (')
+		this.expr(stmt.cond)
+		this.writeln(') {')
+		this.stmts(stmt.body)
+		this.writeln('}')
 	}
 
 	hash_stmt(stmt) {
