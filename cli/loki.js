@@ -2,12 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import * as process from 'process'
-import * as fs from 'fs'
-import { Table } from './types.js'
-import { Tokenizer } from './tokenizer.js'
-import { Parser } from './parser.js'
-import { Checker } from './checker.js'
-import { BACKENDS } from './backends.js'
+import { Builder } from './builder.js'
 
 function parse_args(args) {
 	const prefs = {
@@ -48,27 +43,8 @@ Options:
 	}
 
 	const prefs = parse_args(process.argv.slice(2))
-
-	const text = fs.readFileSync(prefs.file, 'utf-8')
-	const tok = new Tokenizer(text)
-	const tokens = tok.tokenize()
-
-	const table = new Table()
-
-	const parser = new Parser(tokens, table)
-	const ast = parser.parse()
-
-	const checker = new Checker(table, prefs)
-	checker.check(ast)
-
-	const gen = new BACKENDS[prefs.backend](table, prefs)
-	const out = gen.gen(ast)
-
-	const outname = prefs.file.split('/').pop().replace('.lo', `.${prefs.backend}`)
-	if (!fs.existsSync('out')){
-		fs.mkdirSync('out')
-	}
-	fs.writeFileSync(`out/${outname}`, out)
+	const b = new Builder(prefs)
+	b.compile()
 }
 
 main()

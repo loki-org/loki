@@ -262,17 +262,17 @@ class Checker {
 		if (expr.is_method) {
 			expr.left_type = this.expr(expr.left)
 			const lsym = this.table.sym(expr.left_type)
-			return get_method(lsym, expr.name)
+			return [get_method(lsym, expr.name), lsym]
 		}
 
-		return this.root_scope.find(expr.name)
+		return [this.root_scope.find(expr.name), null]
 	}
 
 	call_expr(expr) {
-		const def = this.get_fun_def(expr)
+		const [def, lsym] = this.get_fun_def(expr)
 		if (def === null) {
-			const msg = expr.is_method ? 'method' : 'function'
-			throw new Error(`unknown ${msg} ${expr.name}`)
+			const msg = expr.is_method ? `method ${lsym.name}.` : 'function '
+			throw new Error(`unknown ${msg}${expr.name}`)
 		}
 
 		if (def.params.length !== expr.args.length) {

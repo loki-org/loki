@@ -23,23 +23,29 @@ class BaseGen {
 		}
 	}
 
-	gen(ast) {
+	gen(asts) {
 		this.pre_stage()
 
+		for (const ast of asts) {
+			this.gen_file(ast)
+		}
+
+		this.post_stage()
+
+		return this.headers + '\n' + this.out + "\n" + this.footer
+	}
+
+	gen_file(ast) {
 		this.stmts(ast.body)
 
 		for (const imp of this.imports) {
 			this.import(imp)
 		}
 
-		if (ast.main_fun.name.length > 0) {
+		if (ast.main_fun && ast.main_fun.name.length > 0) {
 			this.indent = 0
 			this.gen_main(ast.main_fun.name, ast.main_fun.params.length > 0)
 		}
-
-		this.post_stage()
-
-		return this.headers + '\n' + this.out + "\n" + this.footer
 	}
 
 	stmts(stmts) {

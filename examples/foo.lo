@@ -1,13 +1,8 @@
 #c.'#include <stdio.h>'
 
-#ts.@alias('split')
-fun (s string) lo_split(delim string) []string {
-	return []string
-}
-
 // TODO return type
 pub fun ini_decode(s string) {
-	lines := s.lo_split("\n")
+	lines := s.split("\n")
 	// #ts.'console.log(lines)'
 	// #c.'printf("hi\n");'
 }

@@ -32,11 +32,16 @@ class Table {
 }
 
 function get_method(sym, name) {
+	if (!sym.methods) {
+		return null
+	}
+
 	for (const method of sym.methods) {
 		if (method.name === name) {
 			return method
 		}
 	}
+
 	return null
 }
 
