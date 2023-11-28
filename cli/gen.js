@@ -74,6 +74,10 @@ class BaseGen {
 				this.fun(stmt)
 				break
 			}
+			case 'loop_control': {
+				this.loop_control(stmt)
+				break
+			}
 			case 'hash': {
 				this.hash_stmt(stmt)
 				break
@@ -156,6 +160,11 @@ class BaseGen {
 		this.writeln(') {')
 		this.stmts(stmt.body)
 		this.writeln('}')
+	}
+
+	loop_control(stmt) {
+		this.write(stmt.control === 'key_break' ? 'break' : 'continue')
+		this.writeln(this.semi)
 	}
 
 	hash_stmt(stmt) {

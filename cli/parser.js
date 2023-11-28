@@ -142,6 +142,10 @@ class Parser{
 			case 'hash': {
 				return this.hash_stmt()
 			}
+			case 'key_break':
+			case 'key_continue': {
+				return this.loop_control()
+			}
 			case 'key_for': {
 				return this.for_loop()
 			}
@@ -240,6 +244,15 @@ class Parser{
 			kind: 'for_cond',
 			cond,
 			body,
+		}
+	}
+
+	loop_control() {
+		const control = this.tok.kind
+		this.next()
+		return {
+			kind: 'loop_control',
+			control,
 		}
 	}
 

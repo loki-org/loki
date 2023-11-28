@@ -89,6 +89,10 @@ class Checker {
 				this.for_cond(stmt)
 				break
 			}
+			case 'loop_control': {
+				this.loop_control(stmt)
+				break
+			}
 			case 'fun': {
 				this.fun(stmt)
 				break
@@ -155,6 +159,10 @@ class Checker {
 			throw new Error('condition must be a bool')
 		}
 		this.stmts(stmt.body)
+	}
+
+	loop_control(stmt) {
+		// nothing to check yet
 	}
 
 	fun(stmt) {
