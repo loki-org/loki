@@ -362,6 +362,10 @@ class BaseGen {
 				return '*'
 			case 'div':
 				return '/'
+			case 'and':
+				return '&&'
+			case 'or':
+				return '||'
 			case 'eq':
 				return '=='
 			case 'ne':

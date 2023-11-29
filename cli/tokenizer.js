@@ -20,6 +20,9 @@ const PRECEDENCE = (tok) => {
 		case 'lt':
 		case 'le':
 			return 3
+		case 'and':
+		case 'or':
+			return 1
 		default:
 			return 0
 	}
@@ -29,7 +32,15 @@ const NAME_START_REGEX = /[a-zA-Z_]/
 const NAME_REGEX = /[a-zA-Z0-9_]/
 
 function is_infix(tok) {
-	return ['plus', 'minus', 'mul', 'div'].includes(tok.kind) || is_comparison(tok)
+	return is_math(tok) || is_logical(tok) || is_comparison(tok)
+}
+
+function is_math(tok) {
+	return ['plus', 'minus', 'mul', 'div'].includes(tok.kind)
+}
+
+function is_logical(tok) {
+	return ['and', 'or'].includes(tok.kind)
 }
 
 function is_comparison(tok) {
@@ -137,6 +148,22 @@ class Tokenizer {
 				case ':': {
 					if (this.text[this.pos] === '=') {
 						this.add_token('decl_assign')
+						this.pos++
+						continue
+					}
+					break
+				}
+				case '&': {
+					if (this.text[this.pos] === '&') {
+						this.add_token('and')
+						this.pos++
+						continue
+					}
+					break
+				}
+				case '|': {
+					if (this.text[this.pos] === '|') {
+						this.add_token('or')
 						this.pos++
 						continue
 					}
@@ -277,4 +304,4 @@ class Tokenizer {
 	}
 }
 
-export { PRECEDENCE, Tokenizer, is_infix, is_comparison, is_assign, is_math_assign }
+export { PRECEDENCE, Tokenizer, is_infix, is_math, is_logical, is_comparison, is_assign, is_math_assign }

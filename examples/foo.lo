@@ -5,11 +5,10 @@ pub fun ini_decode(s string) {
 	lines := s.split("\n")
 	for i := 0; i < lines.length; i += 1 {
 		line := lines[i]
-		// TODO &&, ||
-		// TODO string.starts_with
-		if line.length == 0 {
+		if line.length == 0 || line.starts_with(";") {
 			continue
 		}
+		#ts.'console.log(line)'
 	}
 }
 

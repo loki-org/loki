@@ -4,7 +4,7 @@
 import { IDXS, get_method } from './types.js'
 import { Scope } from './scope.js'
 import { BACKENDS } from './backends.js'
-import { is_comparison } from './tokenizer.js'
+import { is_comparison, is_logical } from './tokenizer.js'
 
 const ATTRS = {
 	'main': {
@@ -376,9 +376,10 @@ class Checker {
 			throw new Error(`types ${ltype} and ${rtype} do not match`)
 		}
 
-		if (is_comparison(expr.op)) {
+		if (is_logical(expr.op) || is_comparison(expr.op)) {
 			return IDXS.bool
 		}
+
 		return ltype
 	}
 

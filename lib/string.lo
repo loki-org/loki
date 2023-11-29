@@ -7,7 +7,12 @@ fun (s string) split(delim string) []string {
 	return []string
 }
 
+#ts.@alias('startsWith')
+fun (s string) starts_with(search string) bool {
+	// TODO c
+	return false
+}
+
 // trim_space
-// starts_with
 // ends_with
 // substring
