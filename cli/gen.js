@@ -147,6 +147,10 @@ class BaseGen {
 				this.map_init(expr)
 				break
 			}
+			case 'selector': {
+				this.selector(expr)
+				break
+			}
 			case 'string': {
 				this.string(expr)
 				break
@@ -325,6 +329,10 @@ class BaseGen {
 	}
 
 	method_call(expr) {
+		throw new Error('Not implemented')
+	}
+
+	selector(expr) {
 		throw new Error('Not implemented')
 	}
 

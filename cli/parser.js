@@ -561,7 +561,10 @@ class Parser{
 
 	dot_expr(left) {
 		this.next()
-		return this.method(left)
+		if (this.next_tok.kind === 'lpar') {
+			return this.method(left)
+		}
+		return this.selector(left)
 	}
 
 	ident() {
@@ -640,6 +643,16 @@ class Parser{
 		return {
 			kind: 'integer',
 			value: val
+		}
+	}
+
+	selector(left) {
+		const name = this.tok.value
+		this.check('name')
+		return {
+			kind: 'selector',
+			left,
+			name,
 		}
 	}
 

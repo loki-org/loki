@@ -158,6 +158,25 @@ class CGen extends BaseGen {
 		this.fun_call(expr)
 	}
 
+	selector(expr) {
+		if (expr.left_type === IDXS.string && expr.name === 'length') {
+			this.write('strlen(')
+			this.expr(expr.left)
+			this.write(')')
+			return
+		}
+
+		const lsym = this.table.sym(expr.left_type)
+		if (lsym.kind === 'array' && expr.name === 'length') {
+			this.write('Array_get_length(')
+			this.expr(expr.left)
+			this.write(')')
+			return
+		}
+
+		// TODO fields
+	}
+
 	string(expr) {
 		if (expr.value.includes('\n')) {
 			const lines = expr.value.split('\n')

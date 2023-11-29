@@ -262,6 +262,9 @@ class Checker {
 			case 'map_init': {
 				return this.map_init(expr)
 			}
+			case 'selector': {
+				return this.selector(expr)
+			}
 			case 'string': {
 				return IDXS.string
 			}
@@ -381,6 +384,17 @@ class Checker {
 
 	map_init(expr) {
 		return expr.type
+	}
+
+	selector(expr) {
+		expr.left_type = this.expr(expr.left)
+		const lsym = this.table.sym(expr.left_type)
+		if (expr.name === 'length' && (lsym.kind === 'array' || expr.left_type === IDXS.string)) {
+			return IDXS.i32
+		}
+
+		// TODO fields
+		throw new Error(`cannot select ${expr.name} from ${expr.left_type}`)
 	}
 
 	struct_init(expr) {

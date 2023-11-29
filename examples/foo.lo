@@ -3,12 +3,18 @@
 // TODO return type
 pub fun ini_decode(s string) {
 	lines := s.split("\n")
-	for i := 0; i < 5; i += 1 {
-		break
+	for i := 0; i < lines.length; i += 1 {
+		line := lines[i]
+		// TODO &&, ||
+		// TODO string.starts_with
+		if line.length == 0 {
+			continue
+		}
 	}
 }
 
 @main
 fun my_main() {
-	ini_decode("a\nb\nc")
+	ini_decode("[section]
+; my comment")
 }

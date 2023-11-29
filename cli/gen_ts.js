@@ -185,6 +185,14 @@ class TsGen extends BaseGen {
 		this.write(`${quote}${expr.value}${quote}`)
 	}
 
+	selector(expr) {
+		this.expr(expr.left)
+		this.write('.')
+		this.write(expr.name)
+
+		// TODO fields
+	}
+
 	struct_init(expr) {
 		// TODO fields
 		this.write(`new ${expr.name}()`)
