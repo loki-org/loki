@@ -27,7 +27,10 @@ class TsGen extends BaseGen {
 		this.write(this.tok_repr(stmt.op))
 		this.write(' ')
 		this.expr(stmt.right)
-		this.writeln('')
+
+		if (!this.for_loop_head) {
+			this.writeln('')
+		}
 	}
 
 	fun(fn) {

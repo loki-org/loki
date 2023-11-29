@@ -238,6 +238,22 @@ class Parser{
 
 	for_loop() {
 		this.next()
+		if (this.next_tok.kind === 'decl_assign') {
+			const init = this.stmt()
+			this.check('semi')
+			const cond = this.expr()
+			this.check('semi')
+			const step = this.stmt()
+			const body = this.block()
+			return {
+				kind: 'for_decl',
+				init,
+				cond,
+				step,
+				body,
+			}
+		}
+
 		const cond = this.expr()
 		const body = this.block()
 		return {
@@ -581,7 +597,7 @@ class Parser{
 		return {
 			kind: 'infix',
 			left,
-			op: op_tok.kind,
+			op: op_tok,
 			right,
 		}
 	}

@@ -4,6 +4,7 @@
 import { IDXS, get_method } from './types.js'
 import { Scope } from './scope.js'
 import { BACKENDS } from './backends.js'
+import { is_comparison } from './tokenizer.js'
 
 const ATTRS = {
 	'main': {
@@ -52,6 +53,8 @@ class Checker {
 		this.scope = new Scope(null)
 
 		this.main_fun = null
+
+		this.for_loop_head = false
 	}
 
 	open_scope() {
@@ -87,6 +90,10 @@ class Checker {
 			}
 			case 'for_cond': {
 				this.for_cond(stmt)
+				break
+			}
+			case 'for_decl': {
+				this.for_decl(stmt)
 				break
 			}
 			case 'loop_control': {
@@ -134,7 +141,7 @@ class Checker {
 			}
 			this.scope.register(stmt.left.name, {
 				type: stmt.type,
-				is_mut: stmt.left.is_mut,
+				is_mut: stmt.left.is_mut || this.for_loop_head,
 			})
 			this.expr(stmt.left)
 			return
@@ -158,6 +165,19 @@ class Checker {
 		if (type !== IDXS.bool) {
 			throw new Error('condition must be a bool')
 		}
+		this.stmts(stmt.body)
+	}
+
+	for_decl(stmt) {
+		this.for_loop_head = true
+		this.stmt(stmt.init)
+		const type = this.expr(stmt.cond)
+		if (type !== IDXS.bool) {
+			throw new Error('condition must be a bool')
+		}
+		this.stmt(stmt.step)
+		this.for_loop_head = true
+
 		this.stmts(stmt.body)
 	}
 
@@ -351,6 +371,10 @@ class Checker {
 		const rtype = this.expr(expr.right)
 		if (ltype !== rtype) {
 			throw new Error(`types ${ltype} and ${rtype} do not match`)
+		}
+
+		if (is_comparison(expr.op)) {
+			return IDXS.bool
 		}
 		return ltype
 	}

@@ -16,6 +16,8 @@ class BaseGen {
 		this.out = ''
 		this.footer = ''
 
+		this.for_loop_head = false
+
 		this.headers += this.comment_str(LOKI_NOTE)
 
 		if (this.constructor === BaseGen) {
@@ -68,6 +70,10 @@ class BaseGen {
 			}
 			case 'for_cond': {
 				this.for_cond(stmt)
+				break
+			}
+			case 'for_decl': {
+				this.for_decl(stmt)
 				break
 			}
 			case 'fun': {
@@ -162,6 +168,20 @@ class BaseGen {
 		this.writeln('}')
 	}
 
+	for_decl(stmt) {
+		this.for_loop_head = true
+		this.write('for (')
+		this.stmt(stmt.init)
+		this.write('; ')
+		this.expr(stmt.cond)
+		this.write('; ')
+		this.stmt(stmt.step)
+		this.writeln(') {')
+		this.for_loop_head = false
+		this.stmts(stmt.body)
+		this.writeln('}')
+	}
+
 	loop_control(stmt) {
 		this.write(stmt.control === 'key_break' ? 'break' : 'continue')
 		this.writeln(this.semi)
@@ -246,7 +266,7 @@ class BaseGen {
 	infix(expr) {
 		this.expr(expr.left)
 		this.write(' ')
-		this.write(this.tok_repr(expr.op))
+		this.write(this.tok_repr(expr.op.kind))
 		this.write(' ')
 		this.expr(expr.right)
 	}

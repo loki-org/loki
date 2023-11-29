@@ -3,8 +3,9 @@
 // TODO return type
 pub fun ini_decode(s string) {
 	lines := s.split("\n")
-	// #ts.'console.log(lines)'
-	// #c.'printf("hi\n");'
+	for i := 0; i < 5; i += 1 {
+		break
+	}
 }
 
 @main

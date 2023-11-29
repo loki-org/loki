@@ -130,6 +130,10 @@ class Tokenizer {
 					this.add_token('dot')
 					continue
 				}
+				case ';': {
+					this.add_token('semi')
+					continue
+				}
 				case ':': {
 					if (this.text[this.pos] === '=') {
 						this.add_token('decl_assign')
@@ -273,4 +277,4 @@ class Tokenizer {
 	}
 }
 
-export { PRECEDENCE, Tokenizer, is_infix, is_assign, is_math_assign }
+export { PRECEDENCE, Tokenizer, is_infix, is_comparison, is_assign, is_math_assign }
