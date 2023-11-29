@@ -216,6 +216,17 @@ class TsGen extends BaseGen {
 		}
 		return sym.name
 	}
+
+	tok_repr(kind) {
+		switch(kind) {
+			case 'eq':
+				return '==='
+			case 'ne':
+				return '!=='
+			default:
+				return super.tok_repr(kind)
+		}
+	}
 }
 
 export { TsGen }

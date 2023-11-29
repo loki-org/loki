@@ -6,13 +6,20 @@ const KEYWORDS = ['break', 'continue', 'else', 'false', 'for', 'fun', 'if', 'mut
 const PRECEDENCE = (tok) => {
 	switch (tok.kind) {
 		case 'dot':
-			return 3
+			return 12
 		case 'mul':
 		case 'div':
-			return 2
+			return 9
 		case 'plus':
 		case 'minus':
-			return 1
+			return 6
+		case 'eq':
+		case 'ne':
+		case 'gt':
+		case 'ge':
+		case 'lt':
+		case 'le':
+			return 3
 		default:
 			return 0
 	}
@@ -22,7 +29,11 @@ const NAME_START_REGEX = /[a-zA-Z_]/
 const NAME_REGEX = /[a-zA-Z0-9_]/
 
 function is_infix(tok) {
-	return ['plus', 'minus', 'mul', 'div'].includes(tok.kind)
+	return ['plus', 'minus', 'mul', 'div'].includes(tok.kind) || is_comparison(tok)
+}
+
+function is_comparison(tok) {
+	return ['eq', 'ne', 'gt', 'ge', 'lt', 'le'].includes(tok.kind)
 }
 
 function is_assign(tok) {
@@ -127,7 +138,38 @@ class Tokenizer {
 					}
 					break
 				}
+				case '<': {
+					if (this.text[this.pos] === '=') {
+						this.add_token('le')
+						this.pos++
+						continue
+					}
+					this.add_token('lt')
+					continue
+				}
+				case '>': {
+					if (this.text[this.pos] === '=') {
+						this.add_token('ge')
+						this.pos++
+						continue
+					}
+					this.add_token('gt')
+					continue
+				}
+				case '!': {
+					if (this.text[this.pos] === '=') {
+						this.add_token('ne')
+						this.pos++
+						continue
+					}
+					break
+				}
 				case '=': {
+					if (this.text[this.pos] === '=') {
+						this.add_token('eq')
+						this.pos++
+						continue
+					}
 					this.add_token('assign')
 					continue
 				}

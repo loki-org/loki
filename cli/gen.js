@@ -334,6 +334,18 @@ class BaseGen {
 				return '*'
 			case 'div':
 				return '/'
+			case 'eq':
+				return '=='
+			case 'ne':
+				return '!='
+			case 'gt':
+				return '>'
+			case 'ge':
+				return '>='
+			case 'lt':
+				return '<'
+			case 'le':
+				return '<='
 			case 'assign':
 				return '='
 			case 'decl_assign':
