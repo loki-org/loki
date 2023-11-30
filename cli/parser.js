@@ -61,6 +61,7 @@ class Parser{
 				kind: 'array',
 				name: `[]${this.table.sym(elem_type).name}`,
 				elem_type,
+				parent: types.IDXS.array,
 			})
 		}
 

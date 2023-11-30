@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import { IDXS, get_method } from './types.js'
+import { IDXS } from './types.js'
 import { Scope } from './scope.js'
 import { BACKENDS } from './backends.js'
 import { is_comparison, is_logical } from './tokenizer.js'
@@ -36,7 +36,7 @@ const ATTRS = {
 			fun.is_alias = true
 
 			const rec_sym = checker.table.sym(fun.receiver.type)
-			const def = get_method(rec_sym, fun.name)
+			const def = checker.table.get_method(rec_sym, fun.name)
 			def.is_alias = true
 			def.alias_name = args[0]
 		},
@@ -71,6 +71,18 @@ class Checker {
 		this.stmts(ast.body)
 
 		ast.main_fun = this.main_fun
+	}
+
+	check_types(got, expected) {
+		if (got === expected) {
+			return true
+		}
+
+		if (expected === IDXS.any) {
+			return true
+		}
+
+		return false
 	}
 
 	stmts(stmts) {
@@ -303,9 +315,10 @@ class Checker {
 
 	get_fun_def(expr) {
 		if (expr.is_method) {
-			expr.left_type = this.expr(expr.left)
-			const lsym = this.table.sym(expr.left_type)
-			return [get_method(lsym, expr.name), lsym]
+			const ltype = this.expr(expr.left)
+			const lsym = this.table.sym(ltype)
+			const def = this.table.get_method(lsym, expr.name)
+			return [def, lsym]
 		}
 
 		return [this.root_scope.find(expr.name), null]
@@ -324,13 +337,17 @@ class Checker {
 
 		def.params.forEach((arg, i) => {
 			const typ = this.expr(expr.args[i])
-			if (arg.type !== typ) {
+			if (!this.check_types(typ, arg.type)) {
 				throw new Error(`arg ${i} has type ${typ}, expected ${arg.type}`)
 			}
 		})
 
 		if (def.is_alias) {
 			expr.name = def.alias_name
+		}
+
+		if (expr.is_method) {
+			expr.left_type = def.receiver.type
 		}
 
 		return def.return_type

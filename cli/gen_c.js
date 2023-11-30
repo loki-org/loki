@@ -221,6 +221,8 @@ class CGen extends BaseGen {
 
 	type(t) {
 		switch (t) {
+			case IDXS.any:
+				return 'void*'
 			case IDXS.i32:
 				return 'int'
 			case IDXS.u8:
@@ -246,7 +248,7 @@ class CGen extends BaseGen {
 }
 
 function c_name(name) {
-	return name.replaceAll('*', 'ptr')
+	return name.replaceAll('*', 'ptr').replaceAll('(', '_').replaceAll(')', '_')
 }
 
 export { CGen }

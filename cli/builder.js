@@ -9,6 +9,7 @@ import { Checker } from './checker.js'
 import { BACKENDS } from './backends.js'
 
 const BUILTIN_FILES = [
+	'array.lo',
 	'string.lo',
 ]
 
