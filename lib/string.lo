@@ -1,18 +1,55 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
+#ts.@alias('substring')
+fun (s string) substr(start i32, end i32) string {
+	mut res := ''
+	new_len := end - start
+
+	#c."res = (char*)malloc((new_len + 1) * sizeof(char));
+	strncpy(res, s + start, new_len);
+	res[new_len] = '\0';"
+
+	return res
+}
+
 #ts.@alias('split')
 fun (s string) split(delim string) []string {
-	// TODO c
-	return []string
+	mut res := []string
+	mut i := 0
+	mut start := 0
+	for i < s.length {
+		if i + delim.length <= s.length {
+			part := s.substr(i, i + delim.length)
+			mut is_delim := false
+			#c."is_delim = strcmp(part, delim) == 0;"
+			if is_delim {
+				res.push(s.substr(start, i))
+				start = i + delim.length
+				i = start
+				continue
+			}
+		}
+		i += 1
+	}
+	res.push(s.substr(start, s.length))
+	return res
 }
 
 #ts.@alias('startsWith')
 fun (s string) starts_with(search string) bool {
-	// TODO c
-	return false
+	if search.length > s.length {
+		return false
+	}
+
+	for i := 0; i < search.length; i += 1 {
+		if search[i] != s[i] {
+			return false
+		}
+	}
+
+	return true
 }
 
 // trim_space
 // ends_with
-// substring

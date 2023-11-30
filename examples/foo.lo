@@ -9,11 +9,14 @@ pub fun ini_decode(s string) {
 			continue
 		}
 		#ts.'console.log(line)'
+		#c.'printf("%s\n", line);'
 	}
 }
 
 @main
 fun my_main() {
-	ini_decode("[section]
-; my comment")
+	s := "[section]
+; my comment
+key = value"
+	ini_decode(s)
 }
