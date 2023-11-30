@@ -91,6 +91,14 @@ class CGen extends BaseGen {
 	}
 
 	index_get(expr) {
+		if (expr.left_type === IDXS.string) {
+			this.expr(expr.left)
+			this.write('[')
+			this.expr(expr.index)
+			this.write(']')
+			return
+		}
+
 		const lsym = this.table.sym(expr.left_type)
 		if (lsym.kind === 'array') {
 			this.write('Array_get(')

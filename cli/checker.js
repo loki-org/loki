@@ -348,6 +348,16 @@ class Checker {
 	index_expr(expr) {
 		expr.left_type = this.expr(expr.left)
 		const lsym = this.table.sym(expr.left_type)
+
+		if (expr.left_type === IDXS.string) {
+			const idx_type = this.expr(expr.index)
+			if (idx_type !== IDXS.i32) {
+				throw new Error(`cannot use ${idx_type} as i32`)
+			}
+
+			return IDXS.u8
+		}
+
 		if (lsym.kind === 'array') {
 			const idx_type = this.expr(expr.index)
 			if (idx_type !== IDXS.i32) {

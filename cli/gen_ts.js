@@ -126,7 +126,7 @@ class TsGen extends BaseGen {
 
 	index_get(expr) {
 		const lsym = this.table.sym(expr.left_type)
-		if (lsym.kind === 'array') {
+		if (lsym.kind === 'array' || expr.left_type === IDXS.string) {
 			this.expr(expr.left)
 			this.write('[')
 			this.expr(expr.index)

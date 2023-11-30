@@ -8,7 +8,6 @@ import { Parser } from './parser.js'
 import { Checker } from './checker.js'
 import { BACKENDS } from './backends.js'
 
-// TODO auto collect these files dynamically
 const BUILTIN_FILES = [
 	'string.lo',
 ]
@@ -19,7 +18,6 @@ class Builder {
 		this.table = new Table()
 	}
 
-	// TODO add cli option to gen separate outfiles
 	compile() {
 		let asts = []
 		for (const file of BUILTIN_FILES) {
