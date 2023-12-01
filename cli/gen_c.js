@@ -46,8 +46,10 @@ class CGen extends BaseGen {
 		}
 
 		const ret_type = this.type(fn.return_type)
+		this.decls_out += `${ret_type} ${fn.name}(`
 		this.write(`${ret_type} ${fn.name}(`)
 		this.params(fn.params)
+		this.decls_out += ");\n"
 		this.writeln(') {')
 		this.stmts(fn.body)
 		this.writeln('}\n')
@@ -58,6 +60,7 @@ class CGen extends BaseGen {
 		for (const param of params) {
 			param_list.push(`${this.type(param.type)} ${param.name}`)
 		}
+		this.decls_out += param_list.join(', ')
 		this.write(param_list.join(', '))
 	}
 
