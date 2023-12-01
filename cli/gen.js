@@ -353,6 +353,10 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
+	default_value(type) {
+		throw new Error('Not implemented')
+	}
+
 	tok_repr(kind) {
 		switch(kind) {
 			case 'plus':

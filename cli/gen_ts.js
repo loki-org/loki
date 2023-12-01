@@ -98,7 +98,31 @@ class TsGen extends BaseGen {
 		this.writeln(`class ${stmt.name} {`)
 		this.indent++
 
-		// TODO fields
+		stmt.fields.forEach((field) => {
+			this.write(field.name)
+			this.write(': ')
+			this.writeln(this.type(field.type))
+		})
+
+		this.write('constructor({ ')
+		stmt.fields.forEach((field, i) => {
+			this.write(field.name)
+			this.write(' = ')
+			this.write(this.default_value(field.type))
+			if (i < stmt.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.writeln(' } = {}) {')
+		this.indent++
+		stmt.fields.forEach((field) => {
+			this.write('this.')
+			this.write(field.name)
+			this.write(' = ')
+			this.writeln(field.name)
+		})
+		this.indent--
+		this.writeln('}')
 
 		sym.methods.forEach((method) => {
 			this.fun_or_method(method)
@@ -205,6 +229,27 @@ class TsGen extends BaseGen {
 		}
 
 		this.writeln(`${name}()`)
+	}
+
+	default_value(type) {
+		switch (type) {
+			case IDXS.bool:
+				return 'false'
+			case IDXS.i32:
+			case IDXS.u8:
+				return '0'
+			case IDXS.string:
+				return '""'
+			default:
+				break
+		}
+
+		const sym = this.table.sym(type)
+		if (sym.kind === 'array') {
+			return '[]'
+		}
+
+		return 'undefined'
 	}
 
 	type(t) {

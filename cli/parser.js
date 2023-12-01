@@ -440,12 +440,22 @@ class Parser{
 		this.check('name')
 
 		this.check('lcur')
-		// TODO fields
-		this.check('rcur')
+		let fields = []
+		while (this.tok.kind !== 'rcur') {
+			const fname = this.tok.value
+			this.check('name')
+			const ftype = this.type()
+			fields.push({
+				name: fname,
+				type: ftype,
+			})
+		}
+		this.next()
 
 		const idx = this.table.register({
 			kind: 'struct',
 			name,
+			methods: [],
 		})
 
 		return {
@@ -453,6 +463,7 @@ class Parser{
 			kind: 'struct_decl',
 			name,
 			type: idx,
+			fields,
 		}
 	}
 

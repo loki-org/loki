@@ -72,8 +72,15 @@ class CGen extends BaseGen {
 
 	struct_decl(stmt) {
 		this.writeln(`typedef struct ${stmt.name} {`)
-		// TODO fields
-		this.writeln(`} ${stmt.name};`)
+		this.indent++
+		stmt.fields.forEach((field) => {
+			this.write(this.type(field.type))
+			this.write(" ")
+			this.write(field.name)
+			this.writeln(';')
+		})
+		this.indent--
+		this.writeln(`} ${stmt.name};\n`)
 	}
 
 	array_init(node) {
