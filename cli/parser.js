@@ -327,7 +327,7 @@ class Parser{
 		}
 
 		this.root_scope.register(name, {
-			type: ret_type,
+			return_type: ret_type,
 			params,
 		})
 		return fn

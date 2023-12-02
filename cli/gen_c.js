@@ -145,11 +145,16 @@ class CGen extends BaseGen {
 		}
 
 		if (lsym.kind === 'map') {
+			const val_sym = this.table.sym(lsym.val_type)
 			this.write('Map_insert(')
 			this.expr(expr.left)
 			this.write(', ')
 			this.expr(expr.index)
-			this.write(`, (${this.type(lsym.val_type)}*)`)
+			if (val_sym.kind === 'struct') {
+				this.write(', &')
+			} else {
+				this.write(`, (${this.type(lsym.val_type)}*)`)
+			}
 			this.expr(value)
 			this.writeln(');')
 			return
