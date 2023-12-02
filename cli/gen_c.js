@@ -46,10 +46,10 @@ class CGen extends BaseGen {
 		}
 
 		const ret_type = this.type(fn.return_type)
-		this.decls_out += `${ret_type} ${fn.name}(`
+		this.fun_decls_out += `${ret_type} ${fn.name}(`
 		this.write(`${ret_type} ${fn.name}(`)
 		this.params(fn.params)
-		this.decls_out += ");\n"
+		this.fun_decls_out += ");\n"
 		this.writeln(') {')
 		this.stmts(fn.body)
 		this.writeln('}\n')
@@ -60,7 +60,7 @@ class CGen extends BaseGen {
 		for (const param of params) {
 			param_list.push(`${this.type(param.type)} ${param.name}`)
 		}
-		this.decls_out += param_list.join(', ')
+		this.fun_decls_out += param_list.join(', ')
 		this.write(param_list.join(', '))
 	}
 
@@ -71,16 +71,11 @@ class CGen extends BaseGen {
 	}
 
 	struct_decl(stmt) {
-		this.writeln(`typedef struct ${stmt.name} {`)
-		this.indent++
+		this.type_defs_out += `typedef struct ${stmt.name} {\n`
 		stmt.fields.forEach((field) => {
-			this.write(this.type(field.type))
-			this.write(" ")
-			this.write(field.name)
-			this.writeln(';')
+			this.type_defs_out += `\t${this.type(field.type)} ${field.name};\n`
 		})
-		this.indent--
-		this.writeln(`} ${stmt.name};\n`)
+		this.type_defs_out += `} ${stmt.name};\n\n`
 	}
 
 	array_init(node) {
@@ -214,8 +209,17 @@ class CGen extends BaseGen {
 	}
 
 	struct_init(expr) {
-		// TODO fields
-		this.write(`(${this.type(expr.type)}){}`)
+		this.write(`(${this.type(expr.type)}){ `)
+		expr.fields.forEach((field, i) => {
+			this.write('.')
+			this.write(field.name)
+			this.write(' = ')
+			this.expr(field.value)
+			if (i < expr.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.write(' }')
 	}
 
 	gen_main(name, with_args) {

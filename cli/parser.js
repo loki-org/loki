@@ -455,6 +455,7 @@ class Parser{
 		const idx = this.table.register({
 			kind: 'struct',
 			name,
+			fields,
 			methods: [],
 		})
 
@@ -681,12 +682,23 @@ class Parser{
 		const type = this.type()
 		const name = this.prev_tok.value
 		this.check('lcur')
-		// TODO fields
-		this.check('rcur')
+		const fields = []
+		while (this.tok.kind !== 'rcur') {
+			const fname = this.tok.value
+			this.check('name')
+			this.check('assign')
+			const fval = this.expr()
+			fields.push({
+				name: fname,
+				value: fval,
+			})
+		}
+		this.next()
 		return {
 			kind: 'struct_init',
 			type,
 			name,
+			fields,
 		}
 	}
 }

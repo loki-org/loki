@@ -13,7 +13,8 @@ class BaseGen {
 		this.pub_syms = []
 		this.semi = ''
 		this.headers = ''
-		this.decls_out = ''
+		this.type_defs_out = ''
+		this.fun_decls_out = ''
 		this.out = ''
 		this.footer = ''
 
@@ -35,7 +36,11 @@ class BaseGen {
 
 		this.post_stage()
 
-		return this.headers + '\n' + this.decls_out + '\n' + this.out + "\n" + this.footer
+		return this.headers + '\n'
+			+ this.type_defs_out + '\n'
+			+ this.fun_decls_out + '\n'
+			+ this.out + "\n"
+			+ this.footer
 	}
 
 	gen_file(ast) {

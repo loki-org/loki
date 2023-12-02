@@ -218,8 +218,16 @@ class TsGen extends BaseGen {
 	}
 
 	struct_init(expr) {
-		// TODO fields
-		this.write(`new ${expr.name}()`)
+		this.write(`new ${expr.name}({ `)
+		expr.fields.forEach((field, i) => {
+			this.write(field.name)
+			this.write(': ')
+			this.expr(field.value)
+			if (i < expr.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.write(' })')
 	}
 
 	gen_main(name, with_args) {
@@ -247,6 +255,10 @@ class TsGen extends BaseGen {
 		const sym = this.table.sym(type)
 		if (sym.kind === 'array') {
 			return '[]'
+		}
+
+		if (sym.kind === 'map') {
+			return 'new Map()'
 		}
 
 		return 'undefined'

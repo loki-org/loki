@@ -426,7 +426,18 @@ class Checker {
 	}
 
 	struct_init(expr) {
-		// TODO fields
+		const sym = this.table.sym(expr.type)
+		expr.fields.forEach((field) => {
+			const def = sym.fields.find((f) => f.name === field.name)
+			if (!def) {
+				throw new Error(`struct ${sym.name} has no field ${field.name}`)
+			}
+
+			const type = this.expr(field.value)
+			if (!this.check_types(type, def.type)) {
+				throw new Error(`cannot assign ${type} to ${def.type}`)
+			}
+		})
 		return expr.type
 	}
 
