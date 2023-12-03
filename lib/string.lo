@@ -38,12 +38,21 @@ fun (s string) split(delim string) []string {
 
 #ts.@alias('startsWith')
 fun (s string) starts_with(search string) bool {
+	return s.contains_at_offset(search, 0)
+}
+
+#ts.@alias('endsWith')
+fun (s string) ends_with(search string) bool {
+	return s.contains_at_offset(search, s.length - search.length)
+}
+
+fun (s string) contains_at_offset(search string, offset i32) bool {
 	if search.length > s.length {
 		return false
 	}
 
 	for i := 0; i < search.length; i += 1 {
-		if search[i] != s[i] {
+		if search[i] != s[offset + i] {
 			return false
 		}
 	}
@@ -51,5 +60,38 @@ fun (s string) starts_with(search string) bool {
 	return true
 }
 
-// trim_space
-// ends_with
+#ts.@alias('trim')
+fun (s string) trim_space() string {
+	cutset := ' \t\n'
+
+	mut left := 0
+	mut right := s.length - 1
+	mut found := true
+	for left < s.length && found {
+		found = false
+		for i := 0; i < cutset.length; i += 1 {
+			if s[left] == cutset[i] {
+				left += 1
+				found = true
+				break
+			}
+		}
+	}
+
+	if left == s.length {
+		return ''
+	}
+
+	found = true
+	for right >= 0 && found {
+		found = false
+		for i := 0; i < cutset.length; i += 1 {
+			if s[right] == cutset[i] {
+				right -= 1
+				found = true
+				break
+			}
+		}
+	}
+	return s.substr(left, right + 1)
+}
