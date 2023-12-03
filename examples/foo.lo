@@ -1,15 +1,38 @@
 #c.'#include <stdio.h>'
 
-// TODO return type
-pub fun ini_decode(s string) {
+struct Section {
+	data map[string]string
+}
+
+struct Ini {
+	sections map[string]Section
+}
+
+pub fun ini_decode(s string) Ini {
+	mut sections := map[string]Section
+	mut cur_section := Section{}
+	mut section_name := ""
 	lines := s.split("\n")
 	for i := 0; i < lines.length; i += 1 {
 		line := lines[i]
 		if line.length == 0 || line.starts_with(";") {
 			continue
 		}
-		#ts.'console.log(line)'
-		#c.'printf("%s\n", line);'
+		if line.starts_with("[") && line.ends_with("]") {
+			if section_name.length > 0 {
+				sections[section_name] = cur_section
+			}
+			section_name = line.substr(1, line.length - 1)
+			cur_section = Section{}
+		} else {
+			parts := line.split("=")
+			key := parts[0].trim_space()
+			value := parts[1].trim_space()
+			cur_section.data[key] = value
+		}
+	}
+	return Ini{
+		sections = sections
 	}
 }
 
@@ -18,5 +41,6 @@ fun my_main() {
 	s := "[section]
 ; my comment
 key = value"
-	ini_decode(s)
+	i := ini_decode(s)
+	#ts.'console.log(i)'
 }
