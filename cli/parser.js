@@ -255,7 +255,9 @@ class Parser{
 			}
 		}
 
+		this.struct_possible = false
 		const cond = this.expr()
+		this.struct_possible = true
 		const body = this.block()
 		return {
 			kind: 'for_cond',
@@ -476,7 +478,7 @@ class Parser{
 			} else if (this.tok.kind === 'dot') {
 				left = this.dot_expr(left)
 			} else {
-				return left
+				break
 			}
 		}
 		return left

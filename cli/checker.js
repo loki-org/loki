@@ -177,11 +177,14 @@ class Checker {
 		if (type !== IDXS.bool) {
 			throw new Error('condition must be a bool')
 		}
+		this.open_scope()
 		this.stmts(stmt.body)
+		this.close_scope()
 	}
 
 	for_decl(stmt) {
 		this.for_loop_head = true
+		this.open_scope()
 		this.stmt(stmt.init)
 		const type = this.expr(stmt.cond)
 		if (type !== IDXS.bool) {
@@ -191,6 +194,7 @@ class Checker {
 		this.for_loop_head = true
 
 		this.stmts(stmt.body)
+		this.close_scope()
 	}
 
 	loop_control(stmt) {
@@ -236,7 +240,9 @@ class Checker {
 					this.expr(branch.cond)
 				}
 			}
+			this.open_scope()
 			this.stmts(branch.body)
+			this.close_scope()
 		}
 	}
 
