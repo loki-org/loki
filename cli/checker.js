@@ -427,7 +427,15 @@ class Checker {
 			return IDXS.i32
 		}
 
-		// TODO fields
+		if (lsym.kind === 'struct') {
+			const def = lsym.fields.find((f) => f.name === expr.name)
+			if (!def) {
+				throw new Error(`struct ${lsym.name} has no field ${expr.name}`)
+			}
+
+			return def.type
+		}
+
 		throw new Error(`cannot select ${expr.name} from ${expr.left_type}`)
 	}
 

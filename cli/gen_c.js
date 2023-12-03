@@ -192,7 +192,9 @@ class CGen extends BaseGen {
 			return
 		}
 
-		// TODO fields
+		this.expr(expr.left)
+		this.write('.')
+		this.write(expr.name)
 	}
 
 	string(expr) {

@@ -213,8 +213,6 @@ class TsGen extends BaseGen {
 		this.expr(expr.left)
 		this.write('.')
 		this.write(expr.name)
-
-		// TODO fields
 	}
 
 	struct_init(expr) {

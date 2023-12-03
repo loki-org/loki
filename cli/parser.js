@@ -477,8 +477,10 @@ class Parser{
 				left = this.infix_expr(left)
 			} else if (this.tok.kind === 'dot') {
 				left = this.dot_expr(left)
+			} else if (this.tok.kind === 'lsbr') {
+				left = this.index_expr(left)
 			} else {
-				break
+				throw new Error(`unhandled precedence ${this.tok.kind}`)
 			}
 		}
 		return left
@@ -596,8 +598,7 @@ class Parser{
 		}
 	}
 
-	index_expr() {
-		const left = this.ident()
+	index_expr(left) {
 		this.check('lsbr')
 		const index = this.expr()
 		this.check('rsbr')
@@ -635,10 +636,6 @@ class Parser{
 	name_expr() {
 		if (this.tok.value === 'map') {
 			return this.map_init()
-		}
-
-		if (this.next_tok.kind === 'lsbr') {
-			return this.index_expr()
 		}
 
 		if (this.next_tok.kind === 'lpar') {
