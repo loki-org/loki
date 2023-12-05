@@ -216,12 +216,21 @@ class CGen extends BaseGen {
 	}
 
 	struct_init(expr) {
+		const inited_fields = expr.fields.map((field) => field.name)
+
+		const def = this.table.sym(expr.type)
 		this.write(`(${this.type(expr.type)}){ `)
-		expr.fields.forEach((field, i) => {
+		def.fields.forEach((def_field, i) => {
 			this.write('.')
-			this.write(field.name)
+			this.write(def_field.name)
 			this.write(' = ')
-			this.expr(field.value)
+
+			const init_idx = inited_fields.indexOf(def_field.name)
+			if (init_idx === -1) {
+				this.write(this.default_value(def_field.type))
+			} else {
+				this.expr(expr.fields[init_idx].value)
+			}
 			if (i < expr.fields.length - 1) {
 				this.write(', ')
 			}
@@ -238,6 +247,15 @@ class CGen extends BaseGen {
 		}
 		this.writeln('\treturn 0;')
 		this.writeln('}')
+	}
+
+	default_value(type) {
+		const sym = this.table.sym(type)
+		if (sym.kind === 'map') {
+			return 'new_Map()'
+		}
+
+		return '0'
 	}
 
 	type(t) {
