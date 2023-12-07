@@ -1,12 +1,15 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
+import { Scope } from "./scope.js"
+
 const IDXS = {}
 
 class Table {
 	constructor() {
 		this.type_idxs = new Map()
 		this.type_syms = []
+		this.global_scope = new Scope(null)
 
 		IDXS.void = this.register({ name: 'void' })
 		IDXS.any = this.register({ name: 'any', kind: 'any' })

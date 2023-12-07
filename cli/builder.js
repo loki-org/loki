@@ -15,6 +15,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const BUILTIN_FILES = [
 	'array.lo',
+	'builtin.lo',
 	'string.lo',
 ]
 

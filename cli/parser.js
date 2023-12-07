@@ -11,7 +11,6 @@ class Parser{
 		this.tokens = tokens
 		this.pos = 0
 		this.attributes = []
-		this.root_scope = new Scope(null)
 		this.toplevel = true
 		this.struct_possible = true
 
@@ -23,14 +22,12 @@ class Parser{
 		let ast = {
 			kind: 'file',
 			body: [],
-			root_scope: null,
 		}
 
 		while (this.pos < this.tokens.length) {
 			ast.body.push(this.toplevel_stmt())
 		}
 
-		ast.root_scope = this.root_scope
 		return ast
 	}
 
@@ -331,7 +328,7 @@ class Parser{
 			return fn
 		}
 
-		this.root_scope.register(name, {
+		this.table.global_scope.register(name, {
 			return_type: ret_type,
 			params,
 		})

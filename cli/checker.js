@@ -29,14 +29,21 @@ const ATTRS = {
 		},
 	},
 	'alias': {
-		applies: 'method',
+		applies: 'fun',
 		max: -1,
 		arg_count: 1,
 		check: (checker, fun, args) => {
 			fun.is_alias = true
 
-			const rec_sym = checker.table.sym(fun.receiver.type)
-			const def = checker.table.get_method(rec_sym, fun.name)
+			if (fun.is_method) {
+				const rec_sym = checker.table.sym(fun.receiver.type)
+				const def = checker.table.get_method(rec_sym, fun.name)
+				def.is_alias = true
+				def.alias_name = args[0]
+				return
+			}
+
+			const def = checker.table.global_scope.find(fun.name)
 			def.is_alias = true
 			def.alias_name = args[0]
 		},
@@ -49,7 +56,6 @@ class Checker {
 	constructor(table, prefs) {
 		this.table = table
 		this.prefs = prefs
-		this.root_scope = null
 		this.scope = new Scope(null)
 
 		this.main_fun = null
@@ -66,8 +72,6 @@ class Checker {
 	}
 
 	check(ast) {
-		this.root_scope = ast.root_scope
-
 		this.stmts(ast.body)
 
 		ast.main_fun = this.main_fun
@@ -330,7 +334,7 @@ class Checker {
 			return [def, lsym]
 		}
 
-		return [this.root_scope.find(expr.name), null]
+		return [this.table.global_scope.find(expr.name), null]
 	}
 
 	call_expr(expr) {
