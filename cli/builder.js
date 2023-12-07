@@ -1,12 +1,17 @@
 // SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import * as fs from 'fs'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
 import { Table } from './types.js'
 import { Tokenizer } from './tokenizer.js'
 import { Parser } from './parser.js'
 import { Checker } from './checker.js'
 import { BACKENDS } from './backends.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const BUILTIN_FILES = [
 	'array.lo',
@@ -22,7 +27,7 @@ class Builder {
 	compile() {
 		let asts = []
 		for (const file of BUILTIN_FILES) {
-			asts.push(this.parse_source_file(`lib/${file}`))
+			asts.push(this.parse_source_file(`${__dirname}/../lib/${file}`))
 		}
 		asts.push(this.parse_source_file(this.prefs.file))
 
