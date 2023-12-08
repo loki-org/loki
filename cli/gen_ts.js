@@ -148,6 +148,13 @@ class TsGen extends BaseGen {
 		this.write(']')
 	}
 
+	cast_expr(expr) {
+		this.expr(expr.left)
+		this.write(' as ')
+		// TODO skip this if TS not needs it, e.g. u8 and i32 both are number
+		this.write(this.type(expr.target))
+	}
+
 	index_get(expr) {
 		const lsym = this.table.sym(expr.left_type)
 		if (lsym.kind === 'array' || expr.left_type === IDXS.string) {

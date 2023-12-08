@@ -265,6 +265,9 @@ class Checker {
 			case 'call': {
 				return this.call_expr(expr)
 			}
+			case 'cast': {
+				return this.cast_expr(expr)
+			}
 			case 'ident': {
 				return this.ident(expr)
 			}
@@ -357,6 +360,12 @@ class Checker {
 		}
 
 		return def.return_type
+	}
+
+	cast_expr(expr) {
+		// TODO check casting is possible
+		this.expr(expr.left)
+		return expr.target
 	}
 
 	ident(expr) {

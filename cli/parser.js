@@ -49,6 +49,9 @@ class Parser{
 	}
 
 	was_pub() {
+		if (!this.prev_tok){
+			return false
+		}
 		return this.prev_tok.kind === 'key_pub'
 	}
 
@@ -479,6 +482,8 @@ class Parser{
 				left = this.dot_expr(left)
 			} else if (this.tok.kind === 'lsbr') {
 				left = this.index_expr(left)
+			} else if (this.tok.kind === 'key_as') {
+				left = this.as_cast(left)
 			} else {
 				throw new Error(`unhandled precedence ${this.tok.kind}`)
 			}
@@ -533,6 +538,16 @@ class Parser{
 		return {
 			kind: 'array_init',
 			exprs,
+		}
+	}
+
+	as_cast(left){
+		this.next()
+		const target = this.type()
+		return {
+			kind: 'cast',
+			left,
+			target,
 		}
 	}
 
