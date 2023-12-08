@@ -7,6 +7,7 @@ import { TsGen } from './gen_ts.js'
 const BACKENDS = {
 	'c': CGen,
 	'ts': TsGen,
+	'js': TsGen,
 }
 
 export { BACKENDS }

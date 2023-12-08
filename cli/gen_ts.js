@@ -50,7 +50,11 @@ class TsGen extends BaseGen {
 		const ret_type = this.type(fn.return_type)
 		this.write(`${fn.name}(`)
 		this.params(fn.params)
-		this.writeln(`): ${ret_type} {`)
+		if (this.prefs.backend === 'ts') {
+			this.writeln(`): ${ret_type} {`)
+		} else {
+			this.writeln(') {')
+		}
 
 		if (fn.is_method) {
 			const rec_assign_this = {
@@ -77,7 +81,11 @@ class TsGen extends BaseGen {
 	params(params) {
 		const param_list = []
 		for (const param of params) {
-			param_list.push(`${param.name}: ${this.type(param.type)}`)
+			if (this.prefs.backend === 'ts') {
+				param_list.push(`${param.name}: ${this.type(param.type)}`)
+			} else {
+				param_list.push(param.name)
+			}
 		}
 		this.write(param_list.join(', '))
 	}
@@ -134,7 +142,11 @@ class TsGen extends BaseGen {
 
 	array_init(node) {
 		if (node.exprs.length === 0) {
-			this.write(`new Array<${this.type(node.elem_type)}>()`)
+			if (this.prefs.backend === 'ts') {
+				this.write(`new Array<${this.type(node.elem_type)}>()`)
+			} else {
+				this.write('new Array()')
+			}
 			return
 		}
 
@@ -150,8 +162,13 @@ class TsGen extends BaseGen {
 
 	cast_expr(expr) {
 		this.expr(expr.left)
-		this.write(' as ')
+
+		if (this.prefs.backend === 'js') {
+			return
+		}
+
 		// TODO skip this if TS not needs it, e.g. u8 and i32 both are number
+		this.write(' as ')
 		this.write(this.type(expr.target))
 	}
 
