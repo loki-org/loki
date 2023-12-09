@@ -28,7 +28,7 @@ class Builder {
 	compile() {
 		let asts = []
 		for (const file of BUILTIN_FILES) {
-			asts.push(this.parse_source_file(`${__dirname}/../lib/${file}`))
+			asts.push(this.parse_source_file(`${__dirname}/../lib/builtin/${file}`))
 		}
 		asts.push(this.parse_source_file(this.prefs.file))
 

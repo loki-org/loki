@@ -42,5 +42,5 @@ fun my_main() {
 ; my comment
 key = value"
 	i := ini_decode(s)
-	#ts.'console.log(i)'
+	println(i)
 }

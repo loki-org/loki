@@ -275,11 +275,11 @@ class CGen extends BaseGen {
 
 		const sym = this.table.sym(t)
 		if (sym.kind === 'array') {
-			this.imports.add('"array.h"')
+			this.imports.add('"builtin/array.h"')
 			return 'Array(' + this.type(sym.elem_type) + ')'
 		}
 		if (sym.kind === 'map') {
-			this.imports.add('"map.h"')
+			this.imports.add('"builtin/map.h"')
 			return 'Map*'
 		}
 		return sym.name
