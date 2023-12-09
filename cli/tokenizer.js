@@ -195,7 +195,8 @@ class Tokenizer {
 						this.pos++
 						continue
 					}
-					break
+					this.add_token('assign')
+					continue
 				}
 				case '=': {
 					if (this.text[this.pos] === '=') {

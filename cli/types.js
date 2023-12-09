@@ -18,6 +18,7 @@ class Table {
 		IDXS.u8 = this.register({ name: 'u8' })
 		IDXS.string = this.register({ name: 'string' })
 		IDXS.array = this.register({ name: 'Array' })
+		IDXS.result = this.register({ name: 'Result' })
 	}
 
 	register(sym) {

@@ -72,6 +72,10 @@ class Parser{
 			return this.map_type()
 		}
 
+		if (name === 'Result') {
+			return this.result_type()
+		}
+
 		return this.table.register({
 			kind: 'other',
 			name: name
@@ -91,6 +95,20 @@ class Parser{
 			name: `map[${key_sym.name}]${val_sym.name}`,
 			key_type,
 			val_type,
+		})
+	}
+
+	result_type() {
+		this.check('lsbr')
+		const val_type = this.type()
+		this.check('rsbr')
+
+		const val_sym = this.table.sym(val_type)
+		return this.table.register({
+			kind: 'result',
+			name: `Result[${val_sym.name}]`,
+			val_type,
+			parent: types.IDXS.result,
 		})
 	}
 
@@ -596,6 +614,17 @@ class Parser{
 		return this.selector(left)
 	}
 
+	error_expr() {
+		this.next()
+		this.check('lpar')
+		const msg = this.string()
+		this.check('rpar')
+		return {
+			kind: 'error',
+			msg,
+		}
+	}
+
 	ident() {
 		const is_mut = this.tok.kind === 'key_mut'
 		if (is_mut) {
@@ -651,6 +680,9 @@ class Parser{
 		}
 
 		if (this.next_tok.kind === 'lpar') {
+			if (this.tok.value === 'error') {
+				return this.error_expr()
+			}
 			return this.call_expr()
 		}
 

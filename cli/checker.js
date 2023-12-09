@@ -251,6 +251,7 @@ class Checker {
 	}
 
 	return_stmt(stmt) {
+		// TODO check expr type matches fun return type
 		this.expr(stmt.expr)
 	}
 
@@ -271,6 +272,10 @@ class Checker {
 			}
 			case 'cast': {
 				return this.cast_expr(expr)
+			}
+			case 'error': {
+				// TODO ensure inside of fun with result type
+				return IDXS.result
 			}
 			case 'ident': {
 				return this.ident(expr)

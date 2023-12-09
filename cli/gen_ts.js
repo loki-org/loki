@@ -91,6 +91,11 @@ class TsGen extends BaseGen {
 	}
 
 	return_stmt(stmt) {
+		if (stmt.expr.kind === 'error') {
+			this.expr(stmt.expr)
+			return
+		}
+
 		this.write('return ')
 		this.expr(stmt.expr)
 		this.writeln('')
@@ -170,6 +175,12 @@ class TsGen extends BaseGen {
 		// TODO skip this if TS not needs it, e.g. u8 and i32 both are number
 		this.write(' as ')
 		this.write(this.type(expr.target))
+	}
+
+	error_expr(expr) {
+		this.write('throw new Error(')
+		this.expr(expr.msg)
+		this.writeln(')')
 	}
 
 	index_get(expr) {

@@ -133,9 +133,14 @@ class BaseGen {
 				this.call_expr(expr)
 				break
 			}
-			case 'cast':
+			case 'cast': {
 				this.cast_expr(expr)
 				break
+			}
+			case 'error': {
+				this.error_expr(expr)
+				break
+			}
 			case 'ident': {
 				this.write(expr.name)
 				break
@@ -326,6 +331,10 @@ class BaseGen {
 	}
 
 	cast_expr(expr){
+		throw new Error('Not implemented')
+	}
+
+	error_expr(expr) {
 		throw new Error('Not implemented')
 	}
 
