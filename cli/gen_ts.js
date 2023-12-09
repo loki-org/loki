@@ -315,6 +315,9 @@ class TsGen extends BaseGen {
 		if (sym.kind === 'map') {
 			return `Map<${this.type(sym.key_type)}, ${this.type(sym.val_type)}>`
 		}
+		if (sym.kind === 'result') {
+			return this.type(sym.val_type)
+		}
 		return sym.name
 	}
 

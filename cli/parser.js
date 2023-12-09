@@ -106,7 +106,6 @@ class Parser{
 		const val_sym = this.table.sym(val_type)
 		return this.table.register({
 			kind: 'result',
-			name: `Result[${val_sym.name}]`,
 			val_type,
 			parent: types.IDXS.result,
 		})
