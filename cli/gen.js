@@ -141,6 +141,10 @@ class BaseGen {
 				this.error_expr(expr)
 				break
 			}
+			case 'float': {
+				this.write(expr.value)
+				break
+			}
 			case 'ident': {
 				this.write(expr.name)
 				break

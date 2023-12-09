@@ -291,6 +291,9 @@ class Checker {
 				// TODO ensure inside of fun with result type
 				return IDXS.result
 			}
+			case 'float': {
+				return IDXS.f64
+			}
 			case 'ident': {
 				return this.ident(expr)
 			}

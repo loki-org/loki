@@ -313,6 +313,12 @@ class Tokenizer {
 			this.pos++
 		}
 
+		if (this.text[this.pos] === '.' && HEX_RE.test(this.text[this.pos + 1])) {
+			this.pos++
+			while (this.pos < this.text.length && HEX_RE.test(this.text[this.pos])) {
+				this.pos++
+			}
+		}
 		return this.text.slice(start, this.pos)
 	}
 

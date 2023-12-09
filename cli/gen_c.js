@@ -267,6 +267,8 @@ class CGen extends BaseGen {
 			case IDXS.u8:
 				this.imports.add('<stdint.h>')
 				return 'uint8_t'
+			case IDXS.f64:
+				return 'double'
 			case IDXS.string:
 				return 'char*'
 			default:

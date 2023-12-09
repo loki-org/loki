@@ -695,9 +695,17 @@ class Parser{
 	number() {
 		const val = this.tok.value
 		this.check('number')
+
+		if (val.includes('.')) {
+			return {
+				kind: 'float',
+				value: val,
+			}
+		}
+
 		return {
 			kind: 'integer',
-			value: val
+			value: val,
 		}
 	}
 

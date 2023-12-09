@@ -298,17 +298,14 @@ class TsGen extends BaseGen {
 	}
 
 	type(t) {
-		switch (t) {
-			case IDXS.i32:
-			case IDXS.u8:
-				return 'number'
-			case IDXS.bool:
-				return 'boolean'
-			default:
-				break
+		if (t === IDXS.bool) {
+			return 'boolean'
 		}
 
 		const sym = this.table.sym(t)
+		if (sym.kind === 'number') {
+			return 'number'
+		}
 		if (sym.kind === 'array') {
 			return this.type(sym.elem_type) + '[]'
 		}
