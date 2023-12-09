@@ -1,0 +1,4 @@
+@main
+fun main() {
+	arr := [0x12 as u8, 0x34, 0x56]
+}

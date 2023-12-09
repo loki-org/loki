@@ -89,6 +89,20 @@ class Checker {
 		return false
 	}
 
+	check_types_castable(from, to) {
+		if (this.check_types(from, to)) {
+			return true
+		}
+
+		const from_sym = this.table.sym(from)
+		const to_sym = this.table.sym(to)
+		if (from_sym.kind === 'number' && to_sym.kind === 'number') {
+			return true
+		}
+
+		return false
+	}
+
 	stmts(stmts) {
 		for (const stmt of stmts) {
 			this.stmt(stmt)
@@ -315,7 +329,7 @@ class Checker {
 		node.exprs.forEach((expr) => {
 			const typ = this.expr(expr)
 			if (node.elem_type) {
-				if (typ !== node.elem_type) {
+				if (!this.check_types_castable(typ, node.elem_type)) {
 					throw new Error(`type ${typ} not matches ${node.elem_type}`)
 				}
 			} else {
@@ -372,8 +386,10 @@ class Checker {
 	}
 
 	cast_expr(expr) {
-		// TODO check casting is possible
-		this.expr(expr.left)
+		const typ = this.expr(expr.left)
+		if (!this.check_types_castable(typ, expr.target)) {
+			throw new Error(`cannot cast ${typ} to ${expr.target}`)
+		}
 		return expr.target
 	}
 

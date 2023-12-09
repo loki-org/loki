@@ -1,11 +1,83 @@
-fun decompress(comp []u8) []u8 {
+// SPDX-FileCopyrightText: 2023-present Lukas Neubert <lukas.neubert@proton.me>
+// SPDX-License-Identifier: MPL-2.0
+
+// TOD return type
+fun copytoken_helper(pos i32, start i32) {
+	diff := pos - start
+// 	const bits = Math.ceil(Math.log2(diff))
+// 	const adjusted_bits = Math.max(4, bits)
+// 	const length_mask = 0xFFFF >> adjusted_bits
+// 	const offset_mask = ~length_mask
+// 	const max_length = (0xFFFF >> adjusted_bits) + 3
+// 	return [length_mask, offset_mask, adjusted_bits, max_length]
+}
+
+fun decompress(comp []u8) Result[[]u8] {
 	decomp := []u8
 	mut pos := 0
 
-	// if (data[pos] != 0x01) {
-	// 	throw new Error(`invalid stream signature byte ${data[pos]}`)
-	// }
+	if comp[pos] != 0x01 as u8 {
+		return error('invalid signature byte')
+	}
 	pos += 1
+
+	for pos < comp.length {
+		start := pos
+		// const header = data.subarray(start, start + 2).readUint16LE()
+		// const size = (header & 0x0FFF) + 3
+		// const sig = (header >> 12) & 0x07
+		// if (sig != 0b011) {
+		// 	throw new Error(`invalid chunk signature ${sig}`)
+		// }
+
+		// const flag = (header >> 15) & 0x01
+		// if (flag == 1 && size > 4098) {
+		// 	throw new Error('chunk size > 4098')
+		// }
+		// if (flag == 0 && size != 4098) {
+		// 	throw new Error('chunk size != 4098')
+		// }
+
+		// const end = Math.min(data.length, start + size)
+		pos = start + 2
+
+		// if (flag == 0) {
+		// 	result.push(data.subarray(pos, pos + 4096))
+		// 	pos += 4096
+		// } else {
+		// 	const res_start = result.length
+		// 	while (pos < end) {
+		// 		const flag_byte = data[pos]
+		// 		pos++
+
+		// 		for (let bit_idx = 0; bit_idx < 8; bit_idx++) {
+		// 			if (pos >= end) {
+		// 				break
+		// 			}
+
+		// 			const flag_bit = (flag_byte >> bit_idx) & 1;
+		// 			if (flag_bit == 0) {
+		// 				result.push(data.subarray(pos, pos + 1))
+		// 				pos++
+		// 			} else {
+		// 				const token = data.subarray(pos, pos + 2).readUint16LE()
+		// 				const [length_mask, offset_mask, bit_count, _] = copytoken_helper(result.length, res_start)
+		// 				const length = (token & length_mask) + 3
+		// 				const t1 = token & offset_mask
+		// 				const t2 = 16 - bit_count
+		// 				const offset = (t1 >> t2) + 1
+		// 				const copy_start = result.length - offset
+		// 				for (let i = copy_start; i < copy_start + length; i++) {
+		// 					result.push(result[i])
+		// 				}
+		// 				pos += 2
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		break
+	}
 
 	return decomp
 }
