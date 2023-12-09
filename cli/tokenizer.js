@@ -34,6 +34,8 @@ const PRECEDENCE = (tok) => {
 
 const NAME_START_REGEX = /[a-zA-Z_]/
 const NAME_REGEX = /[a-zA-Z0-9_]/
+const NUMBER_REGEX = /[0-9]/
+const HEX_RE = /[0-9a-fA-F]/
 
 function is_infix(tok) {
 	return is_math(tok) || is_logical(tok) || is_comparison(tok)
@@ -94,16 +96,12 @@ class Tokenizer {
 			}
 
 			// Numbers
-			const NUMBER_REGEX = /[0-9]/
 			if (NUMBER_REGEX.test(c)) {
-				let val = c
-
-				while (this.pos < this.text.length && NUMBER_REGEX.test(this.text[this.pos])) {
-					val += this.text[this.pos]
-					this.pos++
+				if (c === '0' && this.text[this.pos] === 'x') {
+					this.add_token('number', this.hex_number())
+				} else {
+					this.add_token('number', this.dec_number())
 				}
-
-				this.add_token('number', val)
 				continue
 			}
 
@@ -305,6 +303,27 @@ class Tokenizer {
 		}
 
 		return this.text.slice(start, this.pos - 1)
+	}
+
+	dec_number() {
+		const start = this.pos - 1
+
+		while (this.pos < this.text.length && NUMBER_REGEX.test(this.text[this.pos])) {
+			this.pos++
+		}
+
+		return this.text.slice(start, this.pos)
+	}
+
+	hex_number() {
+		const start = this.pos - 1
+		this.pos++
+
+		while (this.pos < this.text.length && HEX_RE.test(this.text[this.pos])) {
+			this.pos++
+		}
+
+		return this.text.slice(start, this.pos)
 	}
 }
 
