@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 const KEYWORDS = [
+	'const',
 ]
 
 class Lexer{
@@ -52,6 +53,18 @@ class Lexer{
 			return 'name'
 		}
 
+		// Number
+		if (/[0-9]/.test(c)) {
+			if (c === '0' && this.text[this.pos] === 'x') {
+				this.advance_hex_num()
+			} else {
+				this.advance_decimal_num()
+			}
+
+			this.val = this.text.slice(this.start, this.pos)
+			return 'integer'
+		}
+
 		// Simple token
 		switch (c) {
 			case '/': {
@@ -65,12 +78,36 @@ class Lexer{
 					return this.next()
 				}
 			}
+			case ':': {
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'decl_assign'
+				}
+				break
+			}
+			case '(':
+				return 'lpar'
+			case ')':
+				return 'rpar'
 			default:
 				break
 		}
 
 		this.val = `unexpected char ${c}`
 		return 'err'
+	}
+
+	advance_decimal_num() {
+		while (this.pos < this.text.length && /[0-9]/.test(this.text[this.pos])) {
+			this.pos++
+		}
+	}
+
+	advance_hex_num() {
+		this.pos += 1
+		while (this.pos < this.text.length && /[0-9a-fA-F]/.test(this.text[this.pos])) {
+			this.pos++
+		}
 	}
 
 	skip_whitespace() {
