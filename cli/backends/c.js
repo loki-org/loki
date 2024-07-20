@@ -5,7 +5,7 @@ import { BaseGen } from '../gen.js'
 
 class Gen extends BaseGen {
 	const_decl(node) {
-		this.write(`const ${node.name} = `)
+		this.write(`#define ${node.name} `)
 		this.expr(node.expr)
 		this.writeln('')
 	}

@@ -96,7 +96,7 @@ class Parser{
 	single_expr() {
 		switch(this.tok) {
 			case 'integer':
-				return this.integer_literal()
+				return this.integer()
 			case 'name':
 				return this.name_expr()
 			default:
@@ -116,9 +116,9 @@ class Parser{
 		}
 	}
 
-	integer_literal() {
+	integer() {
 		const n = {
-			kind: 'integer_literal',
+			kind: 'integer',
 			value: this.val,
 		}
 		this.next()
