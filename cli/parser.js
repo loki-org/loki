@@ -17,6 +17,7 @@ class Parser{
 		this.next_tok = 'err'
 		this.val = ''
 		this.pos = { line: 0, col: 0}
+		this.is_pub = false
 
 		this.next()
 	}
@@ -70,9 +71,27 @@ class Parser{
 		switch(this.tok) {
 			case 'const':
 				return this.const_decl()
+			case 'pub':
+				this.pub_stmt()
+				return this.toplevel_stmt()
 			default:
 				throw new Error(`unexpected stmt: ${this.tok} "${this.val}"`)
 		}
+	}
+
+	pub_stmt() {
+		if (this.is_pub) {
+			throw new Error(`unexpected pub stmt at ${this.pos}`)
+		}
+
+		this.next()
+		this.is_pub = true
+	}
+
+	read_pub() {
+		const p = this.is_pub
+		this.is_pub = false
+		return p
 	}
 
 	const_decl() {
@@ -82,6 +101,7 @@ class Parser{
 		const expr = this.expr()
 		return {
 			kind: 'const_decl',
+			pub: this.read_pub(),
 			name,
 			expr,
 		}

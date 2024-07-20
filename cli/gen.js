@@ -7,8 +7,9 @@ class BaseGen {
 	comment_sign = '//'
 	line_start = true
 	indent = -1
-	headers_out = ''
+	header_out = ''
 	out = ''
+	footer_out = ''
 
 	constructor() {
 		if (this.constructor === BaseGen) {
@@ -38,14 +39,15 @@ class BaseGen {
 	gen(ast) {
 		this.pre_stage()
 
-		this.headers_out = this.line_comment(LOKI_HEADER)
+		this.header_out = this.line_comment(LOKI_HEADER)
 
 		this.stmts(ast.body)
 
 		this.post_stage()
 
-		return this.headers_out + '\n'
+		return this.header_out + '\n'
 			+ this.out + '\n'
+			+ this.footer_out + '\n'
 	}
 
 	stmts(stmts) {

@@ -3,6 +3,7 @@
 
 const KEYWORDS = [
 	'const',
+	'pub',
 ]
 
 class Lexer{
