@@ -8,7 +8,7 @@ function parse_args(args) {
 	const prefs = {
 		command: 'build',
 		options: {
-			backend: 'js',
+			backends: ['js'],
 		},
 		file: '',
 	}
@@ -18,7 +18,15 @@ function parse_args(args) {
 		switch (arg) {
 			case '-b':
 			case '--backend': {
-				prefs.options.backend = args[++i]
+				prefs.options.backends = args[++i].split(',')
+
+				for (const backend of prefs.options.backends) {
+					if (!['js', 'c', 'py'].includes(backend)) {
+						console.error(`Unknown backend: ${backend}`)
+						process.exit(1)
+					}
+				}
+
 				continue
 			}
 			default:
@@ -40,7 +48,7 @@ function main() {
 	if (process.argv.length < 3) {
 		console.log(`Usage: loki [options] <file>
 Options:
-  -b, --backend <backend>   One of [js, c, py]. Default: js`)
+  -b, --backend <backend>   One of [js, c, py] or a comma-separated list. Default: js`)
 		process.exit(0)
 	}
 
