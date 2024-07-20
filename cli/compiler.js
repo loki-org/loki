@@ -8,9 +8,10 @@ import { gen } from './gen.js'
 function compile(prefs) {
 	const text = fs.readFileSync(prefs.file, 'utf8')
 	const ast = parse(text)
-	const out = gen(ast, prefs.options.backend)
-	const outname = prefs.file.replace('.lo', `.${prefs.options.backend}`)
-	fs.writeFileSync(outname, out)
+	gen(ast, prefs.options.backend).then((out) => {
+		const outname = prefs.file.replace('.lo', `.${prefs.options.backend}`)
+		fs.writeFileSync(outname, out)
+	})
 }
 
 export { compile }

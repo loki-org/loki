@@ -28,7 +28,7 @@ function parse_args(args) {
 		if (prefs.file === '') {
 			prefs.file = arg
 		} else {
-			console.log(`Unknown argument: ${arg}`)
+			console.error(`Unknown argument: ${arg}`)
 			process.exit(1)
 		}
 	}
@@ -51,7 +51,7 @@ Options:
 			compile(prefs)
 			break
 		default:
-			console.log(`Unknown command: ${prefs.command}`)
+			console.error(`Unknown command: ${prefs.command}`)
 			process.exit(1)
 	}
 }
