@@ -4,13 +4,14 @@
 import { Lexer } from "./lexer.js"
 import { Table } from "./table.js"
 
-function parse(text) {
-	const p = new Parser(text)
+function parse(path, text) {
+	const p = new Parser(path, text)
 	return p.parse()
 }
 
 class Parser{
-	constructor(text){
+	constructor(path, text){
+		this.path = path
 		this.lexer = new Lexer(text)
 		this.table = new Table()
 		this.tok = ''
@@ -25,6 +26,7 @@ class Parser{
 	parse() {
 		const ast = {
 			kind: 'file',
+			path: this.path,
 			body: [],
 		}
 

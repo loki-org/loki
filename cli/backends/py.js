@@ -4,7 +4,7 @@
 import { BaseGen } from '../gen.js'
 
 class Gen extends BaseGen {
-	pre_stage() {
+	setup() {
 		this.comment_sign = '#'
 	}
 
