@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import { Lexer } from "./lexer.js"
-import { Table } from "./table.js"
+import { IDXS, Table } from "./table.js"
 
 function parse(path, text) {
 	const p = new Parser(path, text)
@@ -69,15 +69,41 @@ class Parser{
 		return val
 	}
 
+	type() {
+		const name = this.check_name()
+		const idx = this.table.indexes.get(name)
+		if (idx >= 0) {
+			return idx
+		}
+		throw new Error(`unknown type: ${name}`)
+	}
+
 	toplevel_stmt() {
 		switch(this.tok) {
 			case 'const':
 				return this.const_decl()
+			case 'fun':
+				return this.fun_decl()
 			case 'pub':
 				this.pub_stmt()
 				return this.toplevel_stmt()
 			default:
-				throw new Error(`unexpected stmt: ${this.tok} "${this.val}"`)
+				throw new Error(`unexpected toplevel stmt: ${this.tok} "${this.val}"`)
+		}
+	}
+
+	block() {
+		const stmts = []
+		while (this.tok !== 'rcur' && this.tok !== 'eof') {
+			stmts.push(this.stmt())
+		}
+		return stmts
+	}
+
+	stmt() {
+		switch(this.tok) {
+			default:
+				return this.expr()
 		}
 	}
 
@@ -107,6 +133,43 @@ class Parser{
 			name,
 			expr,
 		}
+	}
+
+	fun_decl() {
+		this.next()
+		const name = this.check_name()
+		this.check('lpar')
+		const params = this.params()
+		this.check('rpar')
+		let return_type = IDXS.void
+		if (this.tok !== 'lcur') {
+			return_type = this.type()
+		}
+		this.check('lcur')
+		const body = this.block()
+		this.check('rcur')
+		return {
+			kind: 'fun_decl',
+			pub: this.read_pub(),
+			name,
+			params,
+			return_type,
+			body,
+		}
+	}
+
+	params() {
+		const params = []
+		while (this.tok !== 'rpar') {
+			const name = this.check_name()
+			const type = this.type()
+			params.push({ name, type })
+
+			if (this.tok !== 'rpar') {
+				this.check(',')
+			}
+		}
+		return params
 	}
 
 	expr(precedence) {
