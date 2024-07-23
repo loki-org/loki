@@ -33,11 +33,39 @@ class Gen extends BaseGen {
 		this.writeln('')
 	}
 
+	fun_decl(node) {
+		if (node.pub) {
+			this.pub_syms.push(node.name)
+			this.alt_out += `export function ${node.name}(`
+			for (let i = 0; i < node.params.length; i++) {
+				const param = node.params[i]
+				this.alt_out += `${param.name}: ${this.type(param.type)}`
+				if (i < node.params.length - 1) {
+					this.alt_out += ', '
+				}
+			}
+			this.alt_out += `): ${this.type(node.return_type)}\n`
+		}
+
+		this.write(`function ${node.name}(`)
+		const param_list = []
+		for (const param of node.params) {
+			param_list.push(param.name)
+		}
+		this.write(param_list.join(', '))
+		this.writeln(`) {`)
+		this.stmts(node.body)
+		this.writeln('}')
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
 	}
 
 	type(t) {
+		if (t === IDXS.void) {
+			return 'void'
+		}
 		if (t >= IDXS.i32 && t <= IDXS.u32) {
 			return 'number'
 		}
