@@ -8,6 +8,7 @@ class Table {
 		this.indexes = new Map()
 		this.symbols = []
 
+		IDXS.void = this.register('')
 		IDXS.i32 = this.register('i32')
 		IDXS.u32 = this.register('u32')
 	}

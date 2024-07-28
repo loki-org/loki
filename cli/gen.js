@@ -77,6 +77,9 @@ class BaseGen {
 			case 'const_decl':
 				this.const_decl(stmt)
 				break
+			case 'fun_decl':
+				this.fun_decl(stmt)
+				break
 			default:
 				throw new Error(`cannot generate ${stmt.kind}`)
 		}
@@ -127,6 +130,10 @@ class BaseGen {
 	}
 
 	const_decl(node) {
+		throw new Error('Not implemented')
+	}
+
+	fun_decl(node) {
 		throw new Error('Not implemented')
 	}
 

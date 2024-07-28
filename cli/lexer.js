@@ -3,6 +3,7 @@
 
 const KEYWORDS = [
 	'const',
+	'fun',
 	'pub',
 ]
 
@@ -90,6 +91,10 @@ class Lexer{
 				return 'lpar'
 			case ')':
 				return 'rpar'
+			case '{':
+				return 'lcur'
+			case '}':
+				return 'rcur'
 			default:
 				break
 		}
