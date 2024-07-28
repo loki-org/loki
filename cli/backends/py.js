@@ -42,11 +42,10 @@ class Gen extends BaseGen {
 			case IDXS.void:
 				return 'void'
 			case IDXS.i32:
-				return 'int'
 			case IDXS.u32:
 				return 'int'
 			default:
-				return 'void*'
+				return 'Any'
 		}
 	}
 }

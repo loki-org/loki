@@ -63,13 +63,15 @@ class Gen extends BaseGen {
 	}
 
 	type(t) {
-		if (t === IDXS.void) {
-			return 'void'
+		switch(t) {
+			case IDXS.void:
+				return 'void'
+			case IDXS.i32:
+			case IDXS.u32:
+				return 'number'
+			default:
+				return 'any'
 		}
-		if (t >= IDXS.i32 && t <= IDXS.u32) {
-			return 'number'
-		}
-		return 'any'
 	}
 }
 
