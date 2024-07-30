@@ -4,16 +4,16 @@
 import { Lexer } from "./lexer.js"
 import { IDXS, Table } from "./table.js"
 
-function parse(path, text) {
-	const p = new Parser(path, text)
+function parse(path, table, text) {
+	const p = new Parser(path, table, text)
 	return p.parse()
 }
 
 class Parser{
-	constructor(path, text){
+	constructor(path, table, text){
 		this.path = path
 		this.lexer = new Lexer(text)
-		this.table = new Table()
+		this.table = table
 		this.tok = ''
 		this.next_tok = 'err'
 		this.val = ''
@@ -192,6 +192,9 @@ class Parser{
 			})
 		}
 		this.next()
+
+		this.table.register(name)
+
 		return {
 			kind: 'struct_decl',
 			pub: this.read_pub(),
