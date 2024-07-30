@@ -33,6 +33,11 @@ class Gen extends BaseGen {
 		}
 	}
 
+	struct_decl(node) {
+		this.writeln(`class ${node.name}:`)
+		this.writeln('\tpass')
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
 	}

@@ -41,6 +41,14 @@ class Gen extends BaseGen {
 		this.writeln('}')
 	}
 
+	struct_decl(node) {
+		this.alt_out += 'typedef struct {\n'
+		for (const field of node.fields) {
+			this.alt_out += `\t${this.type(field.type)} ${field.name};\n`
+		}
+		this.alt_out += `} ${node.name};\n`
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
 	}
