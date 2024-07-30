@@ -58,6 +58,23 @@ class Gen extends BaseGen {
 		this.writeln('}')
 	}
 
+	struct_decl(node) {
+		if (node.pub) {
+			this.pub_syms.push(node.name)
+			this.alt_out += `export class ${node.name}{\n`
+			for (const field of node.fields) {
+				this.alt_out += `\t${field.name}: ${this.type(field.type)}\n`
+			}
+			this.alt_out += '}\n'
+		}
+
+		this.writeln(`class ${node.name} {`)
+		this.indent++
+
+		this.indent--
+		this.writeln('}')
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
 	}
@@ -68,9 +85,10 @@ class Gen extends BaseGen {
 				return 'void'
 			case IDXS.i32:
 			case IDXS.u32:
+			case IDXS.f64:
 				return 'number'
 			default:
-				return 'any'
+				throw new Error(`unknown type ${t}`)
 		}
 	}
 }
