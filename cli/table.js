@@ -11,6 +11,7 @@ class Table {
 		IDXS.void = this.register('')
 		IDXS.i32 = this.register('i32')
 		IDXS.u32 = this.register('u32')
+		IDXS.f64 = this.register('f64')
 	}
 
 	register(name) {

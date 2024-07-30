@@ -24,6 +24,10 @@ class Sema {
 				this.fun_decl(stmt)
 				break
 			}
+			case 'struct_decl': {
+				this.struct_decl(stmt)
+				break
+			}
 			default: {
 				throw new Error(`cannot check ${stmt.kind}`)
 			}
@@ -36,6 +40,10 @@ class Sema {
 
 	fun_decl(node) {
 		this.stmts(node.body)
+	}
+
+	struct_decl(node) {
+		// no checks yet
 	}
 
 	expr(node) {
