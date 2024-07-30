@@ -53,7 +53,7 @@ class Gen extends BaseGen {
 		this.expr(node.expr)
 	}
 
-	type(t) {
+	backend_type(t) {
 		switch(t) {
 			case IDXS.void:
 				return 'void'
@@ -61,8 +61,10 @@ class Gen extends BaseGen {
 				return 'int32_t'
 			case IDXS.u32:
 				return 'uint32_t'
+			case IDXS.f64:
+				return 'double'
 			default:
-				return 'void*'
+				return undefined
 		}
 	}
 }
