@@ -4,16 +4,16 @@
 import { Lexer } from "./lexer.js"
 import { IDXS, Table } from "./table.js"
 
-function parse(path, text) {
-	const p = new Parser(path, text)
+function parse(path, table, text) {
+	const p = new Parser(path, table, text)
 	return p.parse()
 }
 
 class Parser{
-	constructor(path, text){
+	constructor(path, table, text){
 		this.path = path
 		this.lexer = new Lexer(text)
-		this.table = new Table()
+		this.table = table
 		this.tok = ''
 		this.next_tok = 'err'
 		this.val = ''
@@ -84,6 +84,8 @@ class Parser{
 				return this.const_decl()
 			case 'fun':
 				return this.fun_decl()
+			case 'struct':
+				return this.struct_decl()
 			case 'pub':
 				this.pub_stmt()
 				return this.toplevel_stmt()
@@ -170,6 +172,35 @@ class Parser{
 			}
 		}
 		return params
+	}
+
+	struct_decl() {
+		this.next()
+		const name = this.check_name()
+		this.check('lcur')
+		const fields = []
+		while (this.tok !== 'rcur') {
+			const is_pub = this.tok === 'pub'
+			if (is_pub) {
+				this.next()
+			}
+			const field_name = this.check_name()
+			const type = this.type()
+			fields.push({
+				name: field_name,
+				type,
+			})
+		}
+		this.next()
+
+		this.table.register(name)
+
+		return {
+			kind: 'struct_decl',
+			pub: this.read_pub(),
+			name,
+			fields,
+		}
 	}
 
 	expr(precedence) {

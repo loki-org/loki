@@ -5,6 +5,7 @@ const KEYWORDS = [
 	'const',
 	'fun',
 	'pub',
+	'struct',
 ]
 
 class Lexer{

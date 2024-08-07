@@ -41,11 +41,19 @@ class Gen extends BaseGen {
 		this.writeln('}')
 	}
 
+	struct_decl(node) {
+		this.alt_out += 'typedef struct {\n'
+		for (const field of node.fields) {
+			this.alt_out += `\t${this.type(field.type)} ${field.name};\n`
+		}
+		this.alt_out += `} ${node.name};\n`
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
 	}
 
-	type(t) {
+	backend_type(t) {
 		switch(t) {
 			case IDXS.void:
 				return 'void'
@@ -53,8 +61,10 @@ class Gen extends BaseGen {
 				return 'int32_t'
 			case IDXS.u32:
 				return 'uint32_t'
+			case IDXS.f64:
+				return 'double'
 			default:
-				return 'void*'
+				return undefined
 		}
 	}
 }
