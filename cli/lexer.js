@@ -4,6 +4,7 @@
 const KEYWORDS = [
 	'const',
 	'fun',
+	'mut',
 	'pub',
 	'struct',
 ]
@@ -88,6 +89,8 @@ class Lexer{
 				}
 				break
 			}
+			case '=':
+				return 'assign'
 			case '(':
 				return 'lpar'
 			case ')':

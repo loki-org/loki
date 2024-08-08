@@ -21,6 +21,25 @@ class Gen extends BaseGen {
 		this.footer_out = `export { ${this.pub_syms.join(', ')} }`
 	}
 
+	assign_stmt(node) {
+		if (node.op === 'decl_assign') {
+			this.decl_assign(node)
+			return
+		}
+
+		this.expr(node.left)
+		this.write(` ${this.op(node.op)} `)
+		this.expr(node.right)
+		this.writeln('')
+	}
+
+	decl_assign(node) {
+		const mut = node.left.is_mut ? 'let' : 'const'
+		this.write(`${mut} ${node.left.name} = `)
+		this.expr(node.right)
+		this.writeln('')
+	}
+
 	const_decl(node) {
 		if (node.pub) {
 			this.pub_syms.push(node.name)

@@ -18,6 +18,24 @@ class Gen extends BaseGen {
 		this.alt_out += '\n'
 	}
 
+	assign_stmt(node) {
+		if (node.op === 'decl_assign') {
+			this.decl_assign(node)
+			return
+		}
+
+		this.expr(node.left)
+		this.write(` ${this.op(node.op)} `)
+		this.expr(node.right)
+		this.writeln(';')
+	}
+
+	decl_assign(node) {
+		this.write(`${this.type(node.left.obj)} ${node.left.name} = `)
+		this.expr(node.right)
+		this.writeln(';')
+	}
+
 	const_decl(node) {
 		this.alt_out += `#define ${node.name} `
 		this.alt_out += this.expr_string(node.expr)

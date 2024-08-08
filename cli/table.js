@@ -1,12 +1,15 @@
 // SPDX-FileCopyrightText: 2024-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
+import { Scope } from "./scope.js"
+
 const IDXS = {}
 
 class Table {
 	constructor() {
+		this.global_scope = new Scope(null)
 		this.indexes = new Map()
-		this.symbols = []
+		this.types = []
 
 		IDXS.void = this.register('void')
 		IDXS.i32 = this.register('i32')
@@ -20,8 +23,8 @@ class Table {
 			throw new Error(`Type ${name} already exists`)
 		}
 
-		const idx = this.symbols.length
-		this.symbols.push(name)
+		const idx = this.types.length
+		this.types.push(name)
 		this.indexes.set(name, idx)
 		return idx
 	}
