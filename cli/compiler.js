@@ -12,7 +12,7 @@ function compile(prefs) {
 	const table = new Table()
 	const ast = parse(prefs.file, table, text)
 
-	const sema = new Sema()
+	const sema = new Sema(table)
 	sema.check(ast)
 
 	for (const backend of prefs.options.backends) {

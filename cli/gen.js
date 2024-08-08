@@ -126,7 +126,7 @@ class BaseGen {
 
 	type(t) {
 		if (t > IDXS.builtin) {
-			return this.table.symbols[t]
+			return this.table.types[t]
 		}
 
 		const res = this.backend_type(t)
@@ -134,7 +134,7 @@ class BaseGen {
 			return res
 		}
 
-		throw new Error(`type not implemented$: ${this.table.symbols[t]}`)
+		throw new Error(`type not implemented$: ${this.table.types[t]}`)
 	}
 
 	// Set configs
