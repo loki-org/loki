@@ -89,6 +89,8 @@ class Lexer{
 				}
 				break
 			}
+			case '=':
+				return 'assign'
 			case '(':
 				return 'lpar'
 			case ')':

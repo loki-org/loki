@@ -25,7 +25,7 @@ class Gen extends BaseGen {
 		}
 
 		this.expr(node.left)
-		this.write(` ${node.op} `)
+		this.write(` ${this.op(node.op)} `)
 		this.expr(node.right)
 		this.writeln(';')
 	}

@@ -28,14 +28,14 @@ class Gen extends BaseGen {
 		}
 
 		this.expr(node.left)
-		this.write(` ${node.op} `)
+		this.write(` ${this.op(node.op)} `)
 		this.expr(node.right)
 		this.writeln('')
 	}
 
 	decl_assign(node) {
-		// TODO const / let
-		this.write(`let ${node.left.name} = `)
+		const mut = node.left.is_mut ? 'let' : 'const'
+		this.write(`${mut} ${node.left.name} = `)
 		this.expr(node.right)
 		this.writeln('')
 	}

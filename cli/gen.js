@@ -102,6 +102,9 @@ class BaseGen {
 			case 'cast_expr':
 				this.cast_expr(expr)
 				break
+			case 'ident':
+				this.ident(expr)
+				break
 			case 'integer':
 				this.integer(expr)
 				break
@@ -117,6 +120,10 @@ class BaseGen {
 		const s = this.out.substring(start)
 		this.out = this.out.substring(0, start)
 		return s
+	}
+
+	ident(node) {
+		this.write(node.name)
 	}
 
 	integer(node) {
@@ -138,6 +145,16 @@ class BaseGen {
 		}
 
 		throw new Error(`type not implemented: ${this.table.types[t]}`)
+	}
+
+	op(kind) {
+		switch (kind) {
+			case 'assign':
+			case 'decl_assign':
+				return '='
+			default:
+				throw new Error(`cannot represent ${kind}`)
+		}
 	}
 
 	// Set configs
