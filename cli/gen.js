@@ -79,6 +79,9 @@ class BaseGen {
 
 	stmt(stmt) {
 		switch (stmt.kind) {
+			case 'assign':
+				this.assign_stmt(stmt)
+				break
 			case 'const_decl':
 				this.const_decl(stmt)
 				break
@@ -134,7 +137,7 @@ class BaseGen {
 			return res
 		}
 
-		throw new Error(`type not implemented$: ${this.table.types[t]}`)
+		throw new Error(`type not implemented: ${this.table.types[t]}`)
 	}
 
 	// Set configs
@@ -149,6 +152,10 @@ class BaseGen {
 
 	post_stage() {
 		// Do nothing by default
+	}
+
+	assign_stmt(node) {
+		throw new Error('Not implemented')
 	}
 
 	const_decl(node) {

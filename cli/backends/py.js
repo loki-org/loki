@@ -9,6 +9,24 @@ class Gen extends BaseGen {
 		this.comment_sign = '#'
 	}
 
+	assign_stmt(node) {
+		if (node.op === 'decl_assign') {
+			this.decl_assign(node)
+			return
+		}
+
+		this.expr(node.left)
+		this.write(` ${node.op} `)
+		this.expr(node.right)
+		this.writeln('')
+	}
+
+	decl_assign(node) {
+		this.write(`${node.left.name} = `)
+		this.expr(node.right)
+		this.writeln('')
+	}
+
 	const_decl(node) {
 		this.write(`${node.name} = `)
 		this.expr(node.expr)
