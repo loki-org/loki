@@ -9,24 +9,28 @@ class Table {
 	constructor() {
 		this.global_scope = new Scope(null)
 		this.indexes = new Map()
-		this.types = []
+		this.symbols = []
 
-		IDXS.void = this.register('void')
-		IDXS.i32 = this.register('i32')
-		IDXS.u32 = this.register('u32')
-		IDXS.f64 = this.register('f64')
-		IDXS.builtin = this.register('_')
+		IDXS.void = this.register({ name: 'void' })
+		IDXS.i32 = this.register({ name: 'i32' })
+		IDXS.u32 = this.register({ name: 'u32' })
+		IDXS.f64 = this.register({ name: 'f64' })
+		IDXS.builtin = this.register({ name: '_' })
 	}
 
-	register(name) {
-		if (this.indexes.has(name)) {
-			throw new Error(`Type ${name} already exists`)
+	register(sym) {
+		if (this.indexes.has(sym.name)) {
+			throw new Error(`Type ${sym.name} already exists`)
 		}
 
-		const idx = this.types.length
-		this.types.push(name)
-		this.indexes.set(name, idx)
+		const idx = this.symbols.length
+		this.symbols.push(sym)
+		this.indexes.set(sym.name, idx)
 		return idx
+	}
+
+	sym(idx) {
+		return this.symbols[idx]
 	}
 }
 
