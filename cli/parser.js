@@ -104,6 +104,9 @@ class Parser{
 
 	stmt() {
 		switch(this.tok) {
+			case 'mut':
+			case 'name':
+				return this.assign_stmt()
 			default:
 				return this.expr()
 		}
@@ -122,6 +125,20 @@ class Parser{
 		const p = this.is_pub
 		this.is_pub = false
 		return p
+	}
+
+	assign_stmt() {
+		const left = this.expr()
+		const op = this.tok
+		this.next()
+		const right = this.expr()
+
+		return {
+			kind: 'assign',
+			op,
+			left,
+			right,
+		}
 	}
 
 	const_decl() {
@@ -213,6 +230,8 @@ class Parser{
 		switch(this.tok) {
 			case 'integer':
 				return this.integer()
+			case 'mut':
+				return this.ident()
 			case 'name':
 				return this.name_expr()
 			default:
@@ -232,6 +251,19 @@ class Parser{
 		}
 	}
 
+	ident() {
+		const is_mut = this.tok === 'mut'
+		if (is_mut) {
+			this.next()
+		}
+		const name = this.check_name()
+		return {
+			kind: 'ident',
+			name,
+			is_mut,
+		}
+	}
+
 	integer() {
 		const n = {
 			kind: 'integer',
@@ -243,12 +275,13 @@ class Parser{
 
 	name_expr() {
 		if (this.peek() === 'lpar') {
-		const type_idx = this.table.indexes.get(this.val)
-		if (type_idx >= 0) {
+			const type_idx = this.table.indexes.get(this.val)
+			if (type_idx >= 0) {
 				return this.cast_expr(type_idx)
 			}
 		}
-		throw new Error(`unknown name: ${this.val}`)
+
+		return this.ident()
 	}
 }
 
