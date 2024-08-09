@@ -71,6 +71,27 @@ class Gen extends BaseGen {
 		this.expr(node.expr)
 	}
 
+	struct_init(node) {
+		const inited_fields = node.fields.map(f => f.name)
+
+		const def = this.table.sym(node.type)
+		this.write(`(${def.name}){`)
+		def.fields.forEach((field, i) => {
+			this.write(`.${field.name} = `)
+
+			const init_idx = inited_fields.indexOf(field.name)
+			if (init_idx === -1) {
+				this.write('0')
+			} else {
+				this.expr(node.fields[init_idx].expr)
+			}
+			if (i < def.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.write('}')
+	}
+
 	backend_type(t) {
 		switch(t) {
 			case IDXS.void:

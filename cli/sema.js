@@ -106,14 +106,14 @@ class Sema {
 	}
 
 	struct_init(node) {
-		const idx = this.table.indexes.get(node.name)
+		node.type = this.table.indexes.get(node.name)
 		// TODO check struct exists
 		for (const field of node.fields) {
 			// TODO check field exists
 			// TODO check type matches
 			this.expr(field.expr)
 		}
-		return idx
+		return node.type
 	}
 
 	open_scope() {

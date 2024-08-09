@@ -53,11 +53,38 @@ class Gen extends BaseGen {
 
 	struct_decl(node) {
 		this.writeln(`class ${node.name}:`)
-		this.writeln('\tpass')
+		this.indent++
+		this.write('def __init__(self, ')
+		node.fields.forEach((field, i) => {
+			this.write(`${field.name}: ${this.type(field.type)}`)
+			if (i < node.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.writeln('):')
+		node.fields.forEach((field) => {
+			this.indent++
+			this.writeln(`self.${field.name} = ${field.name}`)
+			this.indent--
+		})
+		this.indent--
 	}
 
 	cast_expr(node) {
 		this.expr(node.expr)
+	}
+
+	struct_init(node) {
+		this.write(`${node.name}(`)
+		node.fields.forEach((field, i) => {
+			this.write(field.name)
+			this.write('=')
+			this.expr(field.expr)
+			if (i < node.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.write(')')
 	}
 
 	backend_type(t) {
