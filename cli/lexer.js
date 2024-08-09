@@ -82,6 +82,8 @@ class Lexer{
 					return this.next()
 				}
 			}
+			case ',':
+				return 'comma'
 			case ':': {
 				if (this.text[this.pos] === '=') {
 					this.pos++

@@ -108,6 +108,9 @@ class BaseGen {
 			case 'integer':
 				this.integer(expr)
 				break
+			case 'struct_init':
+				this.struct_init(expr)
+				break
 			default:
 				throw new Error(`cannot generate ${expr.kind}`)
 		}
@@ -136,7 +139,7 @@ class BaseGen {
 
 	type(t) {
 		if (t > IDXS.builtin) {
-			return this.table.types[t]
+			return this.table.sym(t).name
 		}
 
 		const res = this.backend_type(t)
@@ -144,7 +147,7 @@ class BaseGen {
 			return res
 		}
 
-		throw new Error(`type not implemented: ${this.table.types[t]}`)
+		throw new Error(`type not implemented: ${this.table.sym(t).name}`)
 	}
 
 	op(kind) {
@@ -188,6 +191,10 @@ class BaseGen {
 	}
 
 	cast_expr(node) {
+		throw new Error('Not implemented')
+	}
+
+	struct_init(node) {
 		throw new Error('Not implemented')
 	}
 

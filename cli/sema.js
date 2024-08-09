@@ -86,6 +86,8 @@ class Sema {
 				return this.ident(node)
 			case 'integer':
 				return IDXS.i32
+			case 'struct_init':
+				return this.struct_init(node)
 			default:
 				throw new Error(`cannot check ${node.kind}`)
 		}
@@ -101,6 +103,17 @@ class Sema {
 		node.obj = this.scope.lookup(node.name)
 		// TODO check obj exists
 		return node.obj
+	}
+
+	struct_init(node) {
+		node.type = this.table.indexes.get(node.name)
+		// TODO check struct exists
+		for (const field of node.fields) {
+			// TODO check field exists
+			// TODO check type matches
+			this.expr(field.expr)
+		}
+		return node.type
 	}
 
 	open_scope() {

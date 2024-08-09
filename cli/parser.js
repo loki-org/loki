@@ -210,7 +210,7 @@ class Parser{
 		}
 		this.next()
 
-		this.table.register(name)
+		this.table.register({ name, fields })
 
 		return {
 			kind: 'struct_decl',
@@ -281,7 +281,36 @@ class Parser{
 			}
 		}
 
+		const is_capitalised = this.val[0] === this.val[0].toUpperCase()
+		if (is_capitalised && this.peek() === 'lcur') {
+			return this.struct_init()
+		}
+
 		return this.ident()
+	}
+
+	struct_init() {
+		const name = this.check_name()
+		this.check('lcur')
+		const fields = []
+		while (this.tok !== 'rcur') {
+			const field_name = this.check_name()
+			this.check('assign')
+			const expr = this.expr()
+			fields.push({
+				name: field_name,
+				expr,
+			})
+			if (this.tok !== 'rcur') {
+				this.check('comma')
+			}
+		}
+		this.next()
+		return {
+			kind: 'struct_init',
+			name,
+			fields,
+		}
 	}
 }
 

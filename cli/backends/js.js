@@ -81,14 +81,36 @@ class Gen extends BaseGen {
 		if (node.pub) {
 			this.pub_syms.push(node.name)
 			this.alt_out += `export class ${node.name}{\n`
-			for (const field of node.fields) {
+			let constructor = '\tconstructor(params?: {'
+			node.fields.forEach((field, i) => {
 				this.alt_out += `\t${field.name}: ${this.type(field.type)}\n`
-			}
+				constructor += `${field.name}?: ${this.type(field.type)}`
+				if (i < node.fields.length - 1) {
+					constructor += '; '
+				}
+			})
+			constructor += '})\n'
+			this.alt_out += constructor
 			this.alt_out += '}\n'
 		}
 
 		this.writeln(`class ${node.name} {`)
 		this.indent++
+
+		this.write('constructor({')
+		node.fields.forEach((field, i) => {
+			this.write(field.name)
+			if (i < node.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.writeln('} = {}) {')
+		node.fields.forEach((field) => {
+			this.indent++
+			this.writeln(`this.${field.name} = ${field.name}`)
+			this.indent--
+		})
+		this.writeln('}')
 
 		this.indent--
 		this.writeln('}')
@@ -96,6 +118,19 @@ class Gen extends BaseGen {
 
 	cast_expr(node) {
 		this.expr(node.expr)
+	}
+
+	struct_init(node) {
+		this.write(`new ${node.name}({`)
+		node.fields.forEach((field, i) => {
+			this.write(field.name)
+			this.write(': ')
+			this.expr(field.expr)
+			if (i < node.fields.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.write('})')
 	}
 
 	backend_type(t) {
