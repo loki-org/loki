@@ -99,6 +99,9 @@ class BaseGen {
 
 	expr(expr){
 		switch (expr.kind) {
+			case 'array_init':
+				this.array_init(expr)
+				break
 			case 'cast_expr':
 				this.cast_expr(expr)
 				break
@@ -135,19 +138,6 @@ class BaseGen {
 
 	line_comment(text) {
 		return `${this.comment_sign}${text}`
-	}
-
-	type(t) {
-		if (t > IDXS.builtin) {
-			return this.table.sym(t).name
-		}
-
-		const res = this.backend_type(t)
-		if (res) {
-			return res
-		}
-
-		throw new Error(`type not implemented: ${this.table.sym(t).name}`)
 	}
 
 	op(kind) {
@@ -190,6 +180,10 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
+	array_init(node) {
+		throw new Error('Not implemented')
+	}
+
 	cast_expr(node) {
 		throw new Error('Not implemented')
 	}
@@ -198,7 +192,7 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
-	backend_type(t) {
+	type(t) {
 		throw new Error('Not implemented')
 	}
 }

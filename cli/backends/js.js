@@ -116,6 +116,10 @@ class Gen extends BaseGen {
 		this.writeln('}')
 	}
 
+	array_init(node) {
+		this.write('new Array()')
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
 	}
@@ -133,7 +137,13 @@ class Gen extends BaseGen {
 		this.write('})')
 	}
 
-	backend_type(t) {
+	type(t) {
+		const sym = this.table.sym(t)
+
+		if (sym.kind === 'array') {
+			return `${this.type(sym.elem)}[]`
+		}
+
 		switch(t) {
 			case IDXS.void:
 				return 'void'
@@ -142,7 +152,7 @@ class Gen extends BaseGen {
 			case IDXS.f64:
 				return 'number'
 			default:
-				return undefined
+				return sym.name
 		}
 	}
 }

@@ -80,6 +80,8 @@ class Sema {
 
 	expr(node) {
 		switch (node.kind) {
+			case 'array_init':
+				return this.array_init(node)
 			case 'cast_expr':
 				return this.cast_expr(node)
 			case 'ident':
@@ -91,6 +93,10 @@ class Sema {
 			default:
 				throw new Error(`cannot check ${node.kind}`)
 		}
+	}
+
+	array_init(node) {
+		return node.type
 	}
 
 	cast_expr(node) {
