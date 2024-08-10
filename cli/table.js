@@ -29,6 +29,16 @@ class Table {
 		return idx
 	}
 
+	find_array(elem) {
+		const name = `[]${this.sym(elem).name}`
+		const idx = this.indexes.get(name)
+		if (idx >= 0) {
+			return idx
+		}
+
+		return this.register({ kind: 'array', name, elem })
+	}
+
 	sym(idx) {
 		return this.symbols[idx]
 	}

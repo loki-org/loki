@@ -70,6 +70,13 @@ class Parser{
 	}
 
 	type() {
+		if (this.tok === 'lsqr') {
+			this.next()
+			this.check('rsqr')
+			const elem = this.type()
+			return this.table.find_array(elem)
+		}
+
 		const name = this.check_name()
 		const idx = this.table.indexes.get(name)
 		if (idx >= 0) {
@@ -230,12 +237,25 @@ class Parser{
 		switch(this.tok) {
 			case 'integer':
 				return this.integer()
+			case 'lsqr':
+				return this.array_init()
 			case 'mut':
 				return this.ident()
 			case 'name':
 				return this.name_expr()
 			default:
 				throw new Error(`unexpected expr: ${this.tok} "${this.val}"`)
+		}
+	}
+
+	array_init() {
+		this.next()
+		this.check('rsqr')
+		const elem = this.type()
+		const type = this.table.find_array(elem)
+		return {
+			kind: 'array_init',
+			type,
 		}
 	}
 

@@ -97,6 +97,10 @@ class Lexer{
 				return 'lpar'
 			case ')':
 				return 'rpar'
+			case '[':
+				return 'lsqr'
+			case ']':
+				return 'rsqr'
 			case '{':
 				return 'lcur'
 			case '}':
