@@ -15,7 +15,7 @@ class Gen extends BaseGen {
 		this.alt_out = this.line_comment(this.LOKI_HEADER)
 		this.alt_out += '#pragma once\n\n'
 		this.alt_out += '#include <stdint.h>\n'
-		this.alt_out += '#include <glib.h>\n' // TODO only include if needed
+		this.alt_out += '#include <glib.h>\n' // TODO:high only include if needed
 		this.alt_out += '\n'
 	}
 
@@ -69,8 +69,15 @@ class Gen extends BaseGen {
 	}
 
 	array_init(node) {
-		const sym = this.table.sym(node.type)
-		this.write(`g_array_new(FALSE, FALSE, sizeof(${this.type(sym.elem)}))`)
+		throw new Error('TODO helper function for array init from C array')
+		// const sym = this.table.sym(node.type)
+		// const typ = this.type(node.type)
+		// this.write(`g_array_sized_new(FALSE, FALSE, sizeof(${typ}), ${node.exprs.length})`)
+
+		// for (let i = 0; i < node.exprs.length; i++) {
+		// 	this.write(`g_array_index(TODO, ${typ}, ${i}) = `)
+		// 	this.expr(node.exprs[i])
+		// }
 	}
 
 	cast_expr(node) {

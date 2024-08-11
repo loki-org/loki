@@ -96,6 +96,18 @@ class Sema {
 	}
 
 	array_init(node) {
+		// Type only init
+		if (node.exprs.length === 0) {
+			return node.type
+		}
+
+		const elem_type = this.expr(node.exprs[0])
+		for (let i = 1; i < node.exprs.length; i++) {
+			this.expr(node.exprs[i])
+			// TODO check elem type matches
+		}
+		node.type = this.table.find_array(elem_type)
+
 		return node.type
 	}
 

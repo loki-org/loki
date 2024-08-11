@@ -250,12 +250,31 @@ class Parser{
 
 	array_init() {
 		this.next()
-		this.check('rsqr')
-		const elem = this.type()
-		const type = this.table.find_array(elem)
+
+		// Type only init, e.g. `[]i32`
+		if (this.tok === 'rsqr') {
+			this.next()
+			const elem = this.type()
+			const type = this.table.find_array(elem)
+			return {
+				kind: 'array_init',
+				exprs: [],
+				type,
+			}
+		}
+
+		// Element init, e.g. `[1, 2, 3]`
+		const exprs = []
+		while (this.tok !== 'rsqr') {
+			exprs.push(this.expr())
+			if (this.tok !== 'rsqr') {
+				this.check('comma')
+			}
+		}
+		this.next()
 		return {
 			kind: 'array_init',
-			type,
+			exprs,
 		}
 	}
 

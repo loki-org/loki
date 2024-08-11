@@ -13,7 +13,7 @@ class Gen extends BaseGen {
 
 	pre_stage() {
 		this.alt_out = this.line_comment(this.LOKI_HEADER)
-		// TODO headers: library name, version
+		// TODO:low headers: library name, version
 		//   see https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-d-ts.html#library-file-layout
 	}
 
@@ -117,7 +117,12 @@ class Gen extends BaseGen {
 	}
 
 	array_init(node) {
-		this.write('new Array()')
+		this.write('new Array(')
+		for (const expr of node.exprs) {
+			this.expr(expr)
+			this.write(', ')
+		}
+		this.write(')')
 	}
 
 	cast_expr(node) {
