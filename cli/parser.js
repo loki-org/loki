@@ -251,19 +251,7 @@ class Parser{
 	array_init() {
 		this.next()
 
-		// Type only init, e.g. `[]i32`
-		if (this.tok === 'rsqr') {
-			this.next()
-			const elem = this.type()
-			const type = this.table.find_array(elem)
-			return {
-				kind: 'array_init',
-				exprs: [],
-				type,
-			}
-		}
-
-		// Element init, e.g. `[1, 2, 3]`
+		// Exprs, e.g. (`1,2,3` in `[1,2,3]`) or (`8` in `[8]u32{}`)
 		const exprs = []
 		while (this.tok !== 'rsqr') {
 			exprs.push(this.expr())
@@ -272,6 +260,28 @@ class Parser{
 			}
 		}
 		this.next()
+
+		// Type only init, e.g. `[]i32{}` or `[8]u32{}`
+		if (this.tok === 'name' && this.peek() === 'lcur') {
+			const fixed = exprs.length === 1
+			const elem = this.type()
+			let type = -1
+			if (fixed) {
+				type = this.table.find_fixed_array(elem, exprs[0].value)
+			} else {
+				type = this.table.find_array(elem)
+			}
+			this.check('lcur')
+			this.check('rcur')
+			return {
+				kind: 'array_init',
+				fixed,
+				exprs,
+				type,
+			}
+		}
+
+		// Element init, e.g. `[1, 2, 3]`
 		return {
 			kind: 'array_init',
 			exprs,

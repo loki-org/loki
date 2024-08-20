@@ -118,10 +118,12 @@ class Gen extends BaseGen {
 
 	array_init(node) {
 		this.write('new Array(')
-		for (const expr of node.exprs) {
+		node.exprs.forEach((expr, i) => {
 			this.expr(expr)
-			this.write(', ')
-		}
+			if (i < node.exprs.length - 1) {
+				this.write(', ')
+			}
+		})
 		this.write(')')
 	}
 

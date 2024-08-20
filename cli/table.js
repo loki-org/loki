@@ -39,6 +39,16 @@ class Table {
 		return this.register({ kind: 'array', name, elem })
 	}
 
+	find_fixed_array(elem, size) {
+		const name = `[${size}]${this.sym(elem).name}`
+		const idx = this.indexes.get(name)
+		if (idx >= 0) {
+			return idx
+		}
+
+		return this.register({ kind: 'array_fixed', name, elem, size })
+	}
+
 	sym(idx) {
 		return this.symbols[idx]
 	}
