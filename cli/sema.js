@@ -86,6 +86,8 @@ class Sema {
 				return this.cast_expr(node)
 			case 'ident':
 				return this.ident(node)
+			case 'index':
+				return this.index_expr(node)
 			case 'integer':
 				return IDXS.i32
 			case 'struct_init':
@@ -121,6 +123,18 @@ class Sema {
 		node.obj = this.scope.lookup(node.name)
 		// TODO check obj exists
 		return node.obj
+	}
+
+	index_expr(node) {
+		const left_type = this.expr(node.left)
+		this.expr(node.index)
+
+		const sym = this.table.sym(left_type)
+		if (sym.kind === 'array') {
+			return sym.elem
+		}
+
+		throw new Error(`cannot index ${left_type}`)
 	}
 
 	struct_init(node) {
