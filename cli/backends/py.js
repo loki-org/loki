@@ -71,6 +71,12 @@ class Gen extends BaseGen {
 	}
 
 	array_init(node) {
+		if (node.fixed) {
+			this.write('[None] * ')
+			this.expr(node.exprs[0])
+			return
+		}
+
 		this.write('[')
 		for (const expr of node.exprs) {
 			this.expr(expr)
