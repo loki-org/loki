@@ -96,6 +96,8 @@ class Gen extends BaseGen {
 		switch(t) {
 			case IDXS.void:
 				return 'void'
+			case IDXS.bool:
+				return 'bool'
 			case IDXS.i32:
 				return 'int32_t'
 			case IDXS.u32:
