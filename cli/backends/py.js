@@ -70,8 +70,30 @@ class Gen extends BaseGen {
 		this.indent--
 	}
 
+	array_init(node) {
+		if (node.fixed) {
+			this.write('[None] * ')
+			this.expr(node.exprs[0])
+			return
+		}
+
+		this.write('[')
+		for (const expr of node.exprs) {
+			this.expr(expr)
+			this.write(', ')
+		}
+		this.write(']')
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
+	}
+
+	index_expr(node) {
+		this.expr(node.left)
+		this.write('[')
+		this.expr(node.index)
+		this.write(']')
 	}
 
 	struct_init(node) {
@@ -87,7 +109,13 @@ class Gen extends BaseGen {
 		this.write(')')
 	}
 
-	backend_type(t) {
+	type(t) {
+		const sym = this.table.sym(t)
+
+		if (sym.kind === 'array') {
+			return `list[${this.type(sym.elem)}]`
+		}
+
 		switch(t) {
 			case IDXS.void:
 				return 'void'
@@ -99,7 +127,7 @@ class Gen extends BaseGen {
 			case IDXS.f64:
 				return 'float'
 			default:
-				return undefined
+				return sym.name
 		}
 	}
 }

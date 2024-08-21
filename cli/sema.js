@@ -80,10 +80,14 @@ class Sema {
 
 	expr(node) {
 		switch (node.kind) {
+			case 'array_init':
+				return this.array_init(node)
 			case 'cast_expr':
 				return this.cast_expr(node)
 			case 'ident':
 				return this.ident(node)
+			case 'index':
+				return this.index_expr(node)
 			case 'integer':
 				return IDXS.i32
 			case 'struct_init':
@@ -91,6 +95,22 @@ class Sema {
 			default:
 				throw new Error(`cannot check ${node.kind}`)
 		}
+	}
+
+	array_init(node) {
+		// Type only init
+		if (node.exprs.length === 0) {
+			return node.type
+		}
+
+		const elem_type = this.expr(node.exprs[0])
+		for (let i = 1; i < node.exprs.length; i++) {
+			this.expr(node.exprs[i])
+			// TODO check elem type matches
+		}
+		node.type = this.table.find_array(elem_type)
+
+		return node.type
 	}
 
 	cast_expr(node) {
@@ -103,6 +123,18 @@ class Sema {
 		node.obj = this.scope.lookup(node.name)
 		// TODO check obj exists
 		return node.obj
+	}
+
+	index_expr(node) {
+		const left_type = this.expr(node.left)
+		this.expr(node.index)
+
+		const sym = this.table.sym(left_type)
+		if (sym.kind === 'array') {
+			return sym.elem
+		}
+
+		throw new Error(`cannot index ${left_type}`)
 	}
 
 	struct_init(node) {

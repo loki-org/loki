@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import { Lexer } from "./lexer.js"
+import { PRECEDENCE, Lexer } from "./lexer.js"
 import { IDXS, Table } from "./table.js"
 
 function parse(path, table, text) {
@@ -70,6 +70,13 @@ class Parser{
 	}
 
 	type() {
+		if (this.tok === 'lsqr') {
+			this.next()
+			this.check('rsqr')
+			const elem = this.type()
+			return this.table.find_array(elem)
+		}
+
 		const name = this.check_name()
 		const idx = this.table.indexes.get(name)
 		if (idx >= 0) {
@@ -220,9 +227,15 @@ class Parser{
 		}
 	}
 
-	expr(precedence) {
+	expr(precedence = 0) {
 		let node = this.single_expr()
-		// TODO precedence
+		while (precedence < PRECEDENCE(this.tok)) {
+			if (this.tok === 'lsqr') {
+				node = this.index_expr(node)
+			} else {
+				throw new Error(`precedence not implemented: ${this.tok}`)
+			}
+		}
 		return node
 	}
 
@@ -230,12 +243,54 @@ class Parser{
 		switch(this.tok) {
 			case 'integer':
 				return this.integer()
+			case 'lsqr':
+				return this.array_init()
 			case 'mut':
 				return this.ident()
 			case 'name':
 				return this.name_expr()
 			default:
 				throw new Error(`unexpected expr: ${this.tok} "${this.val}"`)
+		}
+	}
+
+	array_init() {
+		this.next()
+
+		// Exprs, e.g. (`1,2,3` in `[1,2,3]`) or (`8` in `[8]u32{}`)
+		const exprs = []
+		while (this.tok !== 'rsqr') {
+			exprs.push(this.expr())
+			if (this.tok !== 'rsqr') {
+				this.check('comma')
+			}
+		}
+		this.next()
+
+		// Type only init, e.g. `[]i32{}` or `[8]u32{}`
+		if (this.tok === 'name' && this.peek() === 'lcur') {
+			const fixed = exprs.length === 1
+			const elem = this.type()
+			let type = -1
+			if (fixed) {
+				type = this.table.find_fixed_array(elem, exprs[0].value)
+			} else {
+				type = this.table.find_array(elem)
+			}
+			this.check('lcur')
+			this.check('rcur')
+			return {
+				kind: 'array_init',
+				fixed,
+				exprs,
+				type,
+			}
+		}
+
+		// Element init, e.g. `[1, 2, 3]`
+		return {
+			kind: 'array_init',
+			exprs,
 		}
 	}
 
@@ -261,6 +316,17 @@ class Parser{
 			kind: 'ident',
 			name,
 			is_mut,
+		}
+	}
+
+	index_expr(left) {
+		this.check('lsqr')
+		const index = this.expr()
+		this.check('rsqr')
+		return {
+			kind: 'index',
+			left,
+			index,
 		}
 	}
 

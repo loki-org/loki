@@ -13,7 +13,7 @@ class Gen extends BaseGen {
 
 	pre_stage() {
 		this.alt_out = this.line_comment(this.LOKI_HEADER)
-		// TODO headers: library name, version
+		// TODO:low headers: library name, version
 		//   see https://www.typescriptlang.org/docs/handbook/declaration-files/templates/module-d-ts.html#library-file-layout
 	}
 
@@ -116,8 +116,26 @@ class Gen extends BaseGen {
 		this.writeln('}')
 	}
 
+	array_init(node) {
+		this.write('new Array(')
+		node.exprs.forEach((expr, i) => {
+			this.expr(expr)
+			if (i < node.exprs.length - 1) {
+				this.write(', ')
+			}
+		})
+		this.write(')')
+	}
+
 	cast_expr(node) {
 		this.expr(node.expr)
+	}
+
+	index_expr(node) {
+		this.expr(node.left)
+		this.write('[')
+		this.expr(node.index)
+		this.write(']')
 	}
 
 	struct_init(node) {
@@ -133,7 +151,13 @@ class Gen extends BaseGen {
 		this.write('})')
 	}
 
-	backend_type(t) {
+	type(t) {
+		const sym = this.table.sym(t)
+
+		if (sym.kind === 'array') {
+			return `${this.type(sym.elem)}[]`
+		}
+
 		switch(t) {
 			case IDXS.void:
 				return 'void'
@@ -144,7 +168,7 @@ class Gen extends BaseGen {
 			case IDXS.f64:
 				return 'number'
 			default:
-				return undefined
+				return sym.name
 		}
 	}
 }
