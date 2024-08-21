@@ -12,6 +12,7 @@ class Table {
 		this.symbols = []
 
 		IDXS.void = this.register({ name: 'void' })
+		IDXS.bool = this.register({ name: 'bool' })
 		IDXS.i32 = this.register({ name: 'i32' })
 		IDXS.u32 = this.register({ name: 'u32' })
 		IDXS.f64 = this.register({ name: 'f64' })
