@@ -122,6 +122,7 @@ class Gen extends BaseGen {
 			case IDXS.bool:
 				return 'bool'
 			case IDXS.i32:
+			case IDXS.u8:
 			case IDXS.u32:
 				return 'int'
 			case IDXS.f64:
