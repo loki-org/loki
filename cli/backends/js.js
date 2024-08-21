@@ -131,7 +131,7 @@ class Gen extends BaseGen {
 		this.expr(node.expr)
 	}
 
-	index_get(node) {
+	index_expr(node) {
 		this.expr(node.left)
 		this.write('[')
 		this.expr(node.index)
