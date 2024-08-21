@@ -9,6 +9,15 @@ const KEYWORDS = [
 	'struct',
 ]
 
+const PRECEDENCE = (tok) => {
+	switch (tok) {
+		case 'lsqr':
+			return 1
+		default:
+			return 0
+	}
+}
+
 class Lexer{
 	constructor(text) {
 		this.text = text
@@ -154,4 +163,4 @@ class Lexer{
 	}
 }
 
-export { Lexer }
+export { PRECEDENCE, Lexer }

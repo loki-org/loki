@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import { Lexer } from "./lexer.js"
+import { PRECEDENCE, Lexer } from "./lexer.js"
 import { IDXS, Table } from "./table.js"
 
 function parse(path, table, text) {
@@ -227,9 +227,15 @@ class Parser{
 		}
 	}
 
-	expr(precedence) {
+	expr(precedence = 0) {
 		let node = this.single_expr()
-		// TODO precedence
+		while (precedence < PRECEDENCE(this.tok)) {
+			if (this.tok === 'lsqr') {
+				node = this.index_expr(node)
+			} else {
+				throw new Error(`precedence not implemented: ${this.tok}`)
+			}
+		}
 		return node
 	}
 
@@ -310,6 +316,17 @@ class Parser{
 			kind: 'ident',
 			name,
 			is_mut,
+		}
+	}
+
+	index_expr(left) {
+		this.check('lsqr')
+		const index = this.expr()
+		this.check('rsqr')
+		return {
+			kind: 'index',
+			left,
+			index,
 		}
 	}
 
