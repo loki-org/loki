@@ -6,6 +6,7 @@ const KEYWORDS = [
 	'fun',
 	'mut',
 	'pub',
+	'return',
 	'struct',
 ]
 

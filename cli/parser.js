@@ -114,6 +114,8 @@ class Parser{
 			case 'mut':
 			case 'name':
 				return this.assign_stmt()
+			case 'return':
+				return this.return_stmt()
 			default:
 				return this.expr()
 		}
@@ -192,10 +194,20 @@ class Parser{
 			params.push({ name, type })
 
 			if (this.tok !== 'rpar') {
-				this.check(',')
+				this.check('comma')
 			}
 		}
 		return params
+	}
+
+	return_stmt() {
+		this.next()
+		// TODO return without value
+		const expr = this.expr()
+		return {
+			kind: 'return_stmt',
+			expr,
+		}
 	}
 
 	struct_decl() {
