@@ -91,6 +91,8 @@ class Parser{
 				return this.const_decl()
 			case 'fun':
 				return this.fun_decl()
+			case 'impl':
+				return this.struct_impl()
 			case 'struct':
 				return this.struct_decl()
 			case 'pub':
@@ -246,13 +248,36 @@ class Parser{
 		}
 		this.next()
 
-		this.table.register({ name, fields })
+		const idx = this.table.register({ name, fields, methods: [] })
 
 		return {
 			kind: 'struct_decl',
+			type: idx,
 			pub: this.read_pub(),
 			name,
 			fields,
+		}
+	}
+
+	struct_impl() {
+		this.next()
+		const type = this.type()
+		this.check('lcur')
+		let methods = []
+		while (this.tok !== 'rcur') {
+			if (this.tok === 'pub') {
+				this.next()
+				this.is_pub = true
+			}
+			methods.push(this.fun_decl())
+		}
+		this.check('rcur')
+
+		this.table.add_impl(type, methods)
+
+		return {
+			kind: 'struct_impl',
+			methods,
 		}
 	}
 

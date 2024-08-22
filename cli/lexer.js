@@ -4,6 +4,7 @@
 const KEYWORDS = [
 	'const',
 	'fun',
+	'impl',
 	'mut',
 	'pub',
 	'return',

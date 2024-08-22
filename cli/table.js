@@ -51,6 +51,10 @@ class Table {
 		return this.register({ kind: 'array_fixed', name, elem, size })
 	}
 
+	add_impl(idx, methods) {
+		this.symbols[idx].methods = this.symbols[idx].methods.concat(methods)
+	}
+
 	sym(idx) {
 		return this.symbols[idx]
 	}
