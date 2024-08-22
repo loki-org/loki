@@ -192,7 +192,7 @@ class Parser{
 			params.push({ name, type })
 
 			if (this.tok !== 'rpar') {
-				this.check(',')
+				this.check('comma')
 			}
 		}
 		return params
