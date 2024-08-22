@@ -34,13 +34,14 @@ class Sema {
 				this.fun_decl(stmt)
 				break
 			}
-			case 'struct_decl': {
+			case 'return_stmt':
+				this.return_stmt(stmt)
+				break
+			case 'struct_decl':
 				this.struct_decl(stmt)
 				break
-			}
-			default: {
+			default:
 				throw new Error(`cannot check ${stmt.kind}`)
-			}
 		}
 	}
 
@@ -72,6 +73,10 @@ class Sema {
 		this.open_scope()
 		this.stmts(node.body)
 		this.close_scope()
+	}
+
+	return_stmt(node) {
+		this.expr(node.expr)
 	}
 
 	struct_decl(node) {

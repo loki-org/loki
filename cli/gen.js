@@ -8,6 +8,7 @@ class BaseGen {
 
 	table = null
 	comment_sign = '//'
+	semi = ''
 	line_start = true
 	indent = -1
 	file_name = ''
@@ -88,7 +89,9 @@ class BaseGen {
 			case 'fun_decl':
 				this.fun_decl(stmt)
 				break
-
+			case 'return_stmt':
+				this.return_stmt(stmt)
+				break
 			case 'struct_decl':
 				this.struct_decl(stmt)
 				break
@@ -129,6 +132,12 @@ class BaseGen {
 		const s = this.out.substring(start)
 		this.out = this.out.substring(0, start)
 		return s
+	}
+
+	return_stmt(node) {
+		this.write('return ')
+		this.expr(node.expr)
+		this.writeln(this.semi)
 	}
 
 	ident(node) {
