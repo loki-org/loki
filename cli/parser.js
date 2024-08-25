@@ -112,8 +112,9 @@ class Parser{
 	stmt() {
 		switch(this.tok) {
 			case 'mut':
-			case 'name':
 				return this.assign_stmt()
+			case 'name':
+				return this.name_stmt()
 			case 'return':
 				return this.return_stmt()
 			default:
@@ -138,6 +139,10 @@ class Parser{
 
 	assign_stmt() {
 		const left = this.expr()
+		return this.partial_assign_stmt(left)
+	}
+
+	partial_assign_stmt(left) {
 		const op = this.tok
 		this.next()
 		const right = this.expr()
@@ -198,6 +203,15 @@ class Parser{
 			}
 		}
 		return params
+	}
+
+	name_stmt() {
+		const left = this.expr()
+		if (this.tok === 'decl_assign' || this.tok === 'assign') {
+			return this.partial_assign_stmt(left)
+		}
+
+		return left
 	}
 
 	return_stmt() {
@@ -306,6 +320,24 @@ class Parser{
 		}
 	}
 
+	call_expr() {
+		const name = this.check_name()
+		this.check('lpar')
+		const args = []
+		while (this.tok !== 'rpar') {
+			args.push(this.expr())
+			if (this.tok !== 'rpar') {
+				this.check('comma')
+			}
+		}
+		this.check('rpar')
+		return {
+			kind: 'call_expr',
+			name,
+			args,
+		}
+	}
+
 	cast_expr(target) {
 		this.next()
 		this.check('lpar')
@@ -357,6 +389,8 @@ class Parser{
 			if (type_idx >= 0) {
 				return this.cast_expr(type_idx)
 			}
+
+			return this.call_expr()
 		}
 
 		const is_capitalised = this.val[0] === this.val[0].toUpperCase()
