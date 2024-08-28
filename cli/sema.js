@@ -41,7 +41,8 @@ class Sema {
 				this.struct_decl(stmt)
 				break
 			default:
-				throw new Error(`cannot check ${stmt.kind}`)
+				this.expr(stmt)
+				break
 		}
 	}
 
@@ -87,6 +88,8 @@ class Sema {
 		switch (node.kind) {
 			case 'array_init':
 				return this.array_init(node)
+			case 'call_expr':
+				return this.call_expr(node)
 			case 'cast_expr':
 				return this.cast_expr(node)
 			case 'ident':
@@ -116,6 +119,16 @@ class Sema {
 		node.type = this.table.find_array(elem_type)
 
 		return node.type
+	}
+
+	call_expr(node) {
+		const def = this.table.global_scope.lookup(node.name)
+
+		for (const arg of node.args) {
+			this.expr(arg)
+		}
+
+		return def.return_type
 	}
 
 	cast_expr(node) {

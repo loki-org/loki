@@ -181,6 +181,9 @@ class Parser{
 		this.check('lcur')
 		const body = this.block()
 		this.check('rcur')
+
+		this.table.global_scope.insert(name, { kind: 'fun', params, return_type })
+
 		return {
 			kind: 'fun_decl',
 			pub: this.read_pub(),
