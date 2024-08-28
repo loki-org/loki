@@ -55,7 +55,16 @@ class Gen extends BaseGen {
 	fun_decl(node) {
 		if (node.pub) {
 			this.pub_syms.push(node.name)
-			this.alt_out += `export function ${node.name}(`
+			this.alt_out += `export function`
+		}
+
+		this.write(`function `)
+		this.fun_body(node)
+	}
+
+	fun_body(node) {
+		if (node.pub) {
+			this.alt_out += `${node.name}(`
 			for (let i = 0; i < node.params.length; i++) {
 				const param = node.params[i]
 				this.alt_out += `${param.name}: ${this.type(param.type)}`
@@ -66,7 +75,9 @@ class Gen extends BaseGen {
 			this.alt_out += `): ${this.type(node.return_type)}\n`
 		}
 
-		this.write(`function ${node.name}(`)
+
+		this.write(node.name)
+		this.write('(')
 		const param_list = []
 		for (const param of node.params) {
 			param_list.push(param.name)
@@ -91,7 +102,6 @@ class Gen extends BaseGen {
 			})
 			constructor += '})\n'
 			this.alt_out += constructor
-			this.alt_out += '}\n'
 		}
 
 		this.writeln(`class ${node.name} {`)
@@ -112,8 +122,22 @@ class Gen extends BaseGen {
 		})
 		this.writeln('}')
 
+		const sym = this.table.sym(node.type)
+		sym.methods.forEach((method) => {
+			// TODO fix missing indent if pub
+			this.fun_body(method)
+		})
+
 		this.indent--
 		this.writeln('}')
+
+		if (node.pub) {
+			this.alt_out += '}\n'
+		}
+	}
+
+	struct_impl(node) {
+		// Handled by struct_decl
 	}
 
 	array_init(node) {

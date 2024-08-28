@@ -40,6 +40,9 @@ class Sema {
 			case 'struct_decl':
 				this.struct_decl(stmt)
 				break
+			case 'struct_impl':
+				this.struct_impl(stmt)
+				break
 			default:
 				this.expr(stmt)
 				break
@@ -82,6 +85,12 @@ class Sema {
 
 	struct_decl(node) {
 		// no checks yet
+	}
+
+	struct_impl(node) {
+		for (const fun of node.methods) {
+			this.fun_decl(fun)
+		}
 	}
 
 	expr(node) {

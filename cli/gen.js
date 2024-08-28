@@ -95,6 +95,9 @@ class BaseGen {
 			case 'struct_decl':
 				this.struct_decl(stmt)
 				break
+			case 'struct_impl':
+				this.struct_impl(stmt)
+				break
 			default:
 				this.expr(stmt)
 				this.writeln(this.semi)
@@ -209,6 +212,10 @@ class BaseGen {
 	}
 
 	struct_decl(node){
+		throw new Error('Not implemented')
+	}
+
+	struct_impl(node){
 		throw new Error('Not implemented')
 	}
 
