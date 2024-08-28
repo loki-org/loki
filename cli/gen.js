@@ -96,7 +96,9 @@ class BaseGen {
 				this.struct_decl(stmt)
 				break
 			default:
-				throw new Error(`cannot generate ${stmt.kind}`)
+				this.expr(stmt)
+				this.writeln(this.semi)
+				break
 		}
 	}
 
@@ -104,6 +106,9 @@ class BaseGen {
 		switch (expr.kind) {
 			case 'array_init':
 				this.array_init(expr)
+				break
+			case 'call_expr':
+				this.call_expr(expr)
 				break
 			case 'cast_expr':
 				this.cast_expr(expr)
@@ -138,6 +143,18 @@ class BaseGen {
 		this.write('return ')
 		this.expr(node.expr)
 		this.writeln(this.semi)
+	}
+
+	call_expr(node) {
+		this.write(node.name)
+		this.write('(')
+		for (let i = 0; i < node.args.length; i++) {
+			if (i > 0) {
+				this.write(', ')
+			}
+			this.expr(node.args[i])
+		}
+		this.write(')')
 	}
 
 	ident(node) {
