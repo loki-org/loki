@@ -13,6 +13,8 @@ const KEYWORDS = [
 const PRECEDENCE = (tok) => {
 	switch (tok) {
 		case 'lsqr':
+			return 2
+		case 'dot':
 			return 1
 		default:
 			return 0
@@ -94,6 +96,8 @@ class Lexer{
 			}
 			case ',':
 				return 'comma'
+			case '.':
+				return 'dot'
 			case ':': {
 				if (this.text[this.pos] === '=') {
 					this.pos++
