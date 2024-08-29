@@ -388,6 +388,13 @@ class Parser{
 		}
 	}
 
+	method_call(left) {
+		const call = this.call_expr()
+		call.left = left
+		call.is_method = true
+		return call
+	}
+
 	cast_expr(target) {
 		this.next()
 		this.check('lpar')
@@ -402,6 +409,9 @@ class Parser{
 
 	dot_expr(left) {
 		this.next()
+		if (this.peek() === 'lpar') {
+			return this.method_call(left)
+		}
 		return this.selector_expr(left)
 	}
 

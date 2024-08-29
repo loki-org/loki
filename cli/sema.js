@@ -138,7 +138,19 @@ class Sema {
 	}
 
 	call_expr(node) {
-		const def = this.table.global_scope.lookup(node.name)
+		let def = null
+
+		if (node.is_method) {
+			const left_type = this.expr(node.left)
+			const sym = this.table.sym(left_type)
+			for (const method of sym.methods) {
+				if (method.name === node.name) {
+					def = method
+				}
+			}
+		} else {
+			def = this.table.global_scope.lookup(node.name)
+		}
 
 		for (const arg of node.args) {
 			this.expr(arg)
