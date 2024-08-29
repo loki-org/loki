@@ -261,6 +261,8 @@ class Parser{
 		while (precedence < PRECEDENCE(this.tok)) {
 			if (this.tok === 'lsqr') {
 				node = this.index_expr(node)
+			} else if (this.tok === 'dot') {
+				node = this.dot_expr(node)
 			} else {
 				throw new Error(`precedence not implemented: ${this.tok}`)
 			}
@@ -353,6 +355,11 @@ class Parser{
 		}
 	}
 
+	dot_expr(left) {
+		this.next()
+		return this.selector_expr(left)
+	}
+
 	ident() {
 		const is_mut = this.tok === 'mut'
 		if (is_mut) {
@@ -402,6 +409,15 @@ class Parser{
 		}
 
 		return this.ident()
+	}
+
+	selector_expr(left) {
+		const name = this.check_name()
+		return {
+			kind: 'selector',
+			left,
+			name,
+		}
 	}
 
 	struct_init() {
