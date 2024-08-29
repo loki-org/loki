@@ -95,6 +95,9 @@ class BaseGen {
 			case 'struct_decl':
 				this.struct_decl(stmt)
 				break
+			case 'struct_impl':
+				this.struct_impl(stmt)
+				break
 			default:
 				this.expr(stmt)
 				this.writeln(this.semi)
@@ -125,6 +128,9 @@ class BaseGen {
 			case 'selector':
 				this.selector_expr(expr)
 				break
+			case 'self':
+				this.self_expr(expr)
+				break
 			case 'struct_init':
 				this.struct_init(expr)
 				break
@@ -149,6 +155,20 @@ class BaseGen {
 	}
 
 	call_expr(node) {
+		if (node.is_method) {
+			this.method_call(node)
+		} else {
+			this.fun_call(node)
+		}
+	}
+
+	method_call(node) {
+		this.expr(node.left)
+		this.write('.')
+		this.fun_call(node)
+	}
+
+	fun_call(node) {
 		this.write(node.name)
 		this.write('(')
 		for (let i = 0; i < node.args.length; i++) {
@@ -212,6 +232,10 @@ class BaseGen {
 		throw new Error('Not implemented')
 	}
 
+	struct_impl(node){
+		throw new Error('Not implemented')
+	}
+
 	array_init(node) {
 		throw new Error('Not implemented')
 	}
@@ -225,6 +249,10 @@ class BaseGen {
 	}
 
 	selector_expr(node) {
+		throw new Error('Not implemented')
+	}
+
+	self_expr(node) {
 		throw new Error('Not implemented')
 	}
 

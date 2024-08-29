@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import { IDXS } from "./table.js"
-import { Scope } from "./scope.js"
+import { Env, Scope } from "./scope.js"
 
 class Sema {
 	constructor(table) {
 		this.table = table
 		this.scope = this.table.global_scope
+		this.env = new Env()
 	}
 
 	check(ast) {
@@ -39,6 +40,9 @@ class Sema {
 				break
 			case 'struct_decl':
 				this.struct_decl(stmt)
+				break
+			case 'struct_impl':
+				this.struct_impl(stmt)
 				break
 			default:
 				this.expr(stmt)
@@ -84,6 +88,14 @@ class Sema {
 		// no checks yet
 	}
 
+	struct_impl(node) {
+		this.env.impl_type = node.type
+		for (const fun of node.methods) {
+			this.fun_decl(fun)
+		}
+		this.env.impl_type = -1
+	}
+
 	expr(node) {
 		switch (node.kind) {
 			case 'array_init':
@@ -100,6 +112,8 @@ class Sema {
 				return IDXS.i32
 			case 'selector':
 				return this.selector_expr(node)
+			case 'self':
+				return this.env.impl_type
 			case 'struct_init':
 				return this.struct_init(node)
 			default:
@@ -124,7 +138,19 @@ class Sema {
 	}
 
 	call_expr(node) {
-		const def = this.table.global_scope.lookup(node.name)
+		let def = null
+
+		if (node.is_method) {
+			const left_type = this.expr(node.left)
+			const sym = this.table.sym(left_type)
+			for (const method of sym.methods) {
+				if (method.name === node.name) {
+					def = method
+				}
+			}
+		} else {
+			def = this.table.global_scope.lookup(node.name)
+		}
 
 		for (const arg of node.args) {
 			this.expr(arg)

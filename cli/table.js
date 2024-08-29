@@ -14,6 +14,7 @@ class Table {
 		IDXS.void = this.register({ name: 'void' })
 		IDXS.bool = this.register({ name: 'bool' })
 		IDXS.i32 = this.register({ name: 'i32' })
+		IDXS.u8 = this.register({ name: 'u8' })
 		IDXS.u32 = this.register({ name: 'u32' })
 		IDXS.f64 = this.register({ name: 'f64' })
 		IDXS.builtin = this.register({ name: '_' })
@@ -48,6 +49,10 @@ class Table {
 		}
 
 		return this.register({ kind: 'array_fixed', name, elem, size })
+	}
+
+	add_impl(idx, methods) {
+		this.symbols[idx].methods = this.symbols[idx].methods.concat(methods)
 	}
 
 	sym(idx) {

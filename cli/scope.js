@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2024-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
+class Env {
+	impl_type = -1
+}
+
 class Scope {
 	constructor(parent) {
 		this.parent = parent
@@ -33,4 +37,4 @@ class Scope {
 	}
 }
 
-export { Scope }
+export { Env, Scope }

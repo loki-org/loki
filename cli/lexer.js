@@ -4,9 +4,11 @@
 const KEYWORDS = [
 	'const',
 	'fun',
+	'impl',
 	'mut',
 	'pub',
 	'return',
+	'self',
 	'struct',
 ]
 

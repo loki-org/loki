@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import { PRECEDENCE, Lexer } from "./lexer.js"
-import { IDXS, Table } from "./table.js"
+import { IDXS } from "./table.js"
+import { Env } from './scope.js'
 
 function parse(path, table, text) {
 	const p = new Parser(path, table, text)
@@ -19,6 +20,7 @@ class Parser{
 		this.val = ''
 		this.pos = { line: 0, col: 0}
 		this.is_pub = false
+		this.env = new Env()
 
 		this.next()
 	}
@@ -91,6 +93,8 @@ class Parser{
 				return this.const_decl()
 			case 'fun':
 				return this.fun_decl()
+			case 'impl':
+				return this.struct_impl()
 			case 'struct':
 				return this.struct_decl()
 			case 'pub':
@@ -168,26 +172,38 @@ class Parser{
 		}
 	}
 
-	fun_decl() {
+	fun_decl(is_method = false) {
 		this.next()
 		const name = this.check_name()
+
 		this.check('lpar')
+		let receiver = null
+		if (is_method) {
+			receiver = { name: 'self', type: this.env.impl_type }
+			this.next()
+		}
 		const params = this.params()
 		this.check('rpar')
+
 		let return_type = IDXS.void
 		if (this.tok !== 'lcur') {
 			return_type = this.type()
 		}
+
 		this.check('lcur')
 		const body = this.block()
 		this.check('rcur')
 
-		this.table.global_scope.insert(name, { kind: 'fun', params, return_type })
+		if (!is_method) {
+			this.table.global_scope.insert(name, { kind: 'fun', params, return_type })
+		}
 
 		return {
 			kind: 'fun_decl',
 			pub: this.read_pub(),
 			name,
+			is_method,
+			receiver,
 			params,
 			return_type,
 			body,
@@ -197,13 +213,13 @@ class Parser{
 	params() {
 		const params = []
 		while (this.tok !== 'rpar') {
+			if (params.length > 0) {
+				this.check('comma')
+			}
+
 			const name = this.check_name()
 			const type = this.type()
 			params.push({ name, type })
-
-			if (this.tok !== 'rpar') {
-				this.check('comma')
-			}
 		}
 		return params
 	}
@@ -246,13 +262,40 @@ class Parser{
 		}
 		this.next()
 
-		this.table.register({ name, fields })
+		const idx = this.table.register({ name, fields, methods: [] })
 
 		return {
 			kind: 'struct_decl',
+			type: idx,
 			pub: this.read_pub(),
 			name,
 			fields,
+		}
+	}
+
+	struct_impl() {
+		this.next()
+		const type = this.type()
+		this.env.impl_type = type
+
+		this.check('lcur')
+		let methods = []
+		while (this.tok !== 'rcur') {
+			if (this.tok === 'pub') {
+				this.next()
+				this.is_pub = true
+			}
+			methods.push(this.fun_decl(true))
+		}
+		this.check('rcur')
+
+		this.table.add_impl(type, methods)
+		this.env.impl_type = -1
+
+		return {
+			kind: 'struct_impl',
+			type,
+			methods,
 		}
 	}
 
@@ -280,6 +323,8 @@ class Parser{
 				return this.ident()
 			case 'name':
 				return this.name_expr()
+			case 'self':
+				return this.self_expr()
 			default:
 				throw new Error(`unexpected expr: ${this.tok} "${this.val}"`)
 		}
@@ -343,6 +388,13 @@ class Parser{
 		}
 	}
 
+	method_call(left) {
+		const call = this.call_expr()
+		call.left = left
+		call.is_method = true
+		return call
+	}
+
 	cast_expr(target) {
 		this.next()
 		this.check('lpar')
@@ -357,6 +409,9 @@ class Parser{
 
 	dot_expr(left) {
 		this.next()
+		if (this.peek() === 'lpar') {
+			return this.method_call(left)
+		}
 		return this.selector_expr(left)
 	}
 
@@ -417,6 +472,13 @@ class Parser{
 			kind: 'selector',
 			left,
 			name,
+		}
+	}
+
+	self_expr() {
+		this.next()
+		return {
+			kind: 'self',
 		}
 	}
 
