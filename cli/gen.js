@@ -155,6 +155,20 @@ class BaseGen {
 	}
 
 	call_expr(node) {
+		if (node.is_method) {
+			this.method_call(node)
+		} else {
+			this.fun_call(node)
+		}
+	}
+
+	method_call(node) {
+		this.expr(node.left)
+		this.write('.')
+		this.fun_call(node)
+	}
+
+	fun_call(node) {
 		this.write(node.name)
 		this.write('(')
 		for (let i = 0; i < node.args.length; i++) {
