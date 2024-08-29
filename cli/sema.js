@@ -76,6 +76,9 @@ class Sema {
 
 	fun_decl(node) {
 		this.open_scope()
+		for (const param of node.params) {
+			this.scope.insert(param.name, param.type)
+		}
 		this.stmts(node.body)
 		this.close_scope()
 	}
