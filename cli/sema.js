@@ -98,6 +98,8 @@ class Sema {
 				return this.index_expr(node)
 			case 'integer':
 				return IDXS.i32
+			case 'selector':
+				return this.selector_expr(node)
 			case 'struct_init':
 				return this.struct_init(node)
 			default:
@@ -153,6 +155,18 @@ class Sema {
 		}
 
 		throw new Error(`cannot index ${left_type}`)
+	}
+
+	selector_expr(node) {
+		const left_type = this.expr(node.left)
+		const sym = this.table.sym(left_type)
+		let def = null
+		for (const field of sym.fields) {
+			if (field.name === node.name) {
+				def = field
+			}
+		}
+		return def.type
 	}
 
 	struct_init(node) {

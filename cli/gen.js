@@ -122,6 +122,9 @@ class BaseGen {
 			case 'integer':
 				this.integer(expr)
 				break
+			case 'selector':
+				this.selector_expr(expr)
+				break
 			case 'struct_init':
 				this.struct_init(expr)
 				break
@@ -218,6 +221,10 @@ class BaseGen {
 	}
 
 	index_expr(node) {
+		throw new Error('Not implemented')
+	}
+
+	selector_expr(node) {
 		throw new Error('Not implemented')
 	}
 
