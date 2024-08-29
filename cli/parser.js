@@ -9,6 +9,10 @@ function parse(path, table, text) {
 	return p.parse()
 }
 
+class Env {
+	impl_type = -1
+}
+
 class Parser{
 	constructor(path, table, text){
 		this.path = path
@@ -19,6 +23,7 @@ class Parser{
 		this.val = ''
 		this.pos = { line: 0, col: 0}
 		this.is_pub = false
+		this.env = new Env()
 
 		this.next()
 	}
@@ -170,26 +175,38 @@ class Parser{
 		}
 	}
 
-	fun_decl() {
+	fun_decl(is_method = false) {
 		this.next()
 		const name = this.check_name()
+
 		this.check('lpar')
+		let receiver = null
+		if (is_method) {
+			receiver = { name: 'self', type: this.env.impl_type }
+			this.next()
+		}
 		const params = this.params()
 		this.check('rpar')
+
 		let return_type = IDXS.void
 		if (this.tok !== 'lcur') {
 			return_type = this.type()
 		}
+
 		this.check('lcur')
 		const body = this.block()
 		this.check('rcur')
 
-		this.table.global_scope.insert(name, { kind: 'fun', params, return_type })
+		if (!is_method) {
+			this.table.global_scope.insert(name, { kind: 'fun', params, return_type })
+		}
 
 		return {
 			kind: 'fun_decl',
 			pub: this.read_pub(),
 			name,
+			is_method,
+			receiver,
 			params,
 			return_type,
 			body,
@@ -199,13 +216,13 @@ class Parser{
 	params() {
 		const params = []
 		while (this.tok !== 'rpar') {
+			if (params.length > 0) {
+				this.check('comma')
+			}
+
 			const name = this.check_name()
 			const type = this.type()
 			params.push({ name, type })
-
-			if (this.tok !== 'rpar') {
-				this.check('comma')
-			}
 		}
 		return params
 	}
@@ -262,6 +279,8 @@ class Parser{
 	struct_impl() {
 		this.next()
 		const type = this.type()
+		this.env.impl_type = type
+
 		this.check('lcur')
 		let methods = []
 		while (this.tok !== 'rcur') {
@@ -269,11 +288,12 @@ class Parser{
 				this.next()
 				this.is_pub = true
 			}
-			methods.push(this.fun_decl())
+			methods.push(this.fun_decl(true))
 		}
 		this.check('rcur')
 
 		this.table.add_impl(type, methods)
+		this.env.impl_type = -1
 
 		return {
 			kind: 'struct_impl',

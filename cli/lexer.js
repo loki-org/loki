@@ -8,6 +8,7 @@ const KEYWORDS = [
 	'mut',
 	'pub',
 	'return',
+	'self',
 	'struct',
 ]
 
