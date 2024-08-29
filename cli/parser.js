@@ -2,15 +2,12 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import { PRECEDENCE, Lexer } from "./lexer.js"
-import { IDXS, Table } from "./table.js"
+import { IDXS } from "./table.js"
+import { Env } from './scope.js'
 
 function parse(path, table, text) {
 	const p = new Parser(path, table, text)
 	return p.parse()
-}
-
-class Env {
-	impl_type = -1
 }
 
 class Parser{
@@ -297,6 +294,7 @@ class Parser{
 
 		return {
 			kind: 'struct_impl',
+			type,
 			methods,
 		}
 	}
@@ -325,6 +323,8 @@ class Parser{
 				return this.ident()
 			case 'name':
 				return this.name_expr()
+			case 'self':
+				return this.self_expr()
 			default:
 				throw new Error(`unexpected expr: ${this.tok} "${this.val}"`)
 		}
@@ -462,6 +462,13 @@ class Parser{
 			kind: 'selector',
 			left,
 			name,
+		}
+	}
+
+	self_expr() {
+		this.next()
+		return {
+			kind: 'self',
 		}
 	}
 

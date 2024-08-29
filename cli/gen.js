@@ -128,6 +128,9 @@ class BaseGen {
 			case 'selector':
 				this.selector_expr(expr)
 				break
+			case 'self':
+				this.self_expr(expr)
+				break
 			case 'struct_init':
 				this.struct_init(expr)
 				break
@@ -232,6 +235,10 @@ class BaseGen {
 	}
 
 	selector_expr(node) {
+		throw new Error('Not implemented')
+	}
+
+	self_expr(node) {
 		throw new Error('Not implemented')
 	}
 

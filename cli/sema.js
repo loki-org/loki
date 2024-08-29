@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: MPL-2.0
 
 import { IDXS } from "./table.js"
-import { Scope } from "./scope.js"
+import { Env, Scope } from "./scope.js"
 
 class Sema {
 	constructor(table) {
 		this.table = table
 		this.scope = this.table.global_scope
+		this.env = new Env()
 	}
 
 	check(ast) {
@@ -88,9 +89,11 @@ class Sema {
 	}
 
 	struct_impl(node) {
+		this.env.impl_type = node.type
 		for (const fun of node.methods) {
 			this.fun_decl(fun)
 		}
+		this.env.impl_type = -1
 	}
 
 	expr(node) {
@@ -109,6 +112,8 @@ class Sema {
 				return IDXS.i32
 			case 'selector':
 				return this.selector_expr(node)
+			case 'self':
+				return this.env.impl_type
 			case 'struct_init':
 				return this.struct_init(node)
 			default:

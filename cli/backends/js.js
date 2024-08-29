@@ -167,6 +167,10 @@ class Gen extends BaseGen {
 		this.write(`.${node.name}`)
 	}
 
+	self_expr(node) {
+		this.write('this')
+	}
+
 	struct_init(node) {
 		this.write(`new ${node.name}({`)
 		node.fields.forEach((field, i) => {
