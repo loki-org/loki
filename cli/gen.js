@@ -122,6 +122,9 @@ class BaseGen {
 			case 'index':
 				this.index_expr(expr)
 				break
+			case 'infix':
+				this.infix_expr(expr)
+				break
 			case 'integer':
 				this.integer(expr)
 				break
@@ -184,6 +187,12 @@ class BaseGen {
 		this.write(node.name)
 	}
 
+	infix_expr(node) {
+		this.expr(node.left)
+		this.write(' ' + this.op(node.op) + ' ')
+		this.expr(node.right)
+	}
+
 	integer(node) {
 		this.write(node.value)
 	}
@@ -197,6 +206,18 @@ class BaseGen {
 			case 'assign':
 			case 'decl_assign':
 				return '='
+			case 'eq':
+				return '=='
+			case 'ne':
+				return '!='
+			case 'lt':
+				return '<'
+			case 'le':
+				return '<='
+			case 'gt':
+				return '>'
+			case 'ge':
+				return '>='
 			default:
 				throw new Error(`cannot represent ${kind}`)
 		}

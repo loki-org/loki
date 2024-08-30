@@ -76,6 +76,9 @@ class Sema {
 
 	fun_decl(node) {
 		this.open_scope()
+		for (const param of node.params) {
+			this.scope.insert(param.name, param.type)
+		}
 		this.stmts(node.body)
 		this.close_scope()
 	}
@@ -108,6 +111,8 @@ class Sema {
 				return this.ident(node)
 			case 'index':
 				return this.index_expr(node)
+			case 'infix':
+				return this.infix_expr(node)
 			case 'integer':
 				return IDXS.i32
 			case 'selector':
@@ -181,6 +186,12 @@ class Sema {
 		}
 
 		throw new Error(`cannot index ${left_type}`)
+	}
+
+	infix_expr(node) {
+		this.expr(node.left)
+		this.expr(node.right)
+		return IDXS.bool
 	}
 
 	selector_expr(node) {

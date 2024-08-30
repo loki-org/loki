@@ -184,6 +184,17 @@ class Gen extends BaseGen {
 		this.write('})')
 	}
 
+	op(kind) {
+		switch (kind) {
+			case 'eq':
+				return '==='
+			case 'ne':
+				return '!=='
+			default:
+				super.op(kind)
+		}
+	}
+
 	type(t) {
 		const sym = this.table.sym(t)
 
