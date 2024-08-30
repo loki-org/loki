@@ -191,7 +191,7 @@ class Gen extends BaseGen {
 			case 'ne':
 				return '!=='
 			default:
-				super.op(kind)
+				return super.op(kind)
 		}
 	}
 

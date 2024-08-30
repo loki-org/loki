@@ -18,8 +18,13 @@ const PRECEDENCE = (tok) => {
 			return 6
 		case 'dot':
 			return 5
-		// TODO * / %
-		// TODO + -
+		case 'mul':
+		case 'div':
+		case 'mod':
+			return 4
+		case 'plus':
+		case 'minus':
+			return 3
 		case 'eq':
 		case 'ne':
 		case 'gt':
@@ -33,8 +38,20 @@ const PRECEDENCE = (tok) => {
 	}
 }
 
-function is_comparison(kind) {
-	return ['eq', 'ne', 'gt', 'ge', 'lt', 'le'].includes(kind)
+function is_infix(tok) {
+	return is_math(tok) || is_comparison(tok)
+}
+
+function is_math(tok) {
+	return ['mul', 'div', 'mod', 'plus', 'minus'].includes(tok)
+}
+
+function is_comparison(tok) {
+	return ['eq', 'ne', 'gt', 'ge', 'lt', 'le'].includes(tok)
+}
+
+function is_assign(tok) {
+	return ['decl_assign', 'assign', 'mul_assign', 'div_assign', 'mod_assign', 'plus_assign', 'minus_assign'].includes(tok)
 }
 
 class Lexer{
@@ -109,6 +126,12 @@ class Lexer{
 
 					return this.next()
 				}
+
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'div_assign'
+				}
+				return 'div'
 			}
 			case ',':
 				return 'comma'
@@ -145,6 +168,30 @@ class Lexer{
 					return 'ge'
 				}
 				return 'gt'
+			case '+':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'plus_assign'
+				}
+				return 'plus'
+			case '-':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'minus_assign'
+				}
+				return 'minus'
+			case '*':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'mul_assign'
+				}
+				return 'mul'
+			case '%':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'mod_assign'
+				}
+				return 'mod'
 			case '(':
 				return 'lpar'
 			case ')':
@@ -206,4 +253,11 @@ class Lexer{
 	}
 }
 
-export { PRECEDENCE, is_comparison, Lexer }
+export {
+	PRECEDENCE,
+	is_infix,
+	is_math,
+	is_comparison,
+	is_assign,
+	Lexer,
+}

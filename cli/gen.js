@@ -218,6 +218,24 @@ class BaseGen {
 				return '>'
 			case 'ge':
 				return '>='
+			case 'plus':
+				return '+'
+			case 'minus':
+				return '-'
+			case 'mul':
+				return '*'
+			case 'div':
+				return '/'
+			case 'mod':
+				return '%'
+			case 'plus_assign':
+				return '+='
+			case 'minus_assign':
+				return '-='
+			case 'mul_assign':
+				return '*='
+			case 'div_assign':
+				return '/='
 			default:
 				throw new Error(`cannot represent ${kind}`)
 		}
