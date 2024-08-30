@@ -55,7 +55,7 @@ class Gen extends BaseGen {
 	fun_decl(node) {
 		if (node.pub) {
 			this.pub_syms.push(node.name)
-			this.alt_out += `export function`
+			this.alt_out += `export function `
 		}
 
 		this.write(`function `)
@@ -191,14 +191,14 @@ class Gen extends BaseGen {
 			case 'ne':
 				return '!=='
 			default:
-				super.op(kind)
+				return super.op(kind)
 		}
 	}
 
 	type(t) {
 		const sym = this.table.sym(t)
 
-		if (sym.kind === 'array') {
+		if (sym.kind === 'array' || sym.kind === 'array_fixed') {
 			return `${this.type(sym.elem)}[]`
 		}
 

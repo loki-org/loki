@@ -3,6 +3,7 @@
 
 import { IDXS } from "./table.js"
 import { Env, Scope } from "./scope.js"
+import { is_comparison } from "./lexer.js"
 
 class Sema {
 	constructor(table) {
@@ -189,9 +190,14 @@ class Sema {
 	}
 
 	infix_expr(node) {
-		this.expr(node.left)
+		const left_type = this.expr(node.left)
 		this.expr(node.right)
-		return IDXS.bool
+
+		if (is_comparison(node.op)) {
+			return IDXS.bool
+		}
+
+		return left_type
 	}
 
 	selector_expr(node) {

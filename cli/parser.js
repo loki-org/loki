@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import { PRECEDENCE, Lexer, is_comparison } from "./lexer.js"
+import { PRECEDENCE, Lexer, is_comparison, is_assign, is_infix } from "./lexer.js"
 import { IDXS } from "./table.js"
 import { Env } from './scope.js'
 
@@ -74,8 +74,16 @@ class Parser{
 	type() {
 		if (this.tok === 'lsqr') {
 			this.next()
+			let size = 0
+			if (this.tok === 'integer') {
+				size = this.val
+				this.next()
+			}
 			this.check('rsqr')
 			const elem = this.type()
+			if (size > 0) {
+				return this.table.find_fixed_array(elem, size)
+			}
 			return this.table.find_array(elem)
 		}
 
@@ -226,7 +234,7 @@ class Parser{
 
 	name_stmt() {
 		const left = this.expr()
-		if (this.tok === 'decl_assign' || this.tok === 'assign') {
+		if (is_assign(this.tok)) {
 			return this.partial_assign_stmt(left)
 		}
 
@@ -306,7 +314,7 @@ class Parser{
 				node = this.index_expr(node)
 			} else if (this.tok === 'dot') {
 				node = this.dot_expr(node)
-			} else if (is_comparison(this.tok)) {
+			} else if (is_infix(this.tok)) {
 				node = this.infix_expr(node)
 			} else {
 				throw new Error(`precedence not implemented: ${this.tok}`)
