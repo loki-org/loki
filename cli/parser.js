@@ -74,8 +74,16 @@ class Parser{
 	type() {
 		if (this.tok === 'lsqr') {
 			this.next()
+			let size = 0
+			if (this.tok === 'integer') {
+				size = this.val
+				this.next()
+			}
 			this.check('rsqr')
 			const elem = this.type()
+			if (size > 0) {
+				return this.table.find_fixed_array(elem, size)
+			}
 			return this.table.find_array(elem)
 		}
 

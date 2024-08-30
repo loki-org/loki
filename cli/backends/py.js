@@ -112,7 +112,7 @@ class Gen extends BaseGen {
 	type(t) {
 		const sym = this.table.sym(t)
 
-		if (sym.kind === 'array') {
+		if (sym.kind === 'array' || sym.kind === 'array_fixed') {
 			return `list[${this.type(sym.elem)}]`
 		}
 
