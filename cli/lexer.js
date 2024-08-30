@@ -15,12 +15,26 @@ const KEYWORDS = [
 const PRECEDENCE = (tok) => {
 	switch (tok) {
 		case 'lsqr':
-			return 2
+			return 6
 		case 'dot':
-			return 1
+			return 5
+		// TODO * / %
+		// TODO + -
+		case 'eq':
+		case 'ne':
+		case 'gt':
+		case 'ge':
+		case 'lt':
+		case 'le':
+			return 2
+		// TODO logical &&, ||
 		default:
 			return 0
 	}
+}
+
+function is_comparison(kind) {
+	return ['eq', 'ne', 'gt', 'ge', 'lt', 'le'].includes(kind)
 }
 
 class Lexer{
@@ -108,7 +122,29 @@ class Lexer{
 				break
 			}
 			case '=':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'eq'
+				}
 				return 'assign'
+			case '!':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'ne'
+				}
+				break
+			case '<':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'le'
+				}
+				return 'lt'
+			case '>':
+				if (this.text[this.pos] === '=') {
+					this.pos++
+					return 'ge'
+				}
+				return 'gt'
 			case '(':
 				return 'lpar'
 			case ')':
@@ -170,4 +206,4 @@ class Lexer{
 	}
 }
 
-export { PRECEDENCE, Lexer }
+export { PRECEDENCE, is_comparison, Lexer }
