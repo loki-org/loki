@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import { PRECEDENCE, Lexer } from "./lexer.js"
+import { PRECEDENCE, Lexer, is_comparison } from "./lexer.js"
 import { IDXS } from "./table.js"
 import { Env } from './scope.js'
 
@@ -306,6 +306,8 @@ class Parser{
 				node = this.index_expr(node)
 			} else if (this.tok === 'dot') {
 				node = this.dot_expr(node)
+			} else if (is_comparison(this.tok)) {
+				node = this.infix_expr(node)
 			} else {
 				throw new Error(`precedence not implemented: ${this.tok}`)
 			}
@@ -436,6 +438,18 @@ class Parser{
 			kind: 'index',
 			left,
 			index,
+		}
+	}
+
+	infix_expr(left) {
+		const op = this.tok
+		this.next()
+		const right = this.expr(PRECEDENCE(op))
+		return {
+			kind: 'infix',
+			left,
+			op,
+			right,
 		}
 	}
 
