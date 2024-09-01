@@ -3,6 +3,7 @@
 
 const KEYWORDS = [
 	'const',
+	'for',
 	'fun',
 	'impl',
 	'mut',
@@ -135,6 +136,8 @@ class Lexer{
 			}
 			case ',':
 				return 'comma'
+			case ';':
+				return 'semi'
 			case '.':
 				return 'dot'
 			case ':': {

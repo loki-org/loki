@@ -18,6 +18,7 @@ class BaseGen {
 	footer_out = ''
 	alt_out = ''
 	alt_name = ''
+	for_loop_head = false
 
 	constructor() {
 		if (this.constructor === BaseGen) {
@@ -85,6 +86,9 @@ class BaseGen {
 				break
 			case 'const_decl':
 				this.const_decl(stmt)
+				break
+			case 'for_classic':
+				this.for_classic_loop(stmt)
 				break
 			case 'fun_decl':
 				this.fun_decl(stmt)
@@ -260,6 +264,10 @@ class BaseGen {
 	}
 
 	const_decl(node) {
+		throw new Error('Not implemented')
+	}
+
+	for_classic_loop(node) {
 		throw new Error('Not implemented')
 	}
 

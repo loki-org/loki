@@ -114,15 +114,19 @@ class Parser{
 	}
 
 	block() {
+		this.check('lcur')
 		const stmts = []
 		while (this.tok !== 'rcur' && this.tok !== 'eof') {
 			stmts.push(this.stmt())
 		}
+		this.check('rcur')
 		return stmts
 	}
 
 	stmt() {
 		switch(this.tok) {
+			case 'for':
+				return this.for_loop()
 			case 'mut':
 				return this.assign_stmt()
 			case 'name':
@@ -180,6 +184,25 @@ class Parser{
 		}
 	}
 
+	for_loop() {
+		this.next()
+
+		// Classic for (init, cond, step)
+		const init = this.stmt()
+		this.check('semi')
+		const cond = this.expr()
+		this.check('semi')
+		const step = this.stmt()
+		const body = this.block()
+		return {
+			kind: 'for_classic',
+			init,
+			cond,
+			step,
+			body,
+		}
+	}
+
 	fun_decl(is_method = false) {
 		this.next()
 		const name = this.check_name()
@@ -198,9 +221,7 @@ class Parser{
 			return_type = this.type()
 		}
 
-		this.check('lcur')
 		const body = this.block()
-		this.check('rcur')
 
 		if (!is_method) {
 			this.table.global_scope.insert(name, { kind: 'fun', params, return_type })
