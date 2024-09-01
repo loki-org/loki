@@ -24,18 +24,18 @@ class Sema {
 
 	stmt(stmt) {
 		switch (stmt.kind) {
-			case 'assign': {
+			case 'assign':
 				this.assign_stmt(stmt)
 				break
-			}
-			case 'const_decl': {
+			case 'const_decl':
 				this.const_decl(stmt)
 				break
-			}
-			case 'fun_decl': {
+			case 'for_classic':
+				this.for_classic_loop(stmt)
+				break
+			case 'fun_decl':
 				this.fun_decl(stmt)
 				break
-			}
 			case 'return_stmt':
 				this.return_stmt(stmt)
 				break
@@ -73,6 +73,15 @@ class Sema {
 
 	const_decl(node) {
 		node.type = this.expr(node.expr)
+	}
+
+	for_classic_loop(node) {
+		this.open_scope()
+		this.stmt(node.init)
+		this.expr(node.cond)
+		this.stmt(node.step)
+		this.stmts(node.body)
+		this.close_scope()
 	}
 
 	fun_decl(node) {
