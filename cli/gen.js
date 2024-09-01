@@ -123,6 +123,9 @@ class BaseGen {
 			case 'ident':
 				this.ident(expr)
 				break
+			case 'if':
+				this.if_expr(expr)
+				break
 			case 'index':
 				this.index_expr(expr)
 				break
@@ -288,6 +291,10 @@ class BaseGen {
 	}
 
 	cast_expr(node) {
+		throw new Error('Not implemented')
+	}
+
+	if_expr(node) {
 		throw new Error('Not implemented')
 	}
 

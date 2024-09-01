@@ -100,6 +100,24 @@ class Gen extends BaseGen {
 		this.expr(node.expr)
 	}
 
+	if_expr(node) {
+		node.branches.forEach((branch, i) => {
+			if (branch.cond) {
+				if (i == 0) {
+					this.write('if ')
+				} else {
+					this.write('elif ')
+				}
+				this.expr(branch.cond)
+			} else {
+				this.write('else')
+			}
+			this.writeln(':')
+			this.stmts(branch.stmts)
+		})
+		this.writeln('')
+	}
+
 	index_expr(node) {
 		this.expr(node.left)
 		this.write('[')

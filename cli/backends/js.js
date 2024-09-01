@@ -176,6 +176,25 @@ class Gen extends BaseGen {
 		this.expr(node.expr)
 	}
 
+	if_expr(node) {
+		node.branches.forEach((branch, i) => {
+			if (branch.cond) {
+				this.write('if (')
+				this.expr(branch.cond)
+				this.write(') ')
+			}
+
+			this.writeln('{')
+			this.stmts(branch.stmts)
+			this.write('}')
+
+			if (i < node.branches.length - 1) {
+				this.write(' else ')
+			}
+		})
+		this.writeln('')
+	}
+
 	index_expr(node) {
 		this.expr(node.left)
 		this.write('[')
