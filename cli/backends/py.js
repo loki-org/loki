@@ -33,6 +33,17 @@ class Gen extends BaseGen {
 		this.writeln('')
 	}
 
+	for_classic_loop(node) {
+		this.stmt(node.init)
+		this.write('while ')
+		this.expr(node.cond)
+		this.writeln(':')
+		this.stmts(node.body)
+		this.indent++
+		this.stmt(node.step)
+		this.indent--
+	}
+
 	fun_decl(node) {
 		this.write(`def ${node.name}(`)
 		for (let i = 0; i < node.params.length; i++) {

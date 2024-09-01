@@ -30,14 +30,20 @@ class Gen extends BaseGen {
 		this.expr(node.left)
 		this.write(` ${this.op(node.op)} `)
 		this.expr(node.right)
-		this.writeln('')
+
+		if (!this.for_loop_head) {
+			this.writeln('')
+		}
 	}
 
 	decl_assign(node) {
 		const mut = node.left.is_mut ? 'let' : 'const'
 		this.write(`${mut} ${node.left.name} = `)
 		this.expr(node.right)
-		this.writeln('')
+
+		if (!this.for_loop_head) {
+			this.writeln('')
+		}
 	}
 
 	const_decl(node) {
@@ -50,6 +56,21 @@ class Gen extends BaseGen {
 		this.write(`const ${node.name} = `)
 		this.expr(node.expr)
 		this.writeln('')
+	}
+
+	for_classic_loop(node) {
+		this.for_loop_head = true
+		this.write('for (')
+		this.stmt(node.init)
+		this.write('; ')
+		this.expr(node.cond)
+		this.write('; ')
+		this.stmt(node.step)
+		this.for_loop_head = false
+
+		this.writeln(') {')
+		this.stmts(node.body)
+		this.writeln('}')
 	}
 
 	fun_decl(node) {
