@@ -119,6 +119,8 @@ class Sema {
 				return this.cast_expr(node)
 			case 'ident':
 				return this.ident(node)
+			case 'if':
+				return this.if_expr(node)
 			case 'index':
 				return this.index_expr(node)
 			case 'infix':
@@ -184,6 +186,16 @@ class Sema {
 		node.obj = this.scope.lookup(node.name)
 		// TODO check obj exists
 		return node.obj
+	}
+
+	if_expr(node) {
+		for (const branch of node.branches) {
+			if (branch.cond) {
+				this.expr(branch.cond)
+				this.stmts(branch.stmts)
+			}
+		}
+		return IDXS.void
 	}
 
 	index_expr(node) {
