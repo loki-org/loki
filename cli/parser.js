@@ -346,6 +346,8 @@ class Parser{
 
 	single_expr() {
 		switch(this.tok) {
+			case 'if':
+				return this.if_expr()
 			case 'integer':
 				return this.integer()
 			case 'lsqr':
@@ -456,6 +458,47 @@ class Parser{
 			kind: 'ident',
 			name,
 			is_mut,
+		}
+	}
+
+	if_expr() {
+		const branches = []
+		let has_else = false
+
+		while (true) {
+			if (this.tok === 'else') {
+				this.next()
+
+				// else branch
+				if (this.tok === 'lcur') {
+					has_else = true
+					const stmts = this.block()
+					branches.push({
+						cond: null,
+						stmts,
+					})
+					break
+				}
+			}
+
+			// if- / else-if-branch
+			this.check('if')
+			const cond = this.expr()
+			const stmts = this.block()
+			branches.push({
+				cond,
+				stmts,
+			})
+
+			if (this.tok !== 'else') {
+				break
+			}
+		}
+
+		return {
+			kind: 'if',
+			has_else,
+			branches,
 		}
 	}
 

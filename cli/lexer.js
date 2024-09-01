@@ -3,8 +3,10 @@
 
 const KEYWORDS = [
 	'const',
+	'else',
 	'for',
 	'fun',
+	'if',
 	'impl',
 	'mut',
 	'pub',
