@@ -117,6 +117,8 @@ class Sema {
 				return this.call_expr(node)
 			case 'cast_expr':
 				return this.cast_expr(node)
+			case 'expr_in_parens':
+				return this.expr(node.expr)
 			case 'ident':
 				return this.ident(node)
 			case 'if':
