@@ -346,6 +346,8 @@ class Parser{
 
 	single_expr() {
 		switch(this.tok) {
+			case 'lpar':
+				return this.expr_in_parens()
 			case 'if':
 				return this.if_expr()
 			case 'integer':
@@ -360,6 +362,16 @@ class Parser{
 				return this.self_expr()
 			default:
 				throw new Error(`unexpected expr: ${this.tok} "${this.val}"`)
+		}
+	}
+
+	expr_in_parens() {
+		this.next()
+		const expr = this.expr()
+		this.check('rpar')
+		return {
+			kind: 'expr_in_parens',
+			expr,
 		}
 	}
 

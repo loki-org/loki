@@ -120,6 +120,9 @@ class BaseGen {
 			case 'cast_expr':
 				this.cast_expr(expr)
 				break
+			case 'expr_in_parens':
+				this.expr_in_parens(expr)
+				break
 			case 'ident':
 				this.ident(expr)
 				break
@@ -162,6 +165,12 @@ class BaseGen {
 		this.write('return ')
 		this.expr(node.expr)
 		this.writeln(this.semi)
+	}
+
+	expr_in_parens(node) {
+		this.write('(')
+		this.expr(node.expr)
+		this.write(')')
 	}
 
 	call_expr(node) {
