@@ -24,9 +24,14 @@ const PRECEDENCE = (tok) => {
 		case 'mul':
 		case 'div':
 		case 'mod':
+		case 'lshift':
+		case 'rshift':
+		case 'bit_and':
 			return 4
 		case 'plus':
 		case 'minus':
+		case 'bit_or':
+		case 'bit_xor':
 			return 3
 		case 'eq':
 		case 'ne':
@@ -42,7 +47,7 @@ const PRECEDENCE = (tok) => {
 }
 
 function is_infix(tok) {
-	return is_math(tok) || is_comparison(tok)
+	return is_math(tok) || is_comparison(tok) || is_bitwise(tok)
 }
 
 function is_math(tok) {
@@ -51,6 +56,10 @@ function is_math(tok) {
 
 function is_comparison(tok) {
 	return ['eq', 'ne', 'gt', 'ge', 'lt', 'le'].includes(tok)
+}
+
+function is_bitwise(tok) {
+	return ['bit_and', 'bit_or', 'bit_xor', 'lshift', 'rshift'].includes(tok)
 }
 
 function is_assign(tok) {
@@ -161,18 +170,30 @@ class Lexer{
 					return 'ne'
 				}
 				break
-			case '<':
-				if (this.text[this.pos] === '=') {
+			case '<': {
+				const nc = this.text[this.pos]
+				if (nc === '=') {
 					this.pos++
 					return 'le'
 				}
+				if (nc === '<') {
+					this.pos++
+					return 'lshift'
+				}
 				return 'lt'
-			case '>':
-				if (this.text[this.pos] === '=') {
+			}
+			case '>': {
+				const nc = this.text[this.pos]
+				if (nc === '=') {
 					this.pos++
 					return 'ge'
 				}
+				if (nc === '>') {
+					this.pos++
+					return 'rshift'
+				}
 				return 'gt'
+			}
 			case '+':
 				if (this.text[this.pos] === '=') {
 					this.pos++
@@ -197,6 +218,12 @@ class Lexer{
 					return 'mod_assign'
 				}
 				return 'mod'
+			case '&':
+				return 'bit_and'
+			case '^':
+				return 'bit_xor'
+			case '|':
+				return 'bit_or'
 			case '(':
 				return 'lpar'
 			case ')':
