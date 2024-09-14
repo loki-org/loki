@@ -252,6 +252,16 @@ class BaseGen {
 				return '*='
 			case 'div_assign':
 				return '/='
+			case 'bit_and':
+				return '&'
+			case 'bit_or':
+				return '|'
+			case 'bit_xor':
+				return '^'
+			case 'lshift':
+				return '<<'
+			case 'rshift':
+				return '>>'
 			default:
 				throw new Error(`cannot represent ${kind}`)
 		}
