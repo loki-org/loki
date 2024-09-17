@@ -236,6 +236,8 @@ class Lexer{
 				return 'lcur'
 			case '}':
 				return 'rcur'
+			case '@':
+				return 'at'
 			default:
 				break
 		}

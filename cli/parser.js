@@ -18,8 +18,9 @@ class Parser{
 		this.tok = ''
 		this.next_tok = 'err'
 		this.val = ''
-		this.pos = { line: 0, col: 0}
+		this.pos = { line: 0, col: 0 }
 		this.is_pub = false
+		this.attributes = []
 		this.env = new Env()
 
 		this.next()
@@ -34,6 +35,7 @@ class Parser{
 
 		while(this.tok !== 'eof') {
 			ast.body.push(this.toplevel_stmt())
+			this.attributes = []
 		}
 
 		return ast
@@ -71,6 +73,17 @@ class Parser{
 		return val
 	}
 
+	parse_attributes() {
+		while (this.tok === 'at') {
+			this.next()
+			const name = this.check_name()
+			// TODO attribute arguments
+			this.attributes.push({
+				name,
+			})
+		}
+	}
+
 	type() {
 		if (this.tok === 'lsqr') {
 			this.next()
@@ -96,6 +109,7 @@ class Parser{
 	}
 
 	toplevel_stmt() {
+		this.parse_attributes()
 		switch(this.tok) {
 			case 'const':
 				return this.const_decl()
@@ -236,6 +250,7 @@ class Parser{
 			params,
 			return_type,
 			body,
+			attrs: this.attributes,
 		}
 	}
 

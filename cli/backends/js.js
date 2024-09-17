@@ -61,6 +61,7 @@ class Gen extends BaseGen {
 	for_classic_loop(node) {
 		this.for_loop_head = true
 		this.write('for (')
+		node.init.left.is_mut = true
 		this.stmt(node.init)
 		this.write('; ')
 		this.expr(node.cond)
@@ -255,6 +256,10 @@ class Gen extends BaseGen {
 			default:
 				return sym.name
 		}
+	}
+
+	call_main(name) {
+		this.writeln(`${name}()`)
 	}
 }
 
