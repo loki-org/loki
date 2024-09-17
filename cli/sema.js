@@ -5,7 +5,17 @@ import { IDXS } from "./table.js"
 import { Env, Scope } from "./scope.js"
 import { is_comparison } from "./lexer.js"
 
+const ATTRS = {
+	'main': {
+		check: (checker, fun) => {
+			checker.main_fun = fun
+		},
+	},
+}
+
 class Sema {
+	main_fun = null
+
 	constructor(table) {
 		this.table = table
 		this.scope = this.table.global_scope
@@ -14,6 +24,8 @@ class Sema {
 
 	check(ast) {
 		this.stmts(ast.body)
+
+		ast.main_fun = this.main_fun
 	}
 
 	stmts(stmts) {
@@ -85,6 +97,8 @@ class Sema {
 	}
 
 	fun_decl(node) {
+		this.attributes(node)
+
 		this.open_scope()
 		for (const param of node.params) {
 			this.scope.insert(param.name, param.type)
@@ -244,6 +258,17 @@ class Sema {
 			this.expr(field.expr)
 		}
 		return node.type
+	}
+
+	attributes(node) {
+		node.attrs.forEach((attr) => {
+			const def = ATTRS[attr.name]
+			if (!def) {
+				throw new Error(`unknown attribute @${attr.name}`)
+			}
+
+			def.check(this, node)
+		})
 	}
 
 	open_scope() {
