@@ -257,6 +257,10 @@ class Gen extends BaseGen {
 				return sym.name
 		}
 	}
+
+	call_main(name) {
+		this.writeln(`${name}()`)
+	}
 }
 
 export { Gen }

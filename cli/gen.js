@@ -59,6 +59,11 @@ class BaseGen {
 
 		this.stmts(ast.body)
 
+		if (ast.main_fun) {
+			this.indent = 0
+			this.call_main(ast.main_fun.name)
+		}
+
 		this.post_stage()
 
 		const main_out = this.header_out + '\n'
@@ -334,6 +339,10 @@ class BaseGen {
 	}
 
 	type(t) {
+		throw new Error('Not implemented')
+	}
+
+	call_main(name, with_args) {
 		throw new Error('Not implemented')
 	}
 }
