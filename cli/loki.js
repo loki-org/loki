@@ -9,6 +9,7 @@ function help_and_exit() {
 
 Commands:
   [build] <file>   Compile the given file. Command can be omitted.
+  test <file>      Run the given test.
 
 Options:
   -b, --backend <backend>   One of [js, c, py] or a comma-separated list. Default: js
@@ -25,6 +26,7 @@ function parse_args(args) {
 			backends: ['js'],
 		},
 		file: '',
+		is_test: false,
 	}
 
 	for (let i = 0; i < args.length; i++) {
@@ -77,6 +79,10 @@ function main() {
 			break
 		case 'help':
 			help_and_exit()
+		case 'test':
+			prefs.is_test = true
+			compile(prefs)
+			break
 		default:
 			console.error(`Unknown command: ${prefs.command}`)
 			process.exit(1)
