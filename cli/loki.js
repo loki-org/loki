@@ -12,6 +12,7 @@ function parse_args(args) {
 			backends: ['js'],
 		},
 		file: '',
+		is_test: false,
 	}
 
 	for (let i = 0; i < args.length; i++) {
@@ -38,7 +39,9 @@ function parse_args(args) {
 				break
 		}
 
-		if (prefs.file === '') {
+		if (!arg.endsWith('.lo')) {
+			prefs.command = arg
+		} else if (prefs.file === '') {
 			prefs.file = arg
 		} else {
 			console.error(`Unknown argument: ${arg}`)
@@ -61,6 +64,10 @@ Options:
 
 	switch (prefs.command) {
 		case 'build':
+			compile(prefs)
+			break
+		case 'test':
+			prefs.is_test = true
 			compile(prefs)
 			break
 		default:
