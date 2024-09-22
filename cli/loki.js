@@ -8,6 +8,7 @@ function parse_args(args) {
 	const prefs = {
 		command: 'build',
 		options: {
+			outdir: 'build',
 			backends: ['js'],
 		},
 		file: '',
@@ -16,6 +17,10 @@ function parse_args(args) {
 	for (let i = 0; i < args.length; i++) {
 		const arg = args[i]
 		switch (arg) {
+			case '-o':
+			case '--outdir':
+				prefs.options.outdir = args[++i]
+				continue
 			case '-b':
 			case '--backend': {
 				prefs.options.backends = args[++i].split(',')
