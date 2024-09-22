@@ -25,8 +25,9 @@ function compile(prefs) {
 			fs.mkdirSync(prefs.options.outdir, { recursive: true })
 			fs.writeFileSync(out_path, out.main)
 
-			if (!out.alt_path.endsWith('/')) {
-				fs.writeFileSync(out.alt_path, out.alt)
+			if (out.alt_name.length > 0) {
+				const alt_path = path.join(prefs.options.outdir, out.alt_name)
+				fs.writeFileSync(alt_path, out.alt)
 			}
 		})
 	}

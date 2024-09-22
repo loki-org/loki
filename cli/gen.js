@@ -12,7 +12,6 @@ class BaseGen {
 	line_start = true
 	indent = -1
 	file_name = ''
-	base_path = ''
 	header_out = ''
 	out = ''
 	footer_out = ''
@@ -50,7 +49,6 @@ class BaseGen {
 
 		const slash_idx = ast.path.lastIndexOf('/')
 		this.file_name = ast.path.substring(slash_idx + 1)
-		this.base_path = ast.path.substring(0, slash_idx)
 
 		this.setup()
 
@@ -72,7 +70,7 @@ class BaseGen {
 		return {
 			main: main_out,
 			alt: this.alt_out,
-			alt_path: this.base_path + '/' + this.alt_name,
+			alt_name: this.alt_name,
 		}
 	}
 
