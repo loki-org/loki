@@ -226,6 +226,9 @@ class Parser{
 		if (is_method) {
 			receiver = { name: 'self', type: this.env.impl_type }
 			this.next()
+			if (this.tok !== 'rpar') {
+				this.check('comma')
+			}
 		}
 		const params = this.params()
 		this.check('rpar')
