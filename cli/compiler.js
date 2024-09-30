@@ -13,7 +13,7 @@ function compile(prefs) {
 	const table = new Table()
 	const ast = parse(prefs.file, table, text)
 
-	const sema = new Sema(table)
+	const sema = new Sema(table, prefs.is_test)
 	sema.check(ast)
 
 	const file_name = path.basename(prefs.file)
