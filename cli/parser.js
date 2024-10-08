@@ -226,6 +226,9 @@ class Parser{
 		if (is_method) {
 			receiver = { name: 'self', type: this.env.impl_type }
 			this.next()
+			if (this.tok !== 'rpar') {
+				this.check('comma')
+			}
 		}
 		const params = this.params()
 		this.check('rpar')
@@ -373,6 +376,8 @@ class Parser{
 				return this.ident()
 			case 'name':
 				return this.name_expr()
+			case 'not':
+				return this.prefix_expr()
 			case 'self':
 				return this.self_expr()
 			default:
@@ -577,6 +582,17 @@ class Parser{
 		}
 
 		return this.ident()
+	}
+
+	prefix_expr() {
+		const op = this.tok
+		this.next()
+		const expr = this.expr()
+		return {
+			kind: 'prefix',
+			op,
+			expr,
+		}
 	}
 
 	selector_expr(left) {
