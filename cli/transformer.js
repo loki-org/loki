@@ -5,9 +5,26 @@ import { IDXS } from "./table.js"
 
 class Transformer {
 	ast = null
+	main_fun = null
 
 	transform(ast) {
+		this.is_test = ast.is_test
+
+		if (this.is_test) {
+			this.main_fun = {
+				kind: 'fun_decl',
+				name: 'test_main',
+				params: [],
+				return_type: IDXS.void,
+				body: [],
+			}
+		}
+
 		ast.body = this.stmts(ast.body)
+
+		if (this.is_test) {
+			ast.body.push(this.main_fun)
+		}
 
 		return ast
 	}
@@ -22,9 +39,27 @@ class Transformer {
 
 	stmt(stmt) {
 		switch (stmt.kind) {
+			case 'fun_decl':
+				return this.fun_decl(stmt)
 			default:
 				return this.expr(stmt)
 		}
+	}
+
+	fun_decl(node) {
+		if (node.is_test) {
+			if (!this.is_test) {
+				return null
+			}
+
+			this.main_fun.body.push({
+				kind: 'call_expr',
+				name: node.name,
+				args: [],
+			})
+		}
+
+		return node
 	}
 
 	expr(expr) {

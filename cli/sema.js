@@ -14,14 +14,6 @@ const ATTRS = {
 	'test': {
 		check: (checker, fun) => {
 			fun.is_test = true
-			// if (!checker.is_test) {
-			// 	return
-			// }
-			// checker.main_fun.body.push({
-			// 	kind: 'call_expr',
-			// 	name: fun.name,
-			// 	args: [],
-			// })
 		},
 	}
 }
@@ -33,27 +25,12 @@ class Sema {
 		this.table = table
 		this.scope = this.table.global_scope
 		this.env = new Env()
-		// this.is_test = is_test
 	}
 
 	check(ast) {
-		// if (this.is_test) {
-		// 	this.main_fun = {
-		// 		kind: 'fun_decl',
-		// 		name: 'test_main',
-		// 		params: [],
-		// 		return_type: IDXS.void,
-		// 		body: [],
-		// 	}
-		// }
-
 		this.stmts(ast.body)
 
-		ast.main_fun_name = this.main_fun_name
-
-		// if (this.is_test) {
-		// 	ast.body.push(this.main_fun)
-		// }
+		ast.main_fun = this.main_fun
 	}
 
 	stmts(stmts) {
