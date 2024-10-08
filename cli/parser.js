@@ -6,12 +6,13 @@ import { IDXS } from "./table.js"
 import { Env } from './scope.js'
 
 function parse(prefs, table, text) {
-	const p = new Parser(prefs.file, table, text)
+	const p = new Parser(prefs.file, table, text, prefs.is_test)
 	return p.parse()
 }
 
 class Parser{
-	constructor(path, table, text){
+	constructor(path, table, text, is_test){
+		this.is_test = is_test
 		this.path = path
 		this.lexer = new Lexer(text)
 		this.table = table
@@ -29,6 +30,7 @@ class Parser{
 	parse() {
 		const ast = {
 			kind: 'file',
+			is_test: this.is_test,
 			path: this.path,
 			body: [],
 		}

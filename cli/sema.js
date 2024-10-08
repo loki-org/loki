@@ -13,11 +13,15 @@ const ATTRS = {
 	},
 	'test': {
 		check: (checker, fun) => {
-			checker.main_fun.body.push({
-				kind: 'call_expr',
-				name: fun.name,
-				args: [],
-			})
+			fun.is_test = true
+			// if (!checker.is_test) {
+			// 	return
+			// }
+			// checker.main_fun.body.push({
+			// 	kind: 'call_expr',
+			// 	name: fun.name,
+			// 	args: [],
+			// })
 		},
 	}
 }
@@ -25,31 +29,31 @@ const ATTRS = {
 class Sema {
 	main_fun_name = ''
 
-	constructor(table, is_test) {
+	constructor(table) {
 		this.table = table
 		this.scope = this.table.global_scope
 		this.env = new Env()
-		this.is_test = is_test
+		// this.is_test = is_test
 	}
 
 	check(ast) {
-		if (this.is_test) {
-			this.main_fun = {
-				kind: 'fun_decl',
-				name: 'test_main',
-				params: [],
-				return_type: IDXS.void,
-				body: [],
-			}
-		}
+		// if (this.is_test) {
+		// 	this.main_fun = {
+		// 		kind: 'fun_decl',
+		// 		name: 'test_main',
+		// 		params: [],
+		// 		return_type: IDXS.void,
+		// 		body: [],
+		// 	}
+		// }
 
 		this.stmts(ast.body)
 
 		ast.main_fun_name = this.main_fun_name
 
-		if (this.is_test) {
-			ast.body.push(this.main_fun)
-		}
+		// if (this.is_test) {
+		// 	ast.body.push(this.main_fun)
+		// }
 	}
 
 	stmts(stmts) {

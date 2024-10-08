@@ -13,7 +13,7 @@ async function compile(prefs) {
 	const table = new Table()
 	let ast = parse(prefs, table, text)
 
-	const sema = new Sema(table, prefs.is_test)
+	const sema = new Sema(table)
 	sema.check(ast)
 
 	const trans = new Transformer()
