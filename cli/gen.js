@@ -83,6 +83,10 @@ class BaseGen {
 	}
 
 	stmt(stmt) {
+		if (!stmt) {
+			return
+		}
+
 		switch (stmt.kind) {
 			case 'assign':
 				this.assign_stmt(stmt)
