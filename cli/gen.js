@@ -141,6 +141,9 @@ class BaseGen {
 			case 'integer':
 				this.integer(expr)
 				break
+			case 'prefix':
+				this.prefix_expr(expr)
+				break
 			case 'selector':
 				this.selector_expr(expr)
 				break
@@ -216,6 +219,11 @@ class BaseGen {
 		this.write(node.value)
 	}
 
+	prefix_expr(node) {
+		this.write(this.op(node.op))
+		this.expr(node.expr)
+	}
+
 	line_comment(text) {
 		return `${this.comment_sign}${text}`
 	}
@@ -255,6 +263,8 @@ class BaseGen {
 				return '*='
 			case 'div_assign':
 				return '/='
+			case 'not':
+				return '!'
 			case 'bit_and':
 				return '&'
 			case 'bit_or':

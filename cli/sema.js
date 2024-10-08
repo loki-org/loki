@@ -143,6 +143,8 @@ class Sema {
 				return this.infix_expr(node)
 			case 'integer':
 				return IDXS.i32
+			case 'prefix':
+				return this.prefix_expr(node)
 			case 'selector':
 				return this.selector_expr(node)
 			case 'self':
@@ -235,6 +237,10 @@ class Sema {
 		}
 
 		return left_type
+	}
+
+	prefix_expr(node) {
+		return this.expr(node.expr)
 	}
 
 	selector_expr(node) {

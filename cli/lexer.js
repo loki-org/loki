@@ -18,8 +18,10 @@ const KEYWORDS = [
 const PRECEDENCE = (tok) => {
 	switch (tok) {
 		case 'lsqr':
-			return 6
+			return 7
 		case 'dot':
+			return 6
+		case 'not':
 			return 5
 		case 'mul':
 		case 'div':
@@ -169,7 +171,7 @@ class Lexer{
 					this.pos++
 					return 'ne'
 				}
-				break
+				return 'not'
 			case '<': {
 				const nc = this.text[this.pos]
 				if (nc === '=') {
