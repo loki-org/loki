@@ -6,15 +6,19 @@ import * as path from 'node:path'
 import { Table } from "./table.js"
 import { parse } from './parser.js'
 import { Sema } from './sema.js'
+import { Transformer } from './transformer.js'
 import { gen } from './gen.js'
 
 function compile(prefs) {
 	const text = fs.readFileSync(prefs.file, 'utf8')
 	const table = new Table()
-	const ast = parse(prefs.file, table, text)
+	let ast = parse(prefs, table, text)
 
-	const sema = new Sema(table, prefs.is_test)
+	const sema = new Sema(table)
 	sema.check(ast)
+
+	const trans = new Transformer()
+	ast = trans.transform(ast)
 
 	const file_name = path.basename(prefs.file)
 	const out_path_lo = path.join(prefs.options.outdir, file_name)
