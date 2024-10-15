@@ -4,6 +4,19 @@
 import * as process from 'process'
 import { compile } from './compiler.js'
 
+function help_and_exit() {
+	console.log(`Usage: loki [options] <command|file>
+
+Commands:
+  [build] <file>   Compile the given file. Command can be omitted.
+
+Options:
+  -b, --backend <backend>   One of [js, c, py] or a comma-separated list. Default: js
+  -o, --outdir <dir>        Directory for compiler output. Default: "build"
+`)
+	process.exit(0)
+}
+
 function parse_args(args) {
 	const prefs = {
 		command: 'build',
@@ -38,7 +51,9 @@ function parse_args(args) {
 				break
 		}
 
-		if (prefs.file === '') {
+		if (!arg.endsWith('.lo')) {
+			prefs.command = arg
+		} else if (prefs.file === '') {
 			prefs.file = arg
 		} else {
 			console.error(`Unknown argument: ${arg}`)
@@ -51,10 +66,7 @@ function parse_args(args) {
 
 function main() {
 	if (process.argv.length < 3) {
-		console.log(`Usage: loki [options] <file>
-Options:
-  -b, --backend <backend>   One of [js, c, py] or a comma-separated list. Default: js`)
-		process.exit(0)
+		help_and_exit()
 	}
 
 	const prefs = parse_args(process.argv.slice(2))
@@ -63,6 +75,8 @@ Options:
 		case 'build':
 			compile(prefs)
 			break
+		case 'help':
+			help_and_exit()
 		default:
 			console.error(`Unknown command: ${prefs.command}`)
 			process.exit(1)
