@@ -141,6 +141,8 @@ class Parser{
 
 	stmt() {
 		switch(this.tok) {
+			case 'assert':
+				return this.assert_stmt()
 			case 'for':
 				return this.for_loop()
 			case 'hash':
@@ -169,6 +171,15 @@ class Parser{
 		const p = this.is_pub
 		this.is_pub = false
 		return p
+	}
+
+	assert_stmt() {
+		this.next()
+		const expr = this.expr()
+		return {
+			kind: 'assert',
+			expr,
+		}
 	}
 
 	assign_stmt() {

@@ -41,6 +41,9 @@ class Sema {
 
 	stmt(stmt) {
 		switch (stmt.kind) {
+			case 'assert':
+				this.assert_stmt(stmt)
+				break
 			case 'assign':
 				this.assign_stmt(stmt)
 				break
@@ -69,6 +72,10 @@ class Sema {
 				this.expr(stmt)
 				break
 		}
+	}
+
+	assert_stmt(node) {
+		this.expr(node.expr)
 	}
 
 	assign_stmt(node) {

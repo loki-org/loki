@@ -87,6 +87,9 @@ class BaseGen {
 		}
 
 		switch (stmt.kind) {
+			case 'assert':
+				this.assert_stmt(stmt)
+				break
 			case 'assign':
 				this.assign_stmt(stmt)
 				break
@@ -304,6 +307,10 @@ class BaseGen {
 
 	post_stage() {
 		// Do nothing by default
+	}
+
+	assert_stmt(node) {
+		throw new Error('Not implemented')
 	}
 
 	assign_stmt(node) {
