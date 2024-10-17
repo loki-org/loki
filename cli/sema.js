@@ -30,7 +30,7 @@ class Sema {
 	check(ast) {
 		this.stmts(ast.body)
 
-		ast.main_fun = this.main_fun
+		ast.main_fun_name = this.main_name
 	}
 
 	stmts(stmts) {

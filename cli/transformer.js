@@ -24,6 +24,7 @@ class Transformer {
 
 		if (this.is_test) {
 			ast.body.push(this.main_fun)
+			ast.main_fun_name = this.main_fun.name
 		}
 
 		return ast
