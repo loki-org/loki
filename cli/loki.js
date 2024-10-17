@@ -77,12 +77,12 @@ function main() {
 		case 'build':
 			compile(prefs)
 			break
-		case 'help':
-			help_and_exit()
 		case 'test':
 			prefs.is_test = true
 			compile(prefs)
 			break
+		case 'help':
+			help_and_exit()
 		default:
 			console.error(`Unknown command: ${prefs.command}`)
 			process.exit(1)
