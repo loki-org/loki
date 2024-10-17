@@ -3,6 +3,7 @@
 
 import { IDXS } from '../table.js'
 import { BaseGen } from '../gen.js'
+import { BaseRunner } from '../runner.js'
 
 class Gen extends BaseGen {
 	pub_syms = []
@@ -263,4 +264,10 @@ class Gen extends BaseGen {
 	}
 }
 
-export { Gen }
+class Runner extends BaseRunner {
+	get_run_command(path) {
+		return `node ${path}`
+	}
+}
+
+export { Gen, Runner }

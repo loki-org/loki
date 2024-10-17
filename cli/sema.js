@@ -8,13 +8,13 @@ import { is_comparison } from "./lexer.js"
 const ATTRS = {
 	'main': {
 		check: (checker, fun) => {
-			checker.main_fun = fun
+			checker.main_fun_name = fun.name
 		},
 	},
 }
 
 class Sema {
-	main_fun = null
+	main_fun_name = ''
 
 	constructor(table) {
 		this.table = table
@@ -25,7 +25,7 @@ class Sema {
 	check(ast) {
 		this.stmts(ast.body)
 
-		ast.main_fun = this.main_fun
+		ast.main_fun_name = this.main_fun_name
 	}
 
 	stmts(stmts) {

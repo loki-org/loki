@@ -6,30 +6,46 @@ import * as path from 'node:path'
 import { Table } from "./table.js"
 import { parse } from './parser.js'
 import { Sema } from './sema.js'
-import { gen } from './gen.js'
+import { Transformer } from './transformer.js'
 
-function compile(prefs) {
+async function compile(prefs) {
 	const text = fs.readFileSync(prefs.file, 'utf8')
 	const table = new Table()
-	const ast = parse(prefs.file, table, text)
+	let ast = parse(prefs, table, text)
 
 	const sema = new Sema(table)
 	sema.check(ast)
 
+	const trans = new Transformer()
+	ast = trans.transform(ast)
+
 	const file_name = path.basename(prefs.file)
 	const out_path_lo = path.join(prefs.options.outdir, file_name)
 
-	for (const backend of prefs.options.backends) {
-		gen(ast, table, backend).then((out) => {
-			const out_path = out_path_lo.replace('.lo', `.${backend}`)
-			fs.mkdirSync(prefs.options.outdir, { recursive: true })
-			fs.writeFileSync(out_path, out.main)
+	for (const b of prefs.options.backends) {
+		const backend = await load_backend(b)
 
-			if (out.alt_name.length > 0) {
-				const alt_path = path.join(prefs.options.outdir, out.alt_name)
-				fs.writeFileSync(alt_path, out.alt)
-			}
-		})
+		const gen = new backend.Gen()
+		const out = gen.gen(ast, table)
+
+		const out_path = out_path_lo.replace('.lo', `.${b}`)
+		fs.mkdirSync(prefs.options.outdir, { recursive: true })
+		fs.writeFileSync(out_path, out.main)
+
+		if (out.alt_name.length > 0) {
+			const alt_path = path.join(prefs.options.outdir, out.alt_name)
+			fs.writeFileSync(alt_path, out.alt)
+		}
+	}
+}
+
+async function load_backend(backend) {
+	try {
+		const obj = await import(`./backends/${backend}.js`)
+		return obj
+	} catch (e) {
+		console.error(e)
+		process.exit(1)
 	}
 }
 
