@@ -5,8 +5,8 @@ import { PRECEDENCE, Lexer, is_comparison, is_assign, is_infix } from "./lexer.j
 import { IDXS } from "./table.js"
 import { Env } from './scope.js'
 
-function parse(path, table, text) {
-	const p = new Parser(path, table, text)
+function parse(prefs, table, text) {
+	const p = new Parser(prefs.file, table, text)
 	return p.parse()
 }
 

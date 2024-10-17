@@ -3,6 +3,7 @@
 
 import { BaseGen } from '../gen.js'
 import { IDXS } from '../table.js'
+import { BaseRunner } from '../runner.js'
 
 class Gen extends BaseGen {
 	setup() {
@@ -132,4 +133,6 @@ class Gen extends BaseGen {
 	}
 }
 
-export { Gen }
+class Runner extends BaseRunner {}
+
+export { Gen, Runner }
