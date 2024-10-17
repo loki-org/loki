@@ -36,6 +36,11 @@ async function compile(prefs) {
 			const alt_path = path.join(prefs.options.outdir, out.alt_name)
 			fs.writeFileSync(alt_path, out.alt)
 		}
+
+		if (prefs.is_test) {
+			const runner = new backend.Runner()
+			runner.run(out_path)
+		}
 	}
 }
 
