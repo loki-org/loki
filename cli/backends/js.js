@@ -23,6 +23,16 @@ class Gen extends BaseGen {
 		this.footer_out = `export { ${this.pub_syms.join(', ')} }`
 	}
 
+	assert_stmt(node) {
+		this.write('if(')
+		this.expr(node.expr)
+		this.writeln('){')
+		this.writeln('\tt.pass()')
+		this.writeln('} else {')
+		this.writeln('\tt.fail()')
+		this.writeln('}')
+	}
+
 	assign_stmt(node) {
 		if (node.op === 'decl_assign') {
 			this.decl_assign(node)
