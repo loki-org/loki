@@ -9,6 +9,7 @@ class Gen extends BaseGen {
 	pub_syms = []
 
 	setup() {
+		this.backend = 'js'
 		this.alt_name = 'index.d.ts'
 	}
 

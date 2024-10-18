@@ -7,6 +7,7 @@ import { BaseRunner } from '../runner.js'
 
 class Gen extends BaseGen {
 	setup() {
+		this.backend = 'py'
 		this.comment_sign = '#'
 	}
 

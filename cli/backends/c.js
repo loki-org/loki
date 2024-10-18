@@ -7,6 +7,7 @@ import { BaseRunner } from '../runner.js'
 
 class Gen extends BaseGen {
 	setup() {
+		this.backend = 'c'
 		this.alt_name = this.file_name.replace('.lo', '.h')
 		this.semi = ';'
 	}

@@ -130,6 +130,10 @@ class Lexer{
 
 		// Simple token
 		switch (c) {
+			case "'":
+			case '"':
+				this.string_val(c)
+				return 'string'
 			case '/': {
 				// Skip comments
 				if (this.text[this.pos] === '/') {
@@ -240,6 +244,8 @@ class Lexer{
 				return 'rcur'
 			case '@':
 				return 'at'
+			case '#':
+				return 'hash'
 			default:
 				break
 		}
@@ -259,6 +265,23 @@ class Lexer{
 		while (this.pos < this.text.length && /[0-9a-fA-F]/.test(this.text[this.pos])) {
 			this.pos++
 		}
+	}
+
+	string_val(quote) {
+		const start = this.pos
+
+		while (this.pos < this.text.length) {
+			const c = this.text[this.pos]
+			this.pos++
+
+			if (c === '\\') {
+				this.pos++
+			} else if (c === quote) {
+				break
+			}
+		}
+
+		this.val = this.text.slice(start, this.pos - 1)
 	}
 
 	skip_whitespace() {
