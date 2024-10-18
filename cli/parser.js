@@ -141,6 +141,8 @@ class Parser{
 		switch(this.tok) {
 			case 'for':
 				return this.for_loop()
+			case 'hash':
+				return this.hash_stmt()
 			case 'mut':
 				return this.assign_stmt()
 			case 'name':
@@ -269,6 +271,19 @@ class Parser{
 			params.push({ name, type })
 		}
 		return params
+	}
+
+	hash_stmt() {
+		this.next()
+		const lang = this.check_name()
+		this.check('dot')
+		const value = this.val
+		this.check('string')
+		return {
+			kind: 'hash',
+			lang,
+			value,
+		}
 	}
 
 	name_stmt() {

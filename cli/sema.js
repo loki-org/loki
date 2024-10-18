@@ -48,6 +48,9 @@ class Sema {
 			case 'fun_decl':
 				this.fun_decl(stmt)
 				break
+			case 'hash':
+				// Nothing to check for now
+				break
 			case 'return_stmt':
 				this.return_stmt(stmt)
 				break
