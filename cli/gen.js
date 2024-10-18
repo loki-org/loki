@@ -178,7 +178,7 @@ class BaseGen {
 
 	hash_stmt(node) {
 		if (node.lang == this.backend) {
-			this.write(node.value)
+			this.writeln(node.value)
 		}
 	}
 

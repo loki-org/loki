@@ -16,7 +16,22 @@ class Transformer {
 				name: 'test_main',
 				params: [],
 				return_type: IDXS.void,
-				body: [],
+				body: [
+					{
+						kind: 'assign',
+						left: {
+							kind: 'ident',
+							name: 't',
+							is_mut: true,
+						},
+						op: 'decl_assign',
+						right: {
+							kind: 'struct_init',
+							name: 'TestRunner',
+							fields: [],
+						}
+					}
+				],
 			}
 		}
 
@@ -56,7 +71,10 @@ class Transformer {
 			this.main_fun.body.push({
 				kind: 'call_expr',
 				name: node.name,
-				args: [],
+				args: [{
+					kind: 'ident',
+					name: 't',
+				}],
 			})
 		}
 
