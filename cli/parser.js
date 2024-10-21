@@ -150,6 +150,7 @@ class Parser{
 			case 'mut':
 				return this.assign_stmt()
 			case 'name':
+			case 'self':
 				return this.name_stmt()
 			case 'return':
 				return this.return_stmt()
