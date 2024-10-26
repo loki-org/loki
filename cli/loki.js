@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: 2024-present Lukas Neubert <lukas.neubert@proton.me>
 // SPDX-License-Identifier: MPL-2.0
 
-import * as process from 'process'
+import * as fs from 'node:fs'
+import * as process from 'node:process'
 import { compile } from './compiler.js'
 
 function help_and_exit() {
@@ -51,10 +52,10 @@ function parse_args(args) {
 				break
 		}
 
-		if (!arg.endsWith('.lo')) {
-			prefs.command = arg
-		} else if (prefs.file === '') {
+		if (fs.existsSync(arg)) {
 			prefs.file = arg
+		} else if (prefs.file !== '') {
+			prefs.command = arg
 		} else {
 			console.error(`Unknown argument: ${arg}`)
 			process.exit(1)

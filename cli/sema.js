@@ -22,6 +22,12 @@ class Sema {
 		this.env = new Env()
 	}
 
+	check_files(asts) {
+		for (const ast of asts) {
+			this.check(ast)
+		}
+	}
+
 	check(ast) {
 		this.stmts(ast.body)
 

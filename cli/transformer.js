@@ -6,6 +6,12 @@ import { IDXS } from "./table.js"
 class Transformer {
 	ast = null
 
+	transform_files(asts) {
+		asts.forEach((ast, i) => {
+			asts[i] = this.transform(ast)
+		})
+	}
+
 	transform(ast) {
 		ast.body = this.stmts(ast.body)
 
