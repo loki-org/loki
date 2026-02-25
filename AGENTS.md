@@ -20,11 +20,8 @@ bun run build
 # Run the CLI
 bun run cli [args]
 
-# Run a loki file directly
-bun run cli run path/to/file.lo
-
 # Transpile a loki file to JavaScript
-bun run cli path/to/file.lo
+bun run cli build path/to/file.lo
 ```
 
 ### Linting
@@ -57,14 +54,11 @@ bun run check
 ## Code Style Guidelines
 
 ### General Principles
-
 - Keep code simple and readable - avoid unnecessary complexity
 - Follow the principle that the language should be "less complicated than TypeScript"
 - Write self-documenting code with clear naming
 
 ### TypeScript Conventions
-
-### Types
 - Use explicit return types for public functions
 - Prefer `interface` over `type` for object shapes that may be extended
 - Use `type` for unions, intersections, and primitives
@@ -79,19 +73,11 @@ bun run check
 - **Enums**: PascalCase for enum, snake_case for values
 
 ### Imports
-
 - Use absolute imports with path aliases configured in tsconfig
 - Group imports: external -> internal -> relative
 - Sort alphabetically within groups
 
-```typescript
-import { readFileSync } from 'fs';
-import { parse } from './parser';
-import type { Token } from '../types/token';
-```
-
 ### Formatting
-
 - Use 2 spaces for indentation
 - Maximum line length: 100 characters
 - Use semicolons
@@ -99,24 +85,9 @@ import type { Token } from '../types/token';
 - Trailing commas in multi-line objects/arrays
 
 ### Error Handling
-
 - Use custom error classes that extend `Error`
 - Include meaningful error messages with context
 - For compilation errors, track location (line, column, file)
-
-```typescript
-class ParseError extends Error {
-  constructor(
-    message: string,
-    public readonly line: number,
-    public readonly column: number,
-    public readonly file?: string
-  ) {
-    super(`${file ? `${file}:` : ''}${line}:${column}: ${message}`);
-    this.name = 'ParseError';
-  }
-}
-```
 
 ### Project Structure
 
@@ -152,16 +123,13 @@ lib/loki/         # Core compiler modules
 - Handle edge cases (e.g., reserved words as identifiers)
 
 ### Testing
-
 - Test compiler with `.lo` fixture files
 - Include both valid and invalid input tests
 - Test error messages for invalid syntax
 
 ### Git Conventions
-
-- Prefix commits with the code part they change, e.g. `lexer:`, `gen:`, `ci:`, `docs:`
+- Prefix commits with the code part: `lexer:`, `gen:`, `ci:`, `docs:`
 - Keep commits focused: one logical change per commit
-- Write clear commit messages
 
 ## Editor Configuration
 
