@@ -228,6 +228,10 @@ export class Lexer {
 			case ';':
 				return tok(TokenKind.semi, ch)
 			case ':':
+				if (this.peek_char() === '=') {
+					this.advance_char()
+					return tok(TokenKind.col_eq, ':=')
+				}
 				return tok(TokenKind.colon, ch)
 			case '+':
 				return tok(TokenKind.plus, ch)

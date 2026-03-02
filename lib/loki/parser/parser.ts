@@ -146,10 +146,12 @@ export class Parser {
 
 	private parse_item(): ast.Item {
 		if (this.at(TokenKind.fn)) return this.parse_fn_decl()
-		if (this.at(TokenKind.let)) return this.parse_let_decl() as ast.LetDecl
 		if (this.at(TokenKind.const_)) return this.parse_const_decl()
 		if (this.at(TokenKind.struct_)) return this.parse_struct_decl()
-		this.error(`expected a top-level item (fn, let, const, struct), got '${this.cur().text}'`)
+		if (this.at(TokenKind.mut) || (this.at(TokenKind.ident) && this.peek_at(TokenKind.col_eq))) {
+			return this.parse_var_decl()
+		}
+		this.error(`expected a top-level item (fn, const, struct, or variable declaration), got '${this.cur().text}'`)
 	}
 
 	private parse_fn_decl(): ast.FnDecl {
@@ -263,8 +265,10 @@ export class Parser {
 	}
 
 	private parse_stmt(): ast.Stmt {
-		if (this.at(TokenKind.let)) return this.parse_let_decl()
 		if (this.at(TokenKind.const_)) return this.parse_const_decl()
+		if (this.at(TokenKind.mut) || (this.at(TokenKind.ident) && this.peek_at(TokenKind.col_eq))) {
+			return this.parse_var_decl()
+		}
 		if (this.at(TokenKind.return_)) return this.parse_return_stmt()
 		if (this.at(TokenKind.if_)) return this.parse_if_stmt()
 		if (this.at(TokenKind.while_)) return this.parse_while_stmt()
@@ -283,23 +287,23 @@ export class Parser {
 		return this.parse_expr_stmt()
 	}
 
-	private parse_let_decl(): ast.LetDecl {
+	private parse_var_decl(): ast.VarDecl {
 		const start = this.cur().pos
-		this.expect(TokenKind.let)
-		const name_tok = this.expect(TokenKind.ident)
-
-		let type_ann: ast.TypeExpr | null = null
-		if (this.eat(TokenKind.colon)) {
-			type_ann = this.parse_type_expr()
+		let mutable = false
+		if (this.eat(TokenKind.mut)) {
+			mutable = true
 		}
-
-		let init: ast.Expr | null = null
-		if (this.eat(TokenKind.eq)) {
-			init = this.parse_expr()
-		}
-
+		const name = this.expect(TokenKind.ident).text
+		this.expect(TokenKind.col_eq)
+		const init = this.parse_expr()
 		this.eat(TokenKind.semi)
-		return { kind: 'let_decl', name: name_tok.text, type_ann, init, pos: this.pos_from(start) }
+		return {
+			kind: 'var_decl',
+			name,
+			mutable,
+			init,
+			pos: this.pos_from(start),
+		}
 	}
 
 	private parse_const_decl(): ast.ConstDecl {

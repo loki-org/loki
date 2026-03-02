@@ -19,7 +19,7 @@ export enum TokenKind {
 
 	// Keywords
 	fn,
-	let,
+	mut,
 	const_,
 	if_,
 	else_,
@@ -47,6 +47,7 @@ export enum TokenKind {
 	comma, // ,
 	semi, // ;
 	colon, // :
+	col_eq, // :=
 	dot, // .
 	dot_dot, // ..
 	arrow, // ->
@@ -72,7 +73,7 @@ export enum TokenKind {
 
 const KEYWORDS: Record<string, TokenKind> = {
 	fn: TokenKind.fn,
-	let: TokenKind.let,
+	mut: TokenKind.mut,
 	const: TokenKind.const_,
 	if: TokenKind.if_,
 	else: TokenKind.else_,

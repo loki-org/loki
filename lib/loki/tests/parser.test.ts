@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import type { BinaryExpr, File, FnDecl, LetDecl } from '../ast/nodes.ts'
+import type { BinaryExpr, File, FnDecl, VarDecl } from '../ast/nodes.ts'
 import { Lexer } from '../lexer/lexer.ts'
 import { ParseError } from '../parser/parse_error.ts'
 import { Parser } from '../parser/parser.ts'
@@ -30,13 +30,22 @@ describe('parser — function declaration', () => {
 	})
 })
 
-describe('parser — let / const', () => {
-	it('parses let with init', () => {
-		const file = parse('let x = 42')
-		const decl = file.items[0] as LetDecl
-		expect(decl.kind).toBe('let_decl')
+describe('parser — variable declarations', () => {
+	it('parses immutable var', () => {
+		const file = parse('x := 42')
+		const decl = file.items[0] as VarDecl
+		expect(decl.kind).toBe('var_decl')
 		expect(decl.name).toBe('x')
+		expect(decl.mutable).toBe(false)
 		expect(decl.init?.kind).toBe('int_lit')
+	})
+
+	it('parses mutable var', () => {
+		const file = parse('mut y := 100')
+		const decl = file.items[0] as VarDecl
+		expect(decl.kind).toBe('var_decl')
+		expect(decl.name).toBe('y')
+		expect(decl.mutable).toBe(true)
 	})
 
 	it('parses const', () => {
@@ -48,8 +57,8 @@ describe('parser — let / const', () => {
 
 describe('parser — operator precedence', () => {
 	it('1 + 2 * 3 is add(1, mul(2, 3))', () => {
-		const file = parse('let r = 1 + 2 * 3')
-		const decl = file.items[0] as LetDecl
+		const file = parse('r := 1 + 2 * 3')
+		const decl = file.items[0] as VarDecl
 		const add = decl.init as BinaryExpr
 		expect(add.op).toBe('+')
 		expect(add.left.kind).toBe('int_lit')
@@ -58,8 +67,8 @@ describe('parser — operator precedence', () => {
 	})
 
 	it('parentheses override precedence', () => {
-		const file = parse('let r = (1 + 2) * 3')
-		const decl = file.items[0] as LetDecl
+		const file = parse('r := (1 + 2) * 3')
+		const decl = file.items[0] as VarDecl
 		const mul = decl.init as BinaryExpr
 		expect(mul.op).toBe('*')
 		const add = mul.left as BinaryExpr

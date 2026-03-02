@@ -23,11 +23,11 @@ describe('lexer — keywords', () => {
 
 	it('recognises all reserved words', () => {
 		const src =
-			'let const if else return true false null and or not import export struct enum match for while break continue'
+			'mut const if else return true false null and or not import export struct enum match for while break continue'
 		const toks = lex_all(src)
 		const kinds = toks.map((t) => t.kind)
 		expect(kinds).toEqual([
-			TokenKind.let,
+			TokenKind.mut,
 			TokenKind.const_,
 			TokenKind.if_,
 			TokenKind.else_,
@@ -73,7 +73,7 @@ describe('lexer — literals', () => {
 
 describe('lexer — operators', () => {
 	it('lexes two-char operators', () => {
-		const src = '== != <= >= -> ..'
+		const src = '== != <= >= -> .. :='
 		const toks = lex_all(src)
 		expect(toks.map((t) => t.kind)).toEqual([
 			TokenKind.eq_eq,
@@ -82,6 +82,7 @@ describe('lexer — operators', () => {
 			TokenKind.gt_eq,
 			TokenKind.arrow,
 			TokenKind.dot_dot,
+			TokenKind.col_eq,
 		])
 	})
 })

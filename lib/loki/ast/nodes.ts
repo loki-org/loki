@@ -135,7 +135,7 @@ export interface AssignExpr {
 // ---------------------------------------------------------------------------
 
 export type Stmt =
-	| LetDecl
+	| VarDecl
 	| ConstDecl
 	| ReturnStmt
 	| IfStmt
@@ -146,11 +146,11 @@ export type Stmt =
 	| Block
 	| ExprStmt
 
-export interface LetDecl {
-	kind: 'let_decl'
+export interface VarDecl {
+	kind: 'var_decl'
 	name: string
-	type_ann: TypeExpr | null
-	init: Expr | null
+	mutable: boolean
+	init: Expr
 	pos: Pos
 }
 
@@ -217,7 +217,7 @@ export interface ContinueStmt {
 // Top-level items
 // ---------------------------------------------------------------------------
 
-export type Item = FnDecl | LetDecl | ConstDecl | StructDecl
+export type Item = FnDecl | VarDecl | ConstDecl | StructDecl
 
 export interface Param {
 	name: string
