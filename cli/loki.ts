@@ -1,4 +1,6 @@
 import { Lexer } from '../lib/loki/lexer/lexer.ts'
+import { format_check_error } from '../lib/loki/checker/check_error.ts'
+import { Checker } from '../lib/loki/checker/checker.ts'
 import { format_error, ParseError } from '../lib/loki/parser/parse_error.ts'
 import { Parser } from '../lib/loki/parser/parser.ts'
 
@@ -38,6 +40,17 @@ async function build(file_path: string) {
 		const lex = new Lexer(source, file_path)
 		const parser = new Parser(lex)
 		const ast = parser.parse_file(file_path)
+
+		const checker = new Checker()
+		const errors = checker.check_file(ast)
+
+		if (errors.length > 0) {
+			for (const err of errors) {
+				console.error(format_check_error(err))
+			}
+			process.exit(1)
+		}
+
 		console.log(JSON.stringify(ast, null, 2))
 	} catch (e) {
 		if (e instanceof ParseError) {

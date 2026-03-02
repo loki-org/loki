@@ -34,7 +34,7 @@ lib/loki/         # Core compiler modules
 ├── ast/          # AST node definitions
 ├── lexer/        # Tokenization
 ├── parser/       # Produce AST from tokens
-├── sema/         # Type checking and resolution
+├── checker/      # Type checking and resolution
 ├── transformer/  # Common AST optimizations and simplifications
 ├── gen/          # Code generation
 ├── tests/        # Compiler feature tests
