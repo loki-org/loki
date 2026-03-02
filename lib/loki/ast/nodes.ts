@@ -217,7 +217,7 @@ export interface ContinueStmt {
 // Top-level items
 // ---------------------------------------------------------------------------
 
-export type Item = FnDecl | LetDecl | ConstDecl | StructDecl | TypeAlias
+export type Item = FnDecl | LetDecl | ConstDecl | StructDecl
 
 export interface Param {
 	name: string
@@ -244,13 +244,6 @@ export interface StructDecl {
 	kind: 'struct_decl'
 	name: string
 	fields: StructField[]
-	pos: Pos
-}
-
-export interface TypeAlias {
-	kind: 'type_alias'
-	name: string
-	type_expr: TypeExpr
 	pos: Pos
 }
 

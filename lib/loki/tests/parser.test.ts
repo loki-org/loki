@@ -149,14 +149,6 @@ describe('parser — structs', () => {
 	it('throws error when used as statement', () => {
 		expect(() => parse('fn f() { struct S {} }')).toThrow(ParseError)
 	})
-
-	it('parses type alias', () => {
-		const file = parse('type IntArray = [int]')
-		expect(file.items[0].kind).toBe('type_alias')
-		const alias = file.items[0] as any
-		expect(alias.name).toBe('IntArray')
-		expect(alias.type_expr.kind).toBe('array_type')
-	})
 })
 
 describe('parser — errors', () => {

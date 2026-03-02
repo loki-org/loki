@@ -149,8 +149,7 @@ export class Parser {
 		if (this.at(TokenKind.let)) return this.parse_let_decl() as ast.LetDecl
 		if (this.at(TokenKind.const_)) return this.parse_const_decl()
 		if (this.at(TokenKind.struct_)) return this.parse_struct_decl()
-		if (this.at(TokenKind.type_)) return this.parse_type_alias()
-		this.error(`expected a top-level item (fn, let, const, struct, type), got '${this.cur().text}'`)
+		this.error(`expected a top-level item (fn, let, const, struct), got '${this.cur().text}'`)
 	}
 
 	private parse_fn_decl(): ast.FnDecl {
@@ -202,21 +201,6 @@ export class Parser {
 			kind: 'struct_decl',
 			name,
 			fields,
-			pos: this.pos_from(start),
-		}
-	}
-
-	private parse_type_alias(): ast.TypeAlias {
-		const start = this.cur().pos
-		this.expect(TokenKind.type_)
-		const name = this.expect(TokenKind.ident).text
-		this.expect(TokenKind.eq)
-		const type_expr = this.parse_type_expr()
-		this.eat(TokenKind.semi)
-		return {
-			kind: 'type_alias',
-			name,
-			type_expr,
 			pos: this.pos_from(start),
 		}
 	}

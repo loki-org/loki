@@ -1,20 +1,18 @@
-type ID = int
-
 struct Point {
-    x: int,
-    y: int,
+	x: int,
+	y: int,
 }
 
 struct Empty {}
 
 fn main() {
-    let x: ID = 10
-    const valid = true
+	let x = 10
+	const valid = true
 
-    if valid and not (x == 0) {
-        let sum = x + 20
-        while true {
-            break
-        }
-    }
+	if valid and not (x == 0) {
+		let sum = x + 20
+		while true {
+			break
+		}
+	}
 }
