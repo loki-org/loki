@@ -86,11 +86,7 @@ describe('lexer — operators', () => {
 		])
 	})
 
-	it('lexes && and ||', () => {
-		const toks = lex_all('&& ||')
-		expect(toks[0].kind).toBe(TokenKind.amp_amp)
-		expect(toks[1].kind).toBe(TokenKind.pipe_pipe)
-	})
+
 })
 
 describe('lexer — comments', () => {

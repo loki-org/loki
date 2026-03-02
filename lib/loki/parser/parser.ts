@@ -24,10 +24,8 @@ function infix_prec(kind: TokenKind): Prec {
 		case TokenKind.eq:
 			return Prec.assign
 		case TokenKind.or:
-		case TokenKind.pipe_pipe:
 			return Prec.or
 		case TokenKind.and:
-		case TokenKind.amp_amp:
 			return Prec.and
 		case TokenKind.eq_eq:
 		case TokenKind.bang_eq:
@@ -381,7 +379,7 @@ export class Parser {
 	private parse_unary(): ast.Expr {
 		const start = this.cur().span
 
-		if (this.at(TokenKind.minus) || this.at(TokenKind.bang) || this.at(TokenKind.not)) {
+		if (this.at(TokenKind.minus) || this.at(TokenKind.not)) {
 			const op = this.advance().text
 			const operand = this.parse_unary()
 			return {

@@ -66,9 +66,6 @@ export enum TokenKind {
 	lt_eq, // <=
 	gt, // >
 	gt_eq, // >=
-	bang, // !
-	amp_amp, // &&
-	pipe_pipe, // ||
 
 	// Special
 	eof,
