@@ -85,8 +85,6 @@ describe('lexer — operators', () => {
 			TokenKind.dot_dot,
 		])
 	})
-
-
 })
 
 describe('lexer — comments', () => {

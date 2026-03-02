@@ -121,6 +121,28 @@ describe('parser — if / while', () => {
 	})
 })
 
+describe('parser — structs', () => {
+	it('parses empty struct', () => {
+		const file = parse('struct Empty {}')
+		expect(file.items).toHaveLength(1)
+		expect(file.items[0].kind).toBe('struct_decl')
+		expect((file.items[0] as any).name).toBe('Empty')
+	})
+
+	it('parses struct with fields', () => {
+		const file = parse('struct Point { x: int, y: int }')
+		const s = file.items[0] as any
+		expect(s.kind).toBe('struct_decl')
+		expect(s.fields).toHaveLength(2)
+		expect(s.fields[0].name).toBe('x')
+		expect(s.fields[1].name).toBe('y')
+	})
+
+	it('throws error when used as statement', () => {
+		expect(() => parse('fn f() { struct S {} }')).toThrow(ParseError)
+	})
+})
+
 describe('parser — errors', () => {
 	it('throws ParseError on bad syntax', () => {
 		expect(() => parse('fn () {}')).toThrow(ParseError)

@@ -205,7 +205,7 @@ export interface ExprStmt {
 // Top-level items
 // ---------------------------------------------------------------------------
 
-export type Item = FnDecl | LetDecl | ConstDecl
+export type Item = FnDecl | LetDecl | ConstDecl | StructDecl
 
 export interface Param {
 	name: string
@@ -219,6 +219,19 @@ export interface FnDecl {
 	params: Param[]
 	return_type: TypeExpr | null
 	body: Block
+	span: Span
+}
+
+export interface StructField {
+	name: string
+	type_ann: TypeExpr
+	span: Span
+}
+
+export interface StructDecl {
+	kind: 'struct_decl'
+	name: string
+	fields: StructField[]
 	span: Span
 }
 

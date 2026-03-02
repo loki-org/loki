@@ -148,7 +148,8 @@ export class Parser {
 		if (this.at(TokenKind.fn)) return this.parse_fn_decl()
 		if (this.at(TokenKind.let)) return this.parse_let_decl() as ast.LetDecl
 		if (this.at(TokenKind.const_)) return this.parse_const_decl()
-		this.error(`expected a top-level item (fn, let, const), got '${this.cur().text}'`)
+		if (this.at(TokenKind.struct_)) return this.parse_struct_decl()
+		this.error(`expected a top-level item (fn, let, const, struct), got '${this.cur().text}'`)
 	}
 
 	private parse_fn_decl(): ast.FnDecl {
@@ -174,6 +175,32 @@ export class Parser {
 			params,
 			return_type,
 			body,
+			span: this.span_from(start),
+		}
+	}
+
+	private parse_struct_decl(): ast.StructDecl {
+		const start = this.cur().span
+		this.expect(TokenKind.struct_)
+		const name_tok = this.expect(TokenKind.ident)
+		const name = name_tok.text
+
+		const fields: ast.StructField[] = []
+		this.expect(TokenKind.l_brace)
+		while (!this.at(TokenKind.r_brace) && !this.at(TokenKind.eof)) {
+			const f_start = this.cur().span
+			const f_name = this.expect(TokenKind.ident).text
+			this.expect(TokenKind.colon)
+			const type_ann = this.parse_type_expr()
+			fields.push({ name: f_name, type_ann, span: this.span_from(f_start) })
+			this.eat(TokenKind.comma)
+		}
+		this.expect(TokenKind.r_brace)
+
+		return {
+			kind: 'struct_decl',
+			name,
+			fields,
 			span: this.span_from(start),
 		}
 	}
@@ -460,7 +487,11 @@ export class Parser {
 			}
 			case TokenKind.float: {
 				this.advance()
-				return { kind: 'float_lit', value: Number.parseFloat(tok.text), span } satisfies ast.FloatLit
+				return {
+					kind: 'float_lit',
+					value: Number.parseFloat(tok.text),
+					span,
+				} satisfies ast.FloatLit
 			}
 			case TokenKind.string: {
 				this.advance()

@@ -5,7 +5,7 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 end_of_line = lf
 
-[*.ts]
+[*.{ts,lo}]
 indent_style = tab
 indent_size = 4
 

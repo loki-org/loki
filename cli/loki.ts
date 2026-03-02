@@ -1,6 +1,6 @@
 import { Lexer } from '../lib/loki/lexer/lexer.ts'
+import { format_error, ParseError } from '../lib/loki/parser/parse_error.ts'
 import { Parser } from '../lib/loki/parser/parser.ts'
-import { ParseError, format_error } from '../lib/loki/parser/parse_error.ts'
 
 const VERSION = '0.1.0'
 
