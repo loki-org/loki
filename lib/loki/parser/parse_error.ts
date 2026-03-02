@@ -1,9 +1,10 @@
-import type { Span } from '../lexer/token.ts'
+import type { Pos } from '../lexer/token.ts'
 
 export class ParseError extends Error {
 	constructor(
 		message: string,
-		public readonly span: Span,
+		public readonly file: string,
+		public readonly pos: Pos,
 	) {
 		super(message)
 		this.name = 'ParseError'
@@ -11,6 +12,6 @@ export class ParseError extends Error {
 }
 
 export function format_error(err: ParseError): string {
-	const { file, line, col } = err.span
-	return `${file}:${line}:${col}: error: ${err.message}`
+	const { line, col } = err.pos
+	return `${err.file}:${line}:${col}: error: ${err.message}`
 }

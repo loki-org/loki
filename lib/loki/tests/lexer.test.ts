@@ -101,14 +101,16 @@ describe('lexer — comments', () => {
 	})
 })
 
-describe('lexer — spans', () => {
+describe('lexer — positions', () => {
 	it('tracks line and column', () => {
 		const l = new Lexer('fn foo', '<test>')
-		const t1 = l.next() // fn
-		const t2 = l.next() // foo
-		expect(t1.span.line).toBe(1)
-		expect(t1.span.col).toBe(1)
-		expect(t2.span.col).toBe(4)
+		l.next() // advance bootstrap
+		const t1 = l.current // fn
+		l.next()
+		const t2 = l.current // foo
+		expect(t1.pos.line).toBe(1)
+		expect(t1.pos.col).toBe(1)
+		expect(t2.pos.col).toBe(4)
 	})
 })
 

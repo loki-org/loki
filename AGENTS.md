@@ -9,8 +9,6 @@ Loki is a programming language that fills a role similar to TypeScript but with 
 - **Language**: TypeScript
 
 ## Code Style Guidelines
-- See .editorconfig
-
 ### General Principles
 - Keep code simple and readable - avoid unnecessary complexity
 - Follow the principle that the language should be "less complicated than TypeScript"
@@ -23,6 +21,9 @@ Loki is a programming language that fills a role similar to TypeScript but with 
 - **Functions/Variables**: snake_case (e.g., `parse_tokens`, `current_token`)
 - **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_TOKEN_LENGTH`)
 - **Enums**: PascalCase for enum, snake_case for values
+
+### Formatting
+- See .editorconfig
 
 ### Project Structure
 

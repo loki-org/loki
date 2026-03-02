@@ -119,6 +119,14 @@ describe('parser — if / while', () => {
 		const fn = file.items[0] as FnDecl
 		expect(fn.body.stmts[0].kind).toBe('while_stmt')
 	})
+
+	it('parses break and continue', () => {
+		const file = parse('fn f() { while true { break; continue } }')
+		const fn = file.items[0] as FnDecl
+		const loop = fn.body.stmts[0] as any
+		expect(loop.body.stmts[0].kind).toBe('break_stmt')
+		expect(loop.body.stmts[1].kind).toBe('continue_stmt')
+	})
 })
 
 describe('parser — structs', () => {
@@ -140,6 +148,14 @@ describe('parser — structs', () => {
 
 	it('throws error when used as statement', () => {
 		expect(() => parse('fn f() { struct S {} }')).toThrow(ParseError)
+	})
+
+	it('parses type alias', () => {
+		const file = parse('type IntArray = [int]')
+		expect(file.items[0].kind).toBe('type_alias')
+		const alias = file.items[0] as any
+		expect(alias.name).toBe('IntArray')
+		expect(alias.type_expr.kind).toBe('array_type')
 	})
 })
 

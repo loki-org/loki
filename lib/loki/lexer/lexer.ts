@@ -1,8 +1,8 @@
-import { keyword_kind, make_token, type Span, type Token, TokenKind } from './token.ts'
+import { keyword_kind, make_token, type Pos, type Token, TokenKind } from './token.ts'
 
 export class Lexer {
 	private source: string
-	private file: string
+	public readonly file: string
 	private pos: number = 0
 	private line: number = 1
 	private col: number = 1
@@ -42,7 +42,8 @@ export class Lexer {
 		if (tok.kind !== kind) {
 			throw new LexError(
 				`expected ${TokenKind[kind]}, got ${TokenKind[tok.kind]} ('${tok.text}')`,
-				tok.span,
+				this.file,
+				tok.pos,
 			)
 		}
 		return tok
@@ -52,9 +53,8 @@ export class Lexer {
 	// Internal scanning
 	// -------------------------------------------------------------------------
 
-	private span_here(start_pos: number, start_line: number, start_col: number): Span {
+	private pos_here(start_pos: number, start_line: number, start_col: number): Pos {
 		return {
-			file: this.file,
 			offset: start_pos,
 			line: start_line,
 			col: start_col,
@@ -107,7 +107,7 @@ export class Lexer {
 		while (this.pos < this.source.length) {
 			const ch = this.advance_char()
 			if (ch === '"') {
-				return make_token(TokenKind.string, value, this.span_here(start_pos, start_line, start_col))
+				return make_token(TokenKind.string, value, this.pos_here(start_pos, start_line, start_col))
 			}
 			if (ch === '\\') {
 				const esc = this.advance_char()
@@ -135,7 +135,7 @@ export class Lexer {
 			}
 		}
 		// Unterminated string
-		return make_token(TokenKind.error, value, this.span_here(start_pos, start_line, start_col))
+		return make_token(TokenKind.error, value, this.pos_here(start_pos, start_line, start_col))
 	}
 
 	private scan(): Token {
@@ -163,7 +163,6 @@ export class Lexer {
 
 		if (this.pos >= this.source.length) {
 			return make_token(TokenKind.eof, '', {
-				file: this.file,
 				offset: this.pos,
 				line: this.line,
 				col: this.col,
@@ -176,8 +175,8 @@ export class Lexer {
 		const start_col = this.col
 		const ch = this.advance_char()
 
-		const span = () => this.span_here(start_pos, start_line, start_col)
-		const tok = (kind: TokenKind, text: string) => make_token(kind, text, span())
+		const pos = () => this.pos_here(start_pos, start_line, start_col)
+		const tok = (kind: TokenKind, text: string) => make_token(kind, text, pos())
 
 		// String literal
 		if (ch === '"') {
@@ -286,7 +285,8 @@ export class Lexer {
 export class LexError extends Error {
 	constructor(
 		message: string,
-		public readonly span: Span,
+		public readonly file: string,
+		public readonly pos: Pos,
 	) {
 		super(message)
 		this.name = 'LexError'

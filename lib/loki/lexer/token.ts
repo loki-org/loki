@@ -1,5 +1,4 @@
-export interface Span {
-	file: string
+export interface Pos {
 	offset: number // byte offset of first character
 	line: number
 	col: number
@@ -104,9 +103,9 @@ export function keyword_kind(text: string): TokenKind | undefined {
 export interface Token {
 	kind: TokenKind
 	text: string
-	span: Span
+	pos: Pos
 }
 
-export function make_token(kind: TokenKind, text: string, span: Span): Token {
-	return { kind, text, span }
+export function make_token(kind: TokenKind, text: string, pos: Pos): Token {
+	return { kind, text, pos }
 }

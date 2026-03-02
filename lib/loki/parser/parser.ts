@@ -1,6 +1,6 @@
 import type * as ast from '../ast/nodes.ts'
 import type { Lexer } from '../lexer/lexer.ts'
-import { type Span, type Token, TokenKind } from '../lexer/token.ts'
+import { type Pos, type Token, TokenKind } from '../lexer/token.ts'
 import { ParseError } from './parse_error.ts'
 
 // ---------------------------------------------------------------------------
@@ -14,7 +14,7 @@ enum Prec {
 	equality = 4, // == !=
 	relational = 5, // < <= > >=
 	additive = 6, // + -
-	multiplica = 7, // * / %
+	multiplicative = 7, // * / %
 	unary = 8, // - ! not  (prefix, handled separately)
 	postfix = 9, // () [] .  (handled in parse_postfix)
 }
@@ -41,7 +41,7 @@ function infix_prec(kind: TokenKind): Prec {
 		case TokenKind.star:
 		case TokenKind.slash:
 		case TokenKind.percent:
-			return Prec.multiplica
+			return Prec.multiplicative
 		default:
 			return Prec.none
 	}
@@ -99,20 +99,20 @@ export class Parser {
 		if (this.at(kind)) return this.advance()
 		throw new ParseError(
 			`expected '${TokenKind[kind]}', got '${this.cur().text || TokenKind[this.cur().kind]}'`,
-			this.cur().span,
+			this.lex.file,
+			this.cur().pos,
 		)
 	}
 
 	private error(msg: string): never {
-		throw new ParseError(msg, this.cur().span)
+		throw new ParseError(msg, this.lex.file, this.cur().pos)
 	}
 
-	private span_from(start: Span): Span {
-		// Extend start span to cover everything up to (and including) the last
+	private pos_from(start: Pos): Pos {
+		// Extend start pos to cover everything up to (and including) the last
 		// consumed token. Use byte offsets so len is correct across line breaks.
-		const end = this.cur().span
+		const end = this.cur().pos
 		return {
-			file: start.file,
 			offset: start.offset,
 			line: start.line,
 			col: start.col,
@@ -125,7 +125,7 @@ export class Parser {
 	// -------------------------------------------------------------------------
 
 	parse_file(path: string): ast.File {
-		const start = this.cur().span
+		const start = this.cur().pos
 		const items: ast.Item[] = []
 
 		while (!this.at(TokenKind.eof)) {
@@ -136,7 +136,7 @@ export class Parser {
 			kind: 'file',
 			path,
 			items,
-			span: this.span_from(start),
+			pos: this.pos_from(start),
 		}
 	}
 
@@ -149,11 +149,12 @@ export class Parser {
 		if (this.at(TokenKind.let)) return this.parse_let_decl() as ast.LetDecl
 		if (this.at(TokenKind.const_)) return this.parse_const_decl()
 		if (this.at(TokenKind.struct_)) return this.parse_struct_decl()
-		this.error(`expected a top-level item (fn, let, const, struct), got '${this.cur().text}'`)
+		if (this.at(TokenKind.type_)) return this.parse_type_alias()
+		this.error(`expected a top-level item (fn, let, const, struct, type), got '${this.cur().text}'`)
 	}
 
 	private parse_fn_decl(): ast.FnDecl {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.fn)
 		const name_tok = this.expect(TokenKind.ident)
 		const name = name_tok.text
@@ -175,12 +176,12 @@ export class Parser {
 			params,
 			return_type,
 			body,
-			span: this.span_from(start),
+			pos: this.pos_from(start),
 		}
 	}
 
 	private parse_struct_decl(): ast.StructDecl {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.struct_)
 		const name_tok = this.expect(TokenKind.ident)
 		const name = name_tok.text
@@ -188,11 +189,11 @@ export class Parser {
 		const fields: ast.StructField[] = []
 		this.expect(TokenKind.l_brace)
 		while (!this.at(TokenKind.r_brace) && !this.at(TokenKind.eof)) {
-			const f_start = this.cur().span
+			const f_start = this.cur().pos
 			const f_name = this.expect(TokenKind.ident).text
 			this.expect(TokenKind.colon)
 			const type_ann = this.parse_type_expr()
-			fields.push({ name: f_name, type_ann, span: this.span_from(f_start) })
+			fields.push({ name: f_name, type_ann, pos: this.pos_from(f_start) })
 			this.eat(TokenKind.comma)
 		}
 		this.expect(TokenKind.r_brace)
@@ -201,18 +202,33 @@ export class Parser {
 			kind: 'struct_decl',
 			name,
 			fields,
-			span: this.span_from(start),
+			pos: this.pos_from(start),
+		}
+	}
+
+	private parse_type_alias(): ast.TypeAlias {
+		const start = this.cur().pos
+		this.expect(TokenKind.type_)
+		const name = this.expect(TokenKind.ident).text
+		this.expect(TokenKind.eq)
+		const type_expr = this.parse_type_expr()
+		this.eat(TokenKind.semi)
+		return {
+			kind: 'type_alias',
+			name,
+			type_expr,
+			pos: this.pos_from(start),
 		}
 	}
 
 	private parse_param_list(): ast.Param[] {
 		const params: ast.Param[] = []
 		while (!this.at(TokenKind.r_paren) && !this.at(TokenKind.eof)) {
-			const start = this.cur().span
+			const start = this.cur().pos
 			const name_tok = this.expect(TokenKind.ident)
 			this.expect(TokenKind.colon)
 			const type_ann = this.parse_type_expr()
-			params.push({ name: name_tok.text, type_ann, span: this.span_from(start) })
+			params.push({ name: name_tok.text, type_ann, pos: this.pos_from(start) })
 			if (!this.eat(TokenKind.comma)) break
 		}
 		return params
@@ -225,20 +241,20 @@ export class Parser {
 	private parse_type_expr(): ast.TypeExpr {
 		// [T]  — array type
 		if (this.at(TokenKind.l_bracket)) {
-			const start = this.cur().span
+			const start = this.cur().pos
 			this.advance()
 			const elem = this.parse_type_expr()
 			this.expect(TokenKind.r_bracket)
-			return { kind: 'array_type', elem, span: this.span_from(start) } satisfies ast.ArrayType
+			return { kind: 'array_type', elem, pos: this.pos_from(start) } satisfies ast.ArrayType
 		}
 
 		// Named type (possibly optional with trailing ?)
-		const start = this.cur().span
+		const start = this.cur().pos
 		const name_tok = this.expect(TokenKind.ident)
 		const named: ast.NamedType = {
 			kind: 'named_type',
 			name: name_tok.text,
-			span: this.span_from(start),
+			pos: this.pos_from(start),
 		}
 
 		// Optional type sugar: T?
@@ -252,14 +268,14 @@ export class Parser {
 	// -------------------------------------------------------------------------
 
 	private parse_block(): ast.Block {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.l_brace)
 		const stmts: ast.Stmt[] = []
 		while (!this.at(TokenKind.r_brace) && !this.at(TokenKind.eof)) {
 			stmts.push(this.parse_stmt())
 		}
 		this.expect(TokenKind.r_brace)
-		return { kind: 'block', stmts, span: this.span_from(start) }
+		return { kind: 'block', stmts, pos: this.pos_from(start) }
 	}
 
 	private parse_stmt(): ast.Stmt {
@@ -269,12 +285,22 @@ export class Parser {
 		if (this.at(TokenKind.if_)) return this.parse_if_stmt()
 		if (this.at(TokenKind.while_)) return this.parse_while_stmt()
 		if (this.at(TokenKind.for_)) return this.parse_for_stmt()
+		if (this.at(TokenKind.break_)) {
+			const start = this.advance().pos
+			this.eat(TokenKind.semi)
+			return { kind: 'break_stmt', pos: start }
+		}
+		if (this.at(TokenKind.continue_)) {
+			const start = this.advance().pos
+			this.eat(TokenKind.semi)
+			return { kind: 'continue_stmt', pos: start }
+		}
 		if (this.at(TokenKind.l_brace)) return this.parse_block()
 		return this.parse_expr_stmt()
 	}
 
 	private parse_let_decl(): ast.LetDecl {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.let)
 		const name_tok = this.expect(TokenKind.ident)
 
@@ -289,11 +315,11 @@ export class Parser {
 		}
 
 		this.eat(TokenKind.semi)
-		return { kind: 'let_decl', name: name_tok.text, type_ann, init, span: this.span_from(start) }
+		return { kind: 'let_decl', name: name_tok.text, type_ann, init, pos: this.pos_from(start) }
 	}
 
 	private parse_const_decl(): ast.ConstDecl {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.const_)
 		const name_tok = this.expect(TokenKind.ident)
 
@@ -305,11 +331,11 @@ export class Parser {
 		this.expect(TokenKind.eq)
 		const init = this.parse_expr()
 		this.eat(TokenKind.semi)
-		return { kind: 'const_decl', name: name_tok.text, type_ann, init, span: this.span_from(start) }
+		return { kind: 'const_decl', name: name_tok.text, type_ann, init, pos: this.pos_from(start) }
 	}
 
 	private parse_return_stmt(): ast.ReturnStmt {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.return_)
 		// A return with no expression: `return` followed by `}` or `;`
 		let value: ast.Expr | null = null
@@ -317,11 +343,11 @@ export class Parser {
 			value = this.parse_expr()
 		}
 		this.eat(TokenKind.semi)
-		return { kind: 'return_stmt', value, span: this.span_from(start) }
+		return { kind: 'return_stmt', value, pos: this.pos_from(start) }
 	}
 
 	private parse_if_stmt(): ast.IfStmt {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.if_)
 		const cond = this.parse_expr()
 		const then_block = this.parse_block()
@@ -335,32 +361,32 @@ export class Parser {
 			}
 		}
 
-		return { kind: 'if_stmt', cond, then_block, else_branch, span: this.span_from(start) }
+		return { kind: 'if_stmt', cond, then_block, else_branch, pos: this.pos_from(start) }
 	}
 
 	private parse_while_stmt(): ast.WhileStmt {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.while_)
 		const cond = this.parse_expr()
 		const body = this.parse_block()
-		return { kind: 'while_stmt', cond, body, span: this.span_from(start) }
+		return { kind: 'while_stmt', cond, body, pos: this.pos_from(start) }
 	}
 
 	private parse_for_stmt(): ast.ForStmt {
-		const start = this.cur().span
+		const start = this.cur().pos
 		this.expect(TokenKind.for_)
 		const var_tok = this.expect(TokenKind.ident)
 		this.expect(TokenKind.ident) // `in` — treat as contextual keyword for now
 		const iterable = this.parse_expr()
 		const body = this.parse_block()
-		return { kind: 'for_stmt', variable: var_tok.text, iterable, body, span: this.span_from(start) }
+		return { kind: 'for_stmt', variable: var_tok.text, iterable, body, pos: this.pos_from(start) }
 	}
 
 	private parse_expr_stmt(): ast.ExprStmt {
-		const start = this.cur().span
+		const start = this.cur().pos
 		const expr = this.parse_expr()
 		this.eat(TokenKind.semi)
-		return { kind: 'expr_stmt', expr, span: this.span_from(start) }
+		return { kind: 'expr_stmt', expr, pos: this.pos_from(start) }
 	}
 
 	// -------------------------------------------------------------------------
@@ -387,7 +413,7 @@ export class Parser {
 					kind: 'assign_expr',
 					target: left,
 					value: right,
-					span: this.span_from(left.span),
+					pos: this.pos_from(left.pos),
 				} satisfies ast.AssignExpr
 			} else {
 				left = {
@@ -395,7 +421,7 @@ export class Parser {
 					op: op_tok.text,
 					left,
 					right,
-					span: this.span_from(left.span),
+					pos: this.pos_from(left.pos),
 				} satisfies ast.BinaryExpr
 			}
 		}
@@ -404,7 +430,7 @@ export class Parser {
 	}
 
 	private parse_unary(): ast.Expr {
-		const start = this.cur().span
+		const start = this.cur().pos
 
 		if (this.at(TokenKind.minus) || this.at(TokenKind.not)) {
 			const op = this.advance().text
@@ -413,7 +439,7 @@ export class Parser {
 				kind: 'unary_expr',
 				op,
 				operand,
-				span: this.span_from(start),
+				pos: this.pos_from(start),
 			} satisfies ast.UnaryExpr
 		}
 
@@ -426,7 +452,7 @@ export class Parser {
 		while (true) {
 			if (this.at(TokenKind.l_paren)) {
 				// Call expression
-				const start = expr.span
+				const start = expr.pos
 				this.advance()
 				const args = this.parse_arg_list()
 				this.expect(TokenKind.r_paren)
@@ -434,11 +460,11 @@ export class Parser {
 					kind: 'call_expr',
 					callee: expr,
 					args,
-					span: this.span_from(start),
+					pos: this.pos_from(start),
 				} satisfies ast.CallExpr
 			} else if (this.at(TokenKind.l_bracket)) {
 				// Index expression
-				const start = expr.span
+				const start = expr.pos
 				this.advance()
 				const index = this.parse_expr()
 				this.expect(TokenKind.r_bracket)
@@ -446,18 +472,18 @@ export class Parser {
 					kind: 'index_expr',
 					object: expr,
 					index,
-					span: this.span_from(start),
+					pos: this.pos_from(start),
 				} satisfies ast.IndexExpr
 			} else if (this.at(TokenKind.dot)) {
 				// Member expression
-				const start = expr.span
+				const start = expr.pos
 				this.advance()
 				const member_tok = this.expect(TokenKind.ident)
 				expr = {
 					kind: 'member_expr',
 					object: expr,
 					member: member_tok.text,
-					span: this.span_from(start),
+					pos: this.pos_from(start),
 				} satisfies ast.MemberExpr
 			} else {
 				break
@@ -478,40 +504,40 @@ export class Parser {
 
 	private parse_primary(): ast.Expr {
 		const tok = this.cur()
-		const span = tok.span
+		const pos = tok.pos
 
 		switch (tok.kind) {
 			case TokenKind.int: {
 				this.advance()
-				return { kind: 'int_lit', value: Number.parseInt(tok.text, 10), span } satisfies ast.IntLit
+				return { kind: 'int_lit', value: Number.parseInt(tok.text, 10), pos } satisfies ast.IntLit
 			}
 			case TokenKind.float: {
 				this.advance()
 				return {
 					kind: 'float_lit',
 					value: Number.parseFloat(tok.text),
-					span,
+					pos,
 				} satisfies ast.FloatLit
 			}
 			case TokenKind.string: {
 				this.advance()
-				return { kind: 'string_lit', value: tok.text, span } satisfies ast.StringLit
+				return { kind: 'string_lit', value: tok.text, pos } satisfies ast.StringLit
 			}
 			case TokenKind.true_: {
 				this.advance()
-				return { kind: 'bool_lit', value: true, span } satisfies ast.BoolLit
+				return { kind: 'bool_lit', value: true, pos } satisfies ast.BoolLit
 			}
 			case TokenKind.false_: {
 				this.advance()
-				return { kind: 'bool_lit', value: false, span } satisfies ast.BoolLit
+				return { kind: 'bool_lit', value: false, pos } satisfies ast.BoolLit
 			}
 			case TokenKind.null_: {
 				this.advance()
-				return { kind: 'null_lit', span } satisfies ast.NullLit
+				return { kind: 'null_lit', pos } satisfies ast.NullLit
 			}
 			case TokenKind.ident: {
 				this.advance()
-				return { kind: 'ident_expr', name: tok.text, span } satisfies ast.IdentExpr
+				return { kind: 'ident_expr', name: tok.text, pos } satisfies ast.IdentExpr
 			}
 			case TokenKind.l_paren: {
 				this.advance()

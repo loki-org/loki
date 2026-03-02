@@ -1,4 +1,4 @@
-import type { Span } from '../lexer/token.ts'
+import type { Pos } from '../lexer/token.ts'
 
 // ---------------------------------------------------------------------------
 // Shared
@@ -7,7 +7,7 @@ import type { Span } from '../lexer/token.ts'
 export interface Ident {
 	kind: 'ident'
 	name: string
-	span: Span
+	pos: Pos
 }
 
 // ---------------------------------------------------------------------------
@@ -19,19 +19,19 @@ export type TypeExpr = NamedType | ArrayType | OptionalType
 export interface NamedType {
 	kind: 'named_type'
 	name: string
-	span: Span
+	pos: Pos
 }
 
 export interface ArrayType {
 	kind: 'array_type'
 	elem: TypeExpr
-	span: Span
+	pos: Pos
 }
 
 export interface OptionalType {
 	kind: 'optional_type'
 	inner: TypeExpr
-	span: Span
+	pos: Pos
 }
 
 // ---------------------------------------------------------------------------
@@ -55,36 +55,36 @@ export type Expr =
 export interface IntLit {
 	kind: 'int_lit'
 	value: number
-	span: Span
+	pos: Pos
 }
 
 export interface FloatLit {
 	kind: 'float_lit'
 	value: number
-	span: Span
+	pos: Pos
 }
 
 export interface StringLit {
 	kind: 'string_lit'
 	value: string
-	span: Span
+	pos: Pos
 }
 
 export interface BoolLit {
 	kind: 'bool_lit'
 	value: boolean
-	span: Span
+	pos: Pos
 }
 
 export interface NullLit {
 	kind: 'null_lit'
-	span: Span
+	pos: Pos
 }
 
 export interface IdentExpr {
 	kind: 'ident_expr'
 	name: string
-	span: Span
+	pos: Pos
 }
 
 export interface BinaryExpr {
@@ -92,42 +92,42 @@ export interface BinaryExpr {
 	op: string
 	left: Expr
 	right: Expr
-	span: Span
+	pos: Pos
 }
 
 export interface UnaryExpr {
 	kind: 'unary_expr'
 	op: string
 	operand: Expr
-	span: Span
+	pos: Pos
 }
 
 export interface CallExpr {
 	kind: 'call_expr'
 	callee: Expr
 	args: Expr[]
-	span: Span
+	pos: Pos
 }
 
 export interface IndexExpr {
 	kind: 'index_expr'
 	object: Expr
 	index: Expr
-	span: Span
+	pos: Pos
 }
 
 export interface MemberExpr {
 	kind: 'member_expr'
 	object: Expr
 	member: string
-	span: Span
+	pos: Pos
 }
 
 export interface AssignExpr {
 	kind: 'assign_expr'
 	target: Expr
 	value: Expr
-	span: Span
+	pos: Pos
 }
 
 // ---------------------------------------------------------------------------
@@ -141,6 +141,8 @@ export type Stmt =
 	| IfStmt
 	| WhileStmt
 	| ForStmt
+	| BreakStmt
+	| ContinueStmt
 	| Block
 	| ExprStmt
 
@@ -149,7 +151,7 @@ export interface LetDecl {
 	name: string
 	type_ann: TypeExpr | null
 	init: Expr | null
-	span: Span
+	pos: Pos
 }
 
 export interface ConstDecl {
@@ -157,13 +159,13 @@ export interface ConstDecl {
 	name: string
 	type_ann: TypeExpr | null
 	init: Expr
-	span: Span
+	pos: Pos
 }
 
 export interface ReturnStmt {
 	kind: 'return_stmt'
 	value: Expr | null
-	span: Span
+	pos: Pos
 }
 
 export interface IfStmt {
@@ -171,14 +173,14 @@ export interface IfStmt {
 	cond: Expr
 	then_block: Block
 	else_branch: Block | IfStmt | null
-	span: Span
+	pos: Pos
 }
 
 export interface WhileStmt {
 	kind: 'while_stmt'
 	cond: Expr
 	body: Block
-	span: Span
+	pos: Pos
 }
 
 export interface ForStmt {
@@ -186,31 +188,41 @@ export interface ForStmt {
 	variable: string
 	iterable: Expr
 	body: Block
-	span: Span
+	pos: Pos
 }
 
 export interface Block {
 	kind: 'block'
 	stmts: Stmt[]
-	span: Span
+	pos: Pos
 }
 
 export interface ExprStmt {
 	kind: 'expr_stmt'
 	expr: Expr
-	span: Span
+	pos: Pos
+}
+
+export interface BreakStmt {
+	kind: 'break_stmt'
+	pos: Pos
+}
+
+export interface ContinueStmt {
+	kind: 'continue_stmt'
+	pos: Pos
 }
 
 // ---------------------------------------------------------------------------
 // Top-level items
 // ---------------------------------------------------------------------------
 
-export type Item = FnDecl | LetDecl | ConstDecl | StructDecl
+export type Item = FnDecl | LetDecl | ConstDecl | StructDecl | TypeAlias
 
 export interface Param {
 	name: string
 	type_ann: TypeExpr
-	span: Span
+	pos: Pos
 }
 
 export interface FnDecl {
@@ -219,20 +231,27 @@ export interface FnDecl {
 	params: Param[]
 	return_type: TypeExpr | null
 	body: Block
-	span: Span
+	pos: Pos
 }
 
 export interface StructField {
 	name: string
 	type_ann: TypeExpr
-	span: Span
+	pos: Pos
 }
 
 export interface StructDecl {
 	kind: 'struct_decl'
 	name: string
 	fields: StructField[]
-	span: Span
+	pos: Pos
+}
+
+export interface TypeAlias {
+	kind: 'type_alias'
+	name: string
+	type_expr: TypeExpr
+	pos: Pos
 }
 
 // ---------------------------------------------------------------------------
@@ -243,5 +262,5 @@ export interface File {
 	kind: 'file'
 	path: string
 	items: Item[]
-	span: Span
+	pos: Pos
 }
