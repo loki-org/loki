@@ -9,6 +9,7 @@ Loki is a programming language that fills a role similar to TypeScript but with 
 - **Language**: TypeScript
 
 ## Code Style Guidelines
+- See .editorconfig
 
 ### General Principles
 - Keep code simple and readable - avoid unnecessary complexity

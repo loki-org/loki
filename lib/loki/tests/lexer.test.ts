@@ -1,0 +1,146 @@
+import { describe, expect, it } from 'bun:test'
+import { Lexer } from '../lexer/lexer.ts'
+import { TokenKind } from '../lexer/token.ts'
+
+function lex_all(source: string) {
+	const l = new Lexer(source, '<test>')
+	const tokens = []
+	// Prime: advance past the bootstrap
+	let tok = l.next()
+	while (tok.kind !== TokenKind.eof) {
+		tokens.push(tok)
+		tok = l.next()
+	}
+	return tokens
+}
+
+describe('lexer — keywords', () => {
+	it('recognises fn', () => {
+		const [tok] = lex_all('fn')
+		expect(tok.kind).toBe(TokenKind.fn)
+		expect(tok.text).toBe('fn')
+	})
+
+	it('recognises all reserved words', () => {
+		const src =
+			'let const if else return true false null and or not import export type struct enum match for while break continue'
+		const toks = lex_all(src)
+		const kinds = toks.map((t) => t.kind)
+		expect(kinds).toEqual([
+			TokenKind.let,
+			TokenKind.const_,
+			TokenKind.if_,
+			TokenKind.else_,
+			TokenKind.return_,
+			TokenKind.true_,
+			TokenKind.false_,
+			TokenKind.null_,
+			TokenKind.and,
+			TokenKind.or,
+			TokenKind.not,
+			TokenKind.import_,
+			TokenKind.export_,
+			TokenKind.type_,
+			TokenKind.struct_,
+			TokenKind.enum_,
+			TokenKind.match_,
+			TokenKind.for_,
+			TokenKind.while_,
+			TokenKind.break_,
+			TokenKind.continue_,
+		])
+	})
+})
+
+describe('lexer — literals', () => {
+	it('lexes integer', () => {
+		const [tok] = lex_all('42')
+		expect(tok.kind).toBe(TokenKind.int)
+		expect(tok.text).toBe('42')
+	})
+
+	it('lexes float', () => {
+		const [tok] = lex_all('3.14')
+		expect(tok.kind).toBe(TokenKind.float)
+		expect(tok.text).toBe('3.14')
+	})
+
+	it('lexes string with escapes', () => {
+		const [tok] = lex_all('"hello\\nworld"')
+		expect(tok.kind).toBe(TokenKind.string)
+		expect(tok.text).toBe('hello\nworld')
+	})
+})
+
+describe('lexer — operators', () => {
+	it('lexes two-char operators', () => {
+		const src = '== != <= >= -> ..'
+		const toks = lex_all(src)
+		expect(toks.map((t) => t.kind)).toEqual([
+			TokenKind.eq_eq,
+			TokenKind.bang_eq,
+			TokenKind.lt_eq,
+			TokenKind.gt_eq,
+			TokenKind.arrow,
+			TokenKind.dot_dot,
+		])
+	})
+
+	it('lexes && and ||', () => {
+		const toks = lex_all('&& ||')
+		expect(toks[0].kind).toBe(TokenKind.amp_amp)
+		expect(toks[1].kind).toBe(TokenKind.pipe_pipe)
+	})
+})
+
+describe('lexer — comments', () => {
+	it('skips line comments', () => {
+		const toks = lex_all('// this is a comment\n42')
+		expect(toks.length).toBe(1)
+		expect(toks[0].kind).toBe(TokenKind.int)
+	})
+
+	it('skips block comments', () => {
+		const toks = lex_all('/* block */ 99')
+		expect(toks.length).toBe(1)
+		expect(toks[0].kind).toBe(TokenKind.int)
+	})
+})
+
+describe('lexer — spans', () => {
+	it('tracks line and column', () => {
+		const l = new Lexer('fn foo', '<test>')
+		const t1 = l.next() // fn
+		const t2 = l.next() // foo
+		expect(t1.span.line).toBe(1)
+		expect(t1.span.col).toBe(1)
+		expect(t2.span.col).toBe(4)
+	})
+})
+
+describe('lexer — lookahead', () => {
+	it('peek does not consume', () => {
+		const l = new Lexer('1 2', '<test>')
+		l.next() // prime
+		expect(l.peek.kind).toBe(TokenKind.int)
+		expect(l.peek.text).toBe('2')
+		expect(l.current.text).toBe('1')
+	})
+
+	it('next advances current and updates peek', () => {
+		const l = new Lexer('a b c', '<test>')
+		l.next() // current = a, peek = b
+		expect(l.current.text).toBe('a')
+		expect(l.peek.text).toBe('b')
+		l.next() // current = b, peek = c
+		expect(l.current.text).toBe('b')
+		expect(l.peek.text).toBe('c')
+	})
+})
+
+describe('lexer — error token', () => {
+	it('produces error token for unknown char', () => {
+		const [tok] = lex_all('@')
+		expect(tok.kind).toBe(TokenKind.error)
+	})
+})

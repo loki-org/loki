@@ -1,3 +1,7 @@
+import { Lexer } from '../lib/loki/lexer/lexer.ts'
+import { Parser } from '../lib/loki/parser/parser.ts'
+import { ParseError, format_error } from '../lib/loki/parser/parse_error.ts'
+
 const VERSION = '0.1.0'
 
 function printHelp() {
@@ -22,9 +26,26 @@ function error(message: string) {
 	process.exit(1)
 }
 
-async function build(filePath: string) {
-	console.log(`Building: ${filePath}`)
-	console.log('(build logic not yet implemented)')
+async function build(file_path: string) {
+	let source = ''
+	try {
+		source = await Bun.file(file_path).text()
+	} catch {
+		error(`could not read file: ${file_path}`)
+	}
+
+	try {
+		const lex = new Lexer(source, file_path)
+		const parser = new Parser(lex)
+		const ast = parser.parse_file(file_path)
+		console.log(JSON.stringify(ast, null, 2))
+	} catch (e) {
+		if (e instanceof ParseError) {
+			console.error(format_error(e))
+			process.exit(1)
+		}
+		throw e
+	}
 }
 
 async function main() {
@@ -42,11 +63,11 @@ async function main() {
 	}
 
 	if (command === 'build') {
-		const filePath = args[1]
-		if (!filePath) {
+		const file_path = args[1]
+		if (!file_path) {
 			error('build requires a file path')
 		}
-		await build(filePath)
+		await build(file_path)
 		return
 	}
 
