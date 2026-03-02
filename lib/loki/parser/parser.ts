@@ -268,7 +268,6 @@ export class Parser {
 		}
 		if (this.at(TokenKind.return_)) return this.parse_return_stmt()
 		if (this.at(TokenKind.if_)) return this.parse_if_stmt()
-		if (this.at(TokenKind.while_)) return this.parse_while_stmt()
 		if (this.at(TokenKind.for_)) return this.parse_for_stmt()
 		if (this.at(TokenKind.break_)) {
 			const start = this.advance().pos
@@ -343,22 +342,137 @@ export class Parser {
 		return { kind: 'if_stmt', cond, then_block, else_branch, pos: this.pos_from(start) }
 	}
 
-	private parse_while_stmt(): ast.WhileStmt {
-		const start = this.cur().pos
-		this.expect(TokenKind.while_)
-		const cond = this.parse_expr()
-		const body = this.parse_block()
-		return { kind: 'while_stmt', cond, body, pos: this.pos_from(start) }
-	}
-
 	private parse_for_stmt(): ast.ForStmt {
 		const start = this.cur().pos
 		this.expect(TokenKind.for_)
-		const var_tok = this.expect(TokenKind.ident)
-		this.expect(TokenKind.ident) // `in` — treat as contextual keyword for now
-		const iterable = this.parse_expr()
+
+		// Variant 1: `for { ... }` (infinite loop)
+		if (this.at(TokenKind.l_brace)) {
+			const body = this.parse_block()
+			return {
+				kind: 'for_stmt',
+				init: null,
+				cond: null,
+				post: null,
+				body,
+				pos: this.pos_from(start),
+			}
+		}
+
+		// Variant 2: Iterator loop
+		// `for x in expr { ... }`
+		// `for k, v in expr { ... }`
+		if (this.at(TokenKind.ident)) {
+			if (this.peek_at(TokenKind.in)) {
+				// `for x in expr`
+				const value = this.advance().text
+				this.expect(TokenKind.in)
+				const expr = this.parse_expr()
+				const body = this.parse_block()
+				const in_init: ast.ForInInit = {
+					kind: 'for_in_init',
+					key: null,
+					value,
+					expr,
+					pos: this.pos_from(start),
+				}
+				return {
+					kind: 'for_stmt',
+					init: in_init,
+					cond: null,
+					post: null,
+					body,
+					pos: this.pos_from(start),
+				}
+			}
+			if (this.peek_at(TokenKind.comma)) {
+				// `for k, v in expr`
+				const key = this.advance().text
+				this.expect(TokenKind.comma)
+				const value = this.expect(TokenKind.ident).text
+				this.expect(TokenKind.in)
+				const expr = this.parse_expr()
+				const body = this.parse_block()
+				const in_init: ast.ForInInit = {
+					kind: 'for_in_init',
+					key,
+					value,
+					expr,
+					pos: this.pos_from(start),
+				}
+				return {
+					kind: 'for_stmt',
+					init: in_init,
+					cond: null,
+					post: null,
+					body,
+					pos: this.pos_from(start),
+				}
+			}
+		}
+
+		// Now it's either `for cond { ... }` or `for init; cond; post { ... }`
+		// We can parse an expression or a declaration as the first part.
+		// If it's followed by a semicolon, it's a classic three-part loop.
+		// Otherwise, it was just the condition.
+
+		let init: ast.Stmt | null = null
+		let cond: ast.Expr | null = null
+		let post: ast.Stmt | null = null
+
+		// Try to parse something that can be an init or a cond
+		// If it's `mut` or `ident :=`, it's an init (VarDecl)
+		if (this.at(TokenKind.mut) || (this.at(TokenKind.ident) && this.peek_at(TokenKind.col_eq))) {
+			init = this.parse_var_decl()
+			// The semicolon was already consumed by parse_var_decl.
+			if (!this.at(TokenKind.semi)) {
+				cond = this.parse_expr()
+			}
+			this.expect(TokenKind.semi)
+			if (!this.at(TokenKind.l_brace)) {
+				post = this.parse_stmt()
+			}
+		} else {
+			// It started with something else (expr or empty)
+			if (this.at(TokenKind.semi)) {
+				// `for ; cond; post`
+				this.advance()
+				if (!this.at(TokenKind.semi)) {
+					cond = this.parse_expr()
+				}
+				this.expect(TokenKind.semi)
+				if (!this.at(TokenKind.l_brace)) {
+					post = this.parse_stmt()
+				}
+			} else {
+				// `for cond` or `for init; cond; post` where init is expression
+				const first = this.parse_expr()
+				if (this.eat(TokenKind.semi)) {
+					// Classic loop, `first` is init expression
+					init = { kind: 'expr_stmt', expr: first, pos: first.pos }
+					if (!this.at(TokenKind.semi)) {
+						cond = this.parse_expr()
+					}
+					this.expect(TokenKind.semi)
+					if (!this.at(TokenKind.l_brace)) {
+						post = this.parse_stmt()
+					}
+				} else {
+					// Condition loop, `first` is cond
+					cond = first
+				}
+			}
+		}
+
 		const body = this.parse_block()
-		return { kind: 'for_stmt', variable: var_tok.text, iterable, body, pos: this.pos_from(start) }
+		return {
+			kind: 'for_stmt',
+			init,
+			cond,
+			post,
+			body,
+			pos: this.pos_from(start),
+		}
 	}
 
 	private parse_expr_stmt(): ast.ExprStmt {

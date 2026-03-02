@@ -118,7 +118,7 @@ describe('parser — call / member / index', () => {
 	})
 })
 
-describe('parser — if / while', () => {
+describe('parser — if', () => {
 	it('parses if-else', () => {
 		const file = parse('fn f() { if x { } else { } }')
 		const fn = file.items[0] as FnDecl
@@ -128,15 +128,51 @@ describe('parser — if / while', () => {
 			expect(stmt.else_branch?.kind).toBe('block')
 		}
 	})
+})
 
-	it('parses while', () => {
-		const file = parse('fn f() { while true { } }')
+describe('parser — loops', () => {
+	it('parses for condition (while-like)', () => {
+		const file = parse('fn f() { for true { } }')
 		const fn = file.items[0] as FnDecl
-		expect(fn.body.stmts[0].kind).toBe('while_stmt')
+		const loop = fn.body.stmts[0] as any
+		expect(loop.kind).toBe('for_stmt')
+		expect(loop.cond.kind).toBe('bool_lit')
+		expect(loop.init).toBeNull()
+		expect(loop.post).toBeNull()
+	})
+
+	it('parses classic for loop', () => {
+		const file = parse('fn f() { for i := 0; i < 10; i = i + 1 { } }')
+		const fn = file.items[0] as FnDecl
+		const loop = fn.body.stmts[0] as any
+		expect(loop.kind).toBe('for_stmt')
+		expect(loop.init.kind).toBe('var_decl')
+		expect(loop.cond.kind).toBe('binary_expr')
+		expect(loop.post.kind).toBe('expr_stmt')
+	})
+
+	it('parses for-in loop', () => {
+		const file = parse('fn f() { for x in items { } }')
+		const fn = file.items[0] as FnDecl
+		const loop = fn.body.stmts[0] as any
+		expect(loop.kind).toBe('for_stmt')
+		expect(loop.init.kind).toBe('for_in_init')
+		expect(loop.init.value).toBe('x')
+		expect(loop.init.key).toBeNull()
+	})
+
+	it('parses for-in loop with key and value', () => {
+		const file = parse('fn f() { for k, v in items { } }')
+		const fn = file.items[0] as FnDecl
+		const loop = fn.body.stmts[0] as any
+		expect(loop.kind).toBe('for_stmt')
+		expect(loop.init.kind).toBe('for_in_init')
+		expect(loop.init.key).toBe('k')
+		expect(loop.init.value).toBe('v')
 	})
 
 	it('parses break and continue', () => {
-		const file = parse('fn f() { while true { break; continue } }')
+		const file = parse('fn f() { for true { break; continue } }')
 		const fn = file.items[0] as FnDecl
 		const loop = fn.body.stmts[0] as any
 		expect(loop.body.stmts[0].kind).toBe('break_stmt')

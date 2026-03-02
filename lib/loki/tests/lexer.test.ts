@@ -23,7 +23,7 @@ describe('lexer — keywords', () => {
 
 	it('recognises all reserved words', () => {
 		const src =
-			'mut const if else return true false null and or not import export struct enum match for while break continue'
+			'mut const if else return true false null and or not import export struct enum match for in break continue'
 		const toks = lex_all(src)
 		const kinds = toks.map((t) => t.kind)
 		expect(kinds).toEqual([
@@ -44,7 +44,7 @@ describe('lexer — keywords', () => {
 			TokenKind.enum_,
 			TokenKind.match_,
 			TokenKind.for_,
-			TokenKind.while_,
+			TokenKind.in,
 			TokenKind.break_,
 			TokenKind.continue_,
 		])

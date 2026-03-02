@@ -9,14 +9,26 @@ fn sum(a int, b int) int {
 	return a + b
 }
 
+fn loops() {
+	for valid {
+		break
+	}
+
+	for i := 0; i < 10; i = i + 1 {}
+
+	// TODO array init
+	// for val in [] {}
+
+	// TODO map type init
+	// mut m := map[string, int]
+	// for key, val in m {}
+}
+
 fn main() {
 	x := 10
 
 	if valid and not (x == 0) {
 		sum_val := sum(x, 20)
-		while true {
-			break
-		}
 	}
 
 	mut s := "hi"

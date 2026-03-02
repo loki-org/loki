@@ -139,7 +139,6 @@ export type Stmt =
 	| ConstDecl
 	| ReturnStmt
 	| IfStmt
-	| WhileStmt
 	| ForStmt
 	| BreakStmt
 	| ContinueStmt
@@ -175,18 +174,20 @@ export interface IfStmt {
 	pos: Pos
 }
 
-export interface WhileStmt {
-	kind: 'while_stmt'
-	cond: Expr
+export interface ForStmt {
+	kind: 'for_stmt'
+	init: Stmt | ForInInit | null
+	cond: Expr | null
+	post: Stmt | null
 	body: Block
 	pos: Pos
 }
 
-export interface ForStmt {
-	kind: 'for_stmt'
-	variable: string
-	iterable: Expr
-	body: Block
+export interface ForInInit {
+	kind: 'for_in_init'
+	key: string | null
+	value: string
+	expr: Expr
 	pos: Pos
 }
 
