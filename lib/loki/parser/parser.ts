@@ -265,7 +265,6 @@ export class Parser {
 	}
 
 	private parse_stmt(): ast.Stmt {
-		if (this.at(TokenKind.const_)) return this.parse_const_decl()
 		if (this.at(TokenKind.mut) || (this.at(TokenKind.ident) && this.peek_at(TokenKind.col_eq))) {
 			return this.parse_var_decl()
 		}
@@ -310,16 +309,10 @@ export class Parser {
 		const start = this.cur().pos
 		this.expect(TokenKind.const_)
 		const name_tok = this.expect(TokenKind.ident)
-
-		let type_ann: ast.TypeExpr | null = null
-		if (this.eat(TokenKind.colon)) {
-			type_ann = this.parse_type_expr()
-		}
-
-		this.expect(TokenKind.eq)
+		this.expect(TokenKind.col_eq)
 		const init = this.parse_expr()
 		this.eat(TokenKind.semi)
-		return { kind: 'const_decl', name: name_tok.text, type_ann, init, pos: this.pos_from(start) }
+		return { kind: 'const_decl', name: name_tok.text, init, pos: this.pos_from(start) }
 	}
 
 	private parse_return_stmt(): ast.ReturnStmt {

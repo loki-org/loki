@@ -157,7 +157,6 @@ export interface VarDecl {
 export interface ConstDecl {
 	kind: 'const_decl'
 	name: string
-	type_ann: TypeExpr | null
 	init: Expr
 	pos: Pos
 }

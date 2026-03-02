@@ -49,9 +49,13 @@ describe('parser — variable declarations', () => {
 	})
 
 	it('parses const', () => {
-		const file = parse('const PI = 3.14')
+		const file = parse('const PI := 3.14')
 		const decl = file.items[0]
 		expect(decl.kind).toBe('const_decl')
+	})
+
+	it('throws error when const used as statement', () => {
+		expect(() => parse('fn f() { const X := 1 }')).toThrow(ParseError)
 	})
 })
 

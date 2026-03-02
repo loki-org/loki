@@ -1,13 +1,12 @@
+const valid := true
+
 struct Point {
 	x: int,
 	y: int,
 }
 
-struct Empty {}
-
 fn main() {
 	x := 10
-	const valid = true
 
 	if valid and not (x == 0) {
 		sum := x + 20
@@ -15,4 +14,7 @@ fn main() {
 			break
 		}
 	}
+
+	mut s := "hi"
+	s = "hello"
 }
