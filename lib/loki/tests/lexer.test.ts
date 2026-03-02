@@ -73,7 +73,7 @@ describe('lexer — literals', () => {
 
 describe('lexer — operators', () => {
 	it('lexes two-char operators', () => {
-		const src = '== != <= >= -> .. :='
+		const src = '== != <= >= -> .. := += -= *= /= %='
 		const toks = lex_all(src)
 		expect(toks.map((t) => t.kind)).toEqual([
 			TokenKind.eq_eq,
@@ -83,6 +83,11 @@ describe('lexer — operators', () => {
 			TokenKind.arrow,
 			TokenKind.dot_dot,
 			TokenKind.col_eq,
+			TokenKind.plus_eq,
+			TokenKind.minus_eq,
+			TokenKind.star_eq,
+			TokenKind.slash_eq,
+			TokenKind.percent_eq,
 		])
 	})
 })

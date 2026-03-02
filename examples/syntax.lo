@@ -14,7 +14,7 @@ fn loops() {
 		break
 	}
 
-	for i := 0; i < 10; i = i + 1 {}
+	for i := 0; i < 10; i += 1 {}
 
 	// TODO array init
 	// for val in [] {}

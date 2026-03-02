@@ -22,6 +22,11 @@ enum Prec {
 function infix_prec(kind: TokenKind): Prec {
 	switch (kind) {
 		case TokenKind.eq:
+		case TokenKind.plus_eq:
+		case TokenKind.minus_eq:
+		case TokenKind.star_eq:
+		case TokenKind.slash_eq:
+		case TokenKind.percent_eq:
 			return Prec.assign
 		case TokenKind.or:
 			return Prec.or
@@ -49,7 +54,14 @@ function infix_prec(kind: TokenKind): Prec {
 
 // Assignment is right-associative — parse right side at same level.
 function right_assoc(kind: TokenKind): boolean {
-	return kind === TokenKind.eq
+	return (
+		kind === TokenKind.eq ||
+		kind === TokenKind.plus_eq ||
+		kind === TokenKind.minus_eq ||
+		kind === TokenKind.star_eq ||
+		kind === TokenKind.slash_eq ||
+		kind === TokenKind.percent_eq
+	)
 }
 
 // ---------------------------------------------------------------------------
@@ -501,9 +513,17 @@ export class Parser {
 			const next_prec = right_assoc(op_tok.kind) ? prec - 1 : prec
 			const right = this.parse_pratt(next_prec)
 
-			if (op_tok.kind === TokenKind.eq) {
+			if (
+				op_tok.kind === TokenKind.eq ||
+				op_tok.kind === TokenKind.plus_eq ||
+				op_tok.kind === TokenKind.minus_eq ||
+				op_tok.kind === TokenKind.star_eq ||
+				op_tok.kind === TokenKind.slash_eq ||
+				op_tok.kind === TokenKind.percent_eq
+			) {
 				left = {
 					kind: 'assign_expr',
+					op: op_tok.text,
 					target: left,
 					value: right,
 					pos: this.pos_from(left.pos),

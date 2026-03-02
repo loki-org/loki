@@ -81,7 +81,7 @@ describe('parser — operator precedence', () => {
 		expect(add.op).toBe('+')
 	})
 
-	it('assignment is right-associative', () => {
+	it('is right-associative', () => {
 		// This requires a target — use idents inside a fn body
 		const file = parse('fn f() { a = b = 1 }')
 		const fn = file.items[0] as FnDecl
@@ -91,7 +91,22 @@ describe('parser — operator precedence', () => {
 			const outer = stmt.expr
 			expect(outer.kind).toBe('assign_expr')
 			if (outer.kind === 'assign_expr') {
+				expect(outer.op).toBe('=')
 				expect(outer.value.kind).toBe('assign_expr')
+			}
+		}
+	})
+
+	it('parses math assignment', () => {
+		const file = parse('fn f() { x += 1 }')
+		const fn = file.items[0] as FnDecl
+		const stmt = fn.body.stmts[0]
+		expect(stmt.kind).toBe('expr_stmt')
+		if (stmt.kind === 'expr_stmt') {
+			const assign = stmt.expr
+			expect(assign.kind).toBe('assign_expr')
+			if (assign.kind === 'assign_expr') {
+				expect(assign.op).toBe('+=')
 			}
 		}
 	})

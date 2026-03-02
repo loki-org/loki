@@ -234,10 +234,22 @@ export class Lexer {
 				}
 				return tok(TokenKind.colon, ch)
 			case '+':
+				if (this.peek_char() === '=') {
+					this.advance_char()
+					return tok(TokenKind.plus_eq, '+=')
+				}
 				return tok(TokenKind.plus, ch)
 			case '*':
+				if (this.peek_char() === '=') {
+					this.advance_char()
+					return tok(TokenKind.star_eq, '*=')
+				}
 				return tok(TokenKind.star, ch)
 			case '%':
+				if (this.peek_char() === '=') {
+					this.advance_char()
+					return tok(TokenKind.percent_eq, '%=')
+				}
 				return tok(TokenKind.percent, ch)
 			case '&':
 			case '|':
@@ -252,6 +264,10 @@ export class Lexer {
 				if (this.peek_char() === '>') {
 					this.advance_char()
 					return tok(TokenKind.arrow, '->')
+				}
+				if (this.peek_char() === '=') {
+					this.advance_char()
+					return tok(TokenKind.minus_eq, '-=')
 				}
 				return tok(TokenKind.minus, ch)
 			case '=':
@@ -279,6 +295,10 @@ export class Lexer {
 				}
 				return tok(TokenKind.gt, ch)
 			case '/':
+				if (this.peek_char() === '=') {
+					this.advance_char()
+					return tok(TokenKind.slash_eq, '/=')
+				}
 				return tok(TokenKind.slash, ch)
 			default:
 				return tok(TokenKind.error, ch)

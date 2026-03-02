@@ -59,6 +59,11 @@ export enum TokenKind {
 	slash, // /
 	percent, // %
 	eq, // =
+	plus_eq, // +=
+	minus_eq, // -=
+	star_eq, // *=
+	slash_eq, // /=
+	percent_eq, // %=
 	eq_eq, // ==
 	bang_eq, // !=
 	lt, // <

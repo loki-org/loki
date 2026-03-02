@@ -125,6 +125,7 @@ export interface MemberExpr {
 
 export interface AssignExpr {
 	kind: 'assign_expr'
+	op: string
 	target: Expr
 	value: Expr
 	pos: Pos
