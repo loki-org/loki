@@ -375,10 +375,10 @@ export class Parser {
 		// `for x in expr { ... }`
 		// `for k, v in expr { ... }`
 		if (this.at(TokenKind.ident)) {
-			if (this.peek_at(TokenKind.in)) {
+			if (this.peek_at(TokenKind.in_)) {
 				// `for x in expr`
 				const value = this.advance().text
-				this.expect(TokenKind.in)
+				this.expect(TokenKind.in_)
 				const expr = this.parse_expr()
 				const body = this.parse_block()
 				const in_init: ast.ForInInit = {
@@ -402,7 +402,7 @@ export class Parser {
 				const key = this.advance().text
 				this.expect(TokenKind.comma)
 				const value = this.expect(TokenKind.ident).text
-				this.expect(TokenKind.in)
+				this.expect(TokenKind.in_)
 				const expr = this.parse_expr()
 				const body = this.parse_block()
 				const in_init: ast.ForInInit = {

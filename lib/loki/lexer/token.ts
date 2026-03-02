@@ -33,7 +33,7 @@ export enum TokenKind {
 	enum_,
 	match_,
 	for_,
-	in,
+	in_,
 	break_,
 	continue_,
 
@@ -95,7 +95,7 @@ const KEYWORDS: Record<string, TokenKind> = {
 	enum: TokenKind.enum_,
 	match: TokenKind.match_,
 	for: TokenKind.for_,
-	in: TokenKind.in,
+	in: TokenKind.in_,
 	break: TokenKind.break_,
 	continue: TokenKind.continue_,
 }

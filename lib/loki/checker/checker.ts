@@ -91,7 +91,7 @@ export class Checker {
 				if (node.cond) this.check_expr(node.cond)
 				if (node.post) this.check_stmt(node.post)
 				this.check_block(node.body)
-				break
+				break;
 			case 'break_stmt':
 			case 'continue_stmt':
 				break

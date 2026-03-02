@@ -44,7 +44,7 @@ describe('lexer — keywords', () => {
 			TokenKind.enum_,
 			TokenKind.match_,
 			TokenKind.for_,
-			TokenKind.in,
+			TokenKind.in_,
 			TokenKind.break_,
 			TokenKind.continue_,
 		])
