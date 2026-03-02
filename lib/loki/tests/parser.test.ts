@@ -22,10 +22,12 @@ describe('parser — function declaration', () => {
 	})
 
 	it('parses params and return type', () => {
-		const file = parse('fn add(a: int, b: int) -> int {}')
+		const file = parse('fn f(x int, y float) int { return 0 }')
 		const fn = file.items[0] as FnDecl
+		expect(fn.kind).toBe('fn_decl')
 		expect(fn.params).toHaveLength(2)
-		expect(fn.params[0].name).toBe('a')
+		expect(fn.params[0].name).toBe('x')
+		expect(fn.params[1].name).toBe('y')
 		expect(fn.return_type?.kind).toBe('named_type')
 	})
 })
@@ -151,12 +153,18 @@ describe('parser — structs', () => {
 	})
 
 	it('parses struct with fields', () => {
-		const file = parse('struct Point { x: int, y: int }')
+		const file = parse('struct Point { x int, y int }')
 		const s = file.items[0] as any
 		expect(s.kind).toBe('struct_decl')
 		expect(s.fields).toHaveLength(2)
 		expect(s.fields[0].name).toBe('x')
 		expect(s.fields[1].name).toBe('y')
+	})
+
+	it('parses struct with trailing comma', () => {
+		const file = parse('struct Point { x int, y int, }')
+		const s = file.items[0] as any
+		expect(s.fields).toHaveLength(2)
 	})
 
 	it('throws error when used as statement', () => {

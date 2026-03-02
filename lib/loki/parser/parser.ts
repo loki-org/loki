@@ -165,7 +165,7 @@ export class Parser {
 		this.expect(TokenKind.r_paren)
 
 		let return_type: ast.TypeExpr | null = null
-		if (this.eat(TokenKind.arrow)) {
+		if (!this.at(TokenKind.l_brace)) {
 			return_type = this.parse_type_expr()
 		}
 
@@ -192,7 +192,6 @@ export class Parser {
 		while (!this.at(TokenKind.r_brace) && !this.at(TokenKind.eof)) {
 			const f_start = this.cur().pos
 			const f_name = this.expect(TokenKind.ident).text
-			this.expect(TokenKind.colon)
 			const type_ann = this.parse_type_expr()
 			fields.push({ name: f_name, type_ann, pos: this.pos_from(f_start) })
 			this.eat(TokenKind.comma)
@@ -212,7 +211,6 @@ export class Parser {
 		while (!this.at(TokenKind.r_paren) && !this.at(TokenKind.eof)) {
 			const start = this.cur().pos
 			const name_tok = this.expect(TokenKind.ident)
-			this.expect(TokenKind.colon)
 			const type_ann = this.parse_type_expr()
 			params.push({ name: name_tok.text, type_ann, pos: this.pos_from(start) })
 			if (!this.eat(TokenKind.comma)) break

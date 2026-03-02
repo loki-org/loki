@@ -1,15 +1,19 @@
 const valid := true
 
 struct Point {
-	x: int,
-	y: int,
+	x int,
+	y int,
+}
+
+fn sum(a int, b int) int {
+	return a + b
 }
 
 fn main() {
 	x := 10
 
 	if valid and not (x == 0) {
-		sum := x + 20
+		sum_val := sum(x, 20)
 		while true {
 			break
 		}
