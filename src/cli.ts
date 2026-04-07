@@ -8,10 +8,10 @@ function assertSingleDirectoryArg(argv: string[]): string {
 	return argv[0]
 }
 
-async function main(): Promise<void> {
+function main(): void {
 	try {
 		const directory = assertSingleDirectoryArg(process.argv.slice(2))
-		await convertDirectory(directory)
+		convertDirectory(directory)
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		console.error(message)
@@ -20,5 +20,5 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-	await main()
+	main()
 }

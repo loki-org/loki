@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 type LokiToml = {
@@ -82,15 +82,22 @@ function toPackageJson(parsed: LokiToml): Record<string, unknown> {
 	}
 }
 
-export async function convertDirectory(directory: string): Promise<void> {
+export function convertDirectory(directory: string): void {
 	const lokiTomlPath = join(directory, 'loki.toml')
 	const distDir = join(directory, 'dist')
 	const outputPath = join(distDir, 'package.json')
 
-	const rawToml = await readFile(lokiTomlPath, 'utf8')
+	const rawToml = readFileSync(lokiTomlPath, 'utf8')
 	const parsed = Bun.TOML.parse(rawToml) as LokiToml
 	const packageJson = toPackageJson(parsed)
 
-	await mkdir(distDir, { recursive: true })
-	await writeFile(outputPath, `${JSON.stringify(packageJson, null, 2)}\n`, 'utf8')
+	mkdirSync(distDir, { recursive: true })
+	writeFileSync(outputPath, `${JSON.stringify(packageJson, null, 2)}\n`, 'utf8')
 }
+
+
+// TODO test: not call cli but only test this package
+// TODO split into read, validation, output
+// TODO validate required and optional fields
+// TODO validate field values similar to Cargo.toml
+// TODO add docs

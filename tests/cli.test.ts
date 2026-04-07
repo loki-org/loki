@@ -1,6 +1,5 @@
 import { afterEach, expect, test } from 'bun:test'
-import { existsSync, rmSync } from 'node:fs'
-import { readFile } from 'node:fs/promises'
+import { existsSync, readFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 
 const FIXTURE_DIR = join(process.cwd(), 'tests/inout')
@@ -27,8 +26,8 @@ test('converts tests/inout/loki.toml into tests/inout/dist/package.json', async 
 	expect(exitCode).toBe(0)
 	expect(stderr).toBe('')
 
-	const expectedRaw = await readFile(EXPECTED_PACKAGE_JSON, 'utf8')
-	const generatedRaw = await readFile(GENERATED_PACKAGE_JSON, 'utf8')
+	const expectedRaw = readFileSync(EXPECTED_PACKAGE_JSON, 'utf8')
+	const generatedRaw = readFileSync(GENERATED_PACKAGE_JSON, 'utf8')
 
 	expect(JSON.parse(generatedRaw)).toEqual(JSON.parse(expectedRaw))
 })
