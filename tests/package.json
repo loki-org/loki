@@ -1,0 +1,18 @@
+{
+  "name": "sample_manifest",
+  "version": "0.2.3",
+  "description": "A sample manifest for testing purposes.",
+  "keywords": ["sample", "manifest", "testing"],
+  "homepage": "https://github.com/loki-org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loki-org/loki"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "foo": "^1.4.0"
+  },
+  "devDependencies": {
+    "bar": "~0.9.1"
+  }
+}

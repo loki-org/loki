@@ -1,0 +1,13 @@
+{
+  "name": "loki-toml-cli",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "cli": "bun run src/cli.ts",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.8.3"
+  }
+}
