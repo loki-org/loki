@@ -4,10 +4,14 @@
   "type": "module",
   "scripts": {
     "cli": "bun run src/cli.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "lint": "biome check --write",
+    "lint:ci": "biome ci"
   },
+  "packageManager": "bun@1.3.11",
   "devDependencies": {
-    "@types/bun": "latest",
-    "typescript": "^5.8.3"
+    "@types/bun": "~1.3.11",
+    "@biomejs/biome": "~2.4.10",
+    "@typescript/native-preview": "~7.0.0-dev.20260331.1"
   }
 }
