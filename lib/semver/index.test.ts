@@ -12,7 +12,16 @@ test('parses and normalizes versions', () => {
 })
 
 test('orders versions by semver precedence', () => {
-	const ordered = ['1.0.0-alpha', '1.0.0'].map((v) => Version.parse(v))
+	const ordered = [
+		'1.0.0-alpha',
+		'1.0.0-alpha.1',
+		'1.0.0-alpha.beta',
+		'1.0.0-beta',
+		'1.0.0-beta.2',
+		'1.0.0-beta.11',
+		'1.0.0-rc.1',
+		'1.0.0',
+	].map((v) => Version.parse(v))
 
 	for (let i = 0; i < ordered.length - 1; i++) {
 		expect(ordered[i].compare(ordered[i + 1])).toBeLessThan(0)

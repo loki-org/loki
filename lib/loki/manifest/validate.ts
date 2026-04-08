@@ -67,8 +67,11 @@ export function validateVersion(project: Record<string, unknown>): string {
 	}
 	try {
 		parseVersion(version)
-	} catch {
-		throw new Error('[project].version must be a valid semver version')
+	} catch (error) {
+		const parseErrorMessage = error instanceof Error ? `: ${error.message}` : ''
+		throw new Error(
+			`[project].version must be a valid semver version; received ${JSON.stringify(version)}${parseErrorMessage}`,
+		)
 	}
 	return version
 }

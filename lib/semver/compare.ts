@@ -26,5 +26,20 @@ export function comparePre(left: string, right: string): number {
 	if (right.length === 0) {
 		return -1
 	}
-	return 0
+	const leftIdentifiers = left.split('.')
+	const rightIdentifiers = right.split('.')
+	const length = Math.min(leftIdentifiers.length, rightIdentifiers.length)
+
+	for (let index = 0; index < length; index++) {
+		const comparison = cmpIdentifier(leftIdentifiers[index], rightIdentifiers[index])
+		if (comparison !== 0) {
+			return comparison
+		}
+	}
+
+	if (leftIdentifiers.length === rightIdentifiers.length) {
+		return 0
+	}
+
+	return leftIdentifiers.length < rightIdentifiers.length ? -1 : 1
 }

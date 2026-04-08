@@ -49,7 +49,7 @@ Supported `[project]` fields:
 ## Validation rules (high level)
 
 - `project.name` must be 1-128 chars and only `[A-Za-z0-9_]`
-- `project.version` must be a non-empty string
+- `project.version` must be a valid SemVer version
 - `project.keywords` must be an array of strings with at most 10 items
 - `project.homepage` and `project.repository` cannot be identical
 - `project.license` and `project.license_file` cannot both be set

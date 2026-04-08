@@ -87,8 +87,9 @@ export function opFromPrefix(prefix: string | undefined): Op {
 		case '~':
 			return 'Tilde'
 		case '^':
-		case undefined:
 			return 'Caret'
+		case undefined:
+			return 'Exact'
 		default:
 			throw new Error(`Unsupported operator: ${prefix}`)
 	}
