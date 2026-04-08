@@ -1,4 +1,4 @@
-import { convertDirectory } from '../lib/loki_toml/conversion'
+import { convertDirectory } from '../lib/loki/manifest/conversion'
 
 function assertSingleDirectoryArg(argv: string[]): string {
 	if (argv.length !== 1) {

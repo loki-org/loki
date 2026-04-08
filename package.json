@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "cli": "bun run src/cli.ts",
+    "cli": "bun run src/loki.ts",
     "test": "bun test",
     "check": "tsgo",
     "lint": "biome check --write",

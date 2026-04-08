@@ -95,7 +95,6 @@ export function convertDirectory(directory: string): void {
 	writeFileSync(outputPath, `${JSON.stringify(packageJson, null, 2)}\n`, 'utf8')
 }
 
-
 // TODO test: not call cli but only test this package
 // TODO split into read, validation, output
 // TODO validate required and optional fields
