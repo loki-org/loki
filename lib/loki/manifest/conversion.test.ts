@@ -56,6 +56,14 @@ test('rejects [project].keywords with more than 10 items', () => {
 	)
 })
 
+test('rejects non-string [project].description', () => {
+	expect(() =>
+		validate_lokitoml({
+			project: { name: 'foo', version: '1.0.0', description: 42 },
+		}),
+	).toThrow('Expected [project].description to be a string')
+})
+
 test('rejects same [project].homepage and [project].repository', () => {
 	const sharedUrl = 'https://example.com/same'
 	expect(() =>
