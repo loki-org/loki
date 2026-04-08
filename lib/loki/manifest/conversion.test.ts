@@ -1,8 +1,9 @@
 import { afterEach, expect, test } from 'bun:test'
 import { existsSync, readFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
+import { convertDirectory } from './conversion'
 
-const FIXTURE_DIR = join(process.cwd(), 'tests/inout')
+const FIXTURE_DIR = join(import.meta.dir, 'testdata')
 const EXPECTED_PACKAGE_JSON = join(FIXTURE_DIR, 'package.json')
 const DIST_DIR = join(FIXTURE_DIR, 'dist')
 const GENERATED_PACKAGE_JSON = join(DIST_DIR, 'package.json')
@@ -13,18 +14,8 @@ afterEach(() => {
 	}
 })
 
-test('converts tests/inout/loki.toml into tests/inout/dist/package.json', async () => {
-	const run = Bun.spawn(['bun', 'run', 'src/cli.ts', FIXTURE_DIR], {
-		cwd: process.cwd(),
-		stderr: 'pipe',
-		stdout: 'pipe',
-	})
-
-	const exitCode = await run.exited
-	const stderr = await new Response(run.stderr).text()
-
-	expect(exitCode).toBe(0)
-	expect(stderr).toBe('')
+test('converts testdata/loki.toml into testdata/dist/package.json', () => {
+	convertDirectory(FIXTURE_DIR)
 
 	const expectedRaw = readFileSync(EXPECTED_PACKAGE_JSON, 'utf8')
 	const generatedRaw = readFileSync(GENERATED_PACKAGE_JSON, 'utf8')
