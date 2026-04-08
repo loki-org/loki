@@ -1,0 +1,14 @@
+[project]
+name = "sample_manifest"
+description = "A sample manifest for testing purposes."
+version = "0.2.3"
+keywords = ["sample", "manifest", "testing"]
+homepage = "https://github.com/loki-org"
+repository = "https://github.com/loki-org/loki"
+license = "MIT"
+
+[dependencies]
+foo = "^1.4.0"
+
+[dev_dependencies]
+bar = "~0.9.1"
