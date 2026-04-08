@@ -44,7 +44,7 @@ function asOptionalString(input: Record<string, unknown>, field: string): string
 	return value
 }
 
-function validateProjectName(project: Record<string, unknown>): string {
+export function validateProjectName(project: Record<string, unknown>): string {
 	const name = asRequiredString(project, 'name')
 	if (name.length === 0) {
 		throw new Error('[project].name cannot be empty')
@@ -58,7 +58,7 @@ function validateProjectName(project: Record<string, unknown>): string {
 	return name
 }
 
-function validateVersion(project: Record<string, unknown>): string {
+export function validateVersion(project: Record<string, unknown>): string {
 	const version = asRequiredString(project, 'version')
 	if (version.length === 0) {
 		throw new Error('[project].version cannot be empty')
@@ -66,7 +66,7 @@ function validateVersion(project: Record<string, unknown>): string {
 	return version
 }
 
-function validateKeywords(project: Record<string, unknown>): string[] | undefined {
+export function validateKeywords(project: Record<string, unknown>): string[] | undefined {
 	const keywords = project.keywords
 	if (keywords === undefined) {
 		return undefined
