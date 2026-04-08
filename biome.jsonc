@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/*.md", "!tests/inout"]
+    "includes": ["**", "!**/*.md", "!**/testdata"]
   },
   "formatter": {
     "enabled": true,
