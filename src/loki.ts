@@ -1,4 +1,4 @@
-import { convertDirectory } from '../lib/loki/manifest/conversion'
+import { convert_lokitoml } from '../lib/loki/manifest/conversion'
 
 // --- Arg parsing ---
 
@@ -57,7 +57,7 @@ const commands: Record<string, CommandDef> = {
 			if (!directory) {
 				throw new Error(`Usage: loki ${commands.build.usage}`)
 			}
-			convertDirectory(directory)
+			convert_lokitoml(directory)
 		},
 	},
 }

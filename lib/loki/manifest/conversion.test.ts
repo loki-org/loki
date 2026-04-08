@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from 'bun:test'
 import { existsSync, readFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
-import { convertDirectory } from './conversion'
+import { convert_lokitoml } from './conversion'
 
 const FIXTURE_DIR = join(import.meta.dir, 'testdata')
 const EXPECTED_PACKAGE_JSON = join(FIXTURE_DIR, 'package.json')
@@ -15,7 +15,7 @@ afterEach(() => {
 })
 
 test('converts testdata/loki.toml into testdata/dist/package.json', () => {
-	convertDirectory(FIXTURE_DIR)
+	convert_lokitoml(FIXTURE_DIR)
 
 	const expectedRaw = readFileSync(EXPECTED_PACKAGE_JSON, 'utf8')
 	const generatedRaw = readFileSync(GENERATED_PACKAGE_JSON, 'utf8')

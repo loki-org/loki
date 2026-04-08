@@ -82,7 +82,7 @@ function toPackageJson(parsed: LokiToml): Record<string, unknown> {
 	}
 }
 
-export function convertDirectory(directory: string): void {
+export function convert_lokitoml(directory: string): void {
 	const lokiTomlPath = join(directory, 'loki.toml')
 	const distDir = join(directory, 'dist')
 	const outputPath = join(distDir, 'package.json')
@@ -95,7 +95,6 @@ export function convertDirectory(directory: string): void {
 	writeFileSync(outputPath, `${JSON.stringify(packageJson, null, 2)}\n`, 'utf8')
 }
 
-// TODO test: not call cli but only test this package
 // TODO split into read, validation, output
 // TODO validate required and optional fields
 // TODO validate field values similar to Cargo.toml
