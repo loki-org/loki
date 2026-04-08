@@ -160,6 +160,7 @@ export function validate_lokitoml(parsed: LokiToml): PackageJsonShape {
 	const name = validateProjectName(project)
 	const version = validateVersion(project)
 	const keywords = validateKeywords(project)
+	const description = asOptionalString(project, 'description')
 	const homepage = asOptionalString(project, 'homepage')
 	const repository = asOptionalString(project, 'repository')
 	const license = validateLicense(project)
@@ -179,7 +180,7 @@ export function validate_lokitoml(parsed: LokiToml): PackageJsonShape {
 	return {
 		name,
 		version,
-		description: project.description,
+		description,
 		keywords,
 		homepage,
 		repository:
