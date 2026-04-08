@@ -1,4 +1,4 @@
-import { convert_lokitoml } from '../lib/loki/manifest/conversion'
+import { convert_lokitoml } from '../lib/loki/manifest'
 
 // --- Arg parsing ---
 
