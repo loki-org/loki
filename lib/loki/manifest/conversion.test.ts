@@ -49,6 +49,12 @@ test('rejects empty [project].version', () => {
 	expect(() => validateVersion({ version: '' })).toThrow('[project].version cannot be empty')
 })
 
+test('rejects invalid semver [project].version', () => {
+	expect(() => validateVersion({ version: '1.0' })).toThrow(
+		'[project].version must be a valid semver version',
+	)
+})
+
 test('rejects [project].keywords with more than 10 items', () => {
 	const keywords = Array.from({ length: 11 }, (_, index) => `k${index}`)
 	expect(() => validateKeywords({ keywords })).toThrow(

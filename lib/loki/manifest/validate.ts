@@ -1,3 +1,5 @@
+import { parseVersion } from '../../semver'
+
 export type LokiToml = {
 	project: Record<string, unknown>
 	dependencies?: Record<string, unknown>
@@ -62,6 +64,11 @@ export function validateVersion(project: Record<string, unknown>): string {
 	const version = asRequiredString(project, 'version')
 	if (version.length === 0) {
 		throw new Error('[project].version cannot be empty')
+	}
+	try {
+		parseVersion(version)
+	} catch {
+		throw new Error('[project].version must be a valid semver version')
 	}
 	return version
 }
