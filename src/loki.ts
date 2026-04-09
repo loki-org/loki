@@ -1,4 +1,4 @@
-import { convert_lokitoml } from '../lib/loki/manifest'
+import { build } from '../lib/loki/builder'
 
 // --- Arg parsing ---
 
@@ -45,7 +45,7 @@ function parseArgs(argv: string[]): ParsedArgs {
 type CommandDef = {
 	description: string
 	usage: string
-	run: (args: ParsedArgs) => void
+	run: (args: ParsedArgs) => number
 }
 
 const commands: Record<string, CommandDef> = {
@@ -57,7 +57,7 @@ const commands: Record<string, CommandDef> = {
 			if (!directory) {
 				throw new Error(`Usage: loki ${commands.build.usage}`)
 			}
-			convert_lokitoml(directory)
+			return build(directory)
 		},
 	},
 }
@@ -94,7 +94,8 @@ function main(): void {
 
 		const cmd = commands[args.command]
 
-		cmd.run(args)
+		const exitCode = cmd.run(args)
+		process.exit(exitCode)
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error)
 		console.error(message)
