@@ -1,4 +1,4 @@
-import type { LokiAstFile } from '../ast'
+import type { File } from '../ast'
 
 export type CheckerDiagnostic = {
 	filePath: string
@@ -9,7 +9,7 @@ export type CheckerResult = {
 	diagnostics: CheckerDiagnostic[]
 }
 
-export function check_files(files: LokiAstFile[]): CheckerResult {
+export function check_files(files: File[]): CheckerResult {
 	const diagnostics: CheckerDiagnostic[] = []
 
 	for (const _file of files) {
