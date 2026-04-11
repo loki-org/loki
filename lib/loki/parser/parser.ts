@@ -11,6 +11,8 @@ function tokenLabel(kind: TokenKind): string {
 	switch (kind) {
 		case TokenKind.name:
 			return 'name'
+		case TokenKind.k_pub:
+			return 'pub'
 		case TokenKind.k_fun:
 			return 'fun'
 		case TokenKind.lpar:
@@ -64,6 +66,15 @@ class Parser {
 		return token
 	}
 
+	private consumeOptionalWordToken(expected: string): boolean {
+		const token = this.lexer.tok()
+		if (token.kind === TokenKind.k_pub && token.val === expected) {
+			this.lexer.next_tok()
+			return true
+		}
+		return false
+	}
+
 	private expectToken(kind: TokenKind): Token {
 		const token = this.lexer.tok()
 		if (token.kind !== kind) {
@@ -74,6 +85,7 @@ class Parser {
 	}
 
 	private parseFunctionDeclaration(): Stmt {
+		this.consumeOptionalWordToken('pub')
 		this.expectWordToken('fun')
 		const functionName = this.expectToken(TokenKind.name)
 		this.expectToken(TokenKind.lpar)

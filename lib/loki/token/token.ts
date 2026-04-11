@@ -10,6 +10,7 @@ export enum TokenKind {
 	rcurly, // }
 
 	// Keywords
+	k_pub,
 	k_fun,
 }
 

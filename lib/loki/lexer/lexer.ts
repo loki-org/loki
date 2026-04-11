@@ -74,6 +74,13 @@ export class Lexer {
 				}
 
 				const val = this.sourceText.slice(start, this.index)
+				if (val === 'pub') {
+					return {
+						kind: TokenKind.k_pub,
+						val,
+						pos: startPos,
+					}
+				}
 				return {
 					kind: val === 'fun' ? TokenKind.k_fun : TokenKind.name,
 					val,

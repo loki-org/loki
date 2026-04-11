@@ -30,6 +30,24 @@ test('parses from a lexer token stream into a function declaration', () => {
 	})
 })
 
+test('parses a pub fun declaration from source text', () => {
+	const ast = parse_text('sample.lo', 'pub fun name() {}')
+
+	expect(ast.stmts).toHaveLength(1)
+	expect(ast.stmts[0]).toEqual({
+		kind: 'FunDecl',
+		name: 'name',
+		params: [],
+		body: [],
+	})
+})
+
 test('rejects non-fun declarations during parsing', () => {
 	expect(() => parse_text('sample.lo', 'name() {}')).toThrow("parse error: expected 'fun' at 1:1")
+})
+
+test('rejects pub without fun', () => {
+	expect(() => parse_text('sample.lo', 'pub name() {}')).toThrow(
+		"parse error: expected 'fun' at 1:5",
+	)
 })
